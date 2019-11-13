@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:cc="http://java.sun.com/jsf/composite">
+<cc:interface>
+    <cc:attribute name="condition" required="true"/>
+    <cc:facet name="then"/>
+    <cc:facet name="else" />
+</cc:interface>
+
+<cc:implementation>
+    <ui:fragment rendered="#{cc.attrs.condition}" >
+        <cc:renderFacet name="then" />
+    </ui:fragment>
+    <ui:fragment rendered="#{not cc.attrs.condition}" >
+        <cc:renderFacet name="else" />
+    </ui:fragment>
+</cc:implementation>
+</html>

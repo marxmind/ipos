@@ -1,0 +1,1078 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Delivery Transactions</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.css"/>
+            <h:outputStylesheet name="css/pageHeaderFooter.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.min.js" target="head"/>
+            
+            
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>Delivery Transactions</title>
+
+<style>
+<!-- 
+
+ -->
+ </style>
+
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Delivery Transactions</title>
+
+</h:head>
+
+<h:body>
+	
+
+<h:form prependId="false" id="formId" >
+
+	<div class="page-header">
+	 		<a><p:outputLabel value="Delivery Transactions" style="#{skin.pageTitle};"/></a>
+	</div>
+
+
+		<p:growl id="msg" showDetail="true" />
+	
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+	
+		<p:layout fullPage="true">
+			
+		<p:layoutUnit position="north" size="100" visible="false"/>
+		<p:layoutUnit position="south" size="50" visible="false"/>
+		<p:layoutUnit position="west" size="0" visible="false"/>
+		<p:layoutUnit position="east" size="0" visible="false"/>
+		<p:layoutUnit position="center">	
+    
+		<p:tabView orientation="left" id="delId" prependId="false" style="#{skin.tabs}">
+		
+			<p:ajax  event="tabChange" listener="#{deliveryBean.onTabChange}"  update="delId" />
+		
+	        <p:tab id="tabAddItemId" title="Product From Suppliers" rendered="#{menuBean.deliverySupplier}">
+	        		
+	        		<p:toolbar id="tb" >
+    					<f:facet name="left">
+		        			<p:commandButton update="tabAddTranId,selectSupId" icon="fa fa-file-o" value="New" actionListener="#{deliveryBean.newSupplierTrans}"/>
+    					</f:facet>
+    					<f:facet name="right">
+    						<p:commandButton update="tabAddTranId,selectSupId" value="Clear" icon="fa fa-trash" action="#{deliveryBean.newSupplierTrans}"/>
+    						<p:commandButton update="tranDataId,tabAddTranId,selectSupId,msg" icon="fa fa-floppy-o" value="Save" actionListener="#{deliveryBean.createSupplierTransaction}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to create new supplier transaction?" icon="ui-icon-alert" />
+	            			</p:commandButton>
+    						
+    					</f:facet>
+						</p:toolbar>
+	        		
+	        		<p:panelGrid id="tabAddTranId"  columns="6" >
+	        			
+	        			<p:outputLabel value="Date" />
+						<p:inputText value="#{deliveryBean.dateTransacted}" a:placeholder="YYYY-MM-DD" a:type="date" style="width: 16em"/>
+					
+						<p:outputLabel value="Supplier" />
+							<p:selectOneMenu id="addSupplierId" value="#{deliveryBean.supplierId}" style="width: 16em" filter="true" filterMatchMode="contains">
+	            				<f:selectItem itemLabel="Select..."/>
+	                			<f:selectItems value="#{deliveryBean.suppliers}"/>
+	                			<f:ajax event="change" listener="#{deliveryBean.assignSupplier}" render="selectSupId"/>
+	            			</p:selectOneMenu>
+            			
+            			<p:outputLabel value="Delivery Receipt" />
+						<p:inputText value="#{deliveryBean.addSelectedSupplierDeliveryReceipt}" a:placeholder="00000000" style="width: 16em"/>
+						
+					</p:panelGrid>
+					<p:outputLabel id="selectSupId" value="Currently Selected Supplier: #{deliveryBean.addSelectedSupplier.suppliername}" />	
+	        		
+	        		<p:toolbar id="tbSearchSup" >
+    					<f:facet name="left">
+    						<p:inputText value="#{deliveryBean.addFromDate}" a:placeholder="YYYY-MM-DD" a:type="date" />
+    						<p:inputText value="#{deliveryBean.addToDate}" a:placeholder="YYYY-MM-DD" a:type="date" />
+    						<p:commandButton update="tranDataId" icon="fa fa-search" action="#{deliveryBean.loadSupplierTransactions}"/>	
+    					</f:facet>
+    					</p:toolbar>
+	        		
+	        		<p:dataTable id="tranDataId" value="#{deliveryBean.trans}" var="tranData" rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100" paginatorPosition="top"
+                         scrollable="true" >
+	        			
+	        			<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Supplier Transaction in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="tranDataId" fileName="SupplierTransaction" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Supplier Transaction in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="tranDataId" fileName="SupplierTransaction" />
+            						</h:commandLink>
+            				</f:facet>
+	        			
+	        				<p:column headerText="[*]" width="20">
+            					<p:commandButton update="tranDataId,msg" icon="fa fa-trash"  actionListener="#{deliveryBean.deleteAddTran(tranData)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" icon="ui-icon-alert" />
+            					</p:commandButton>
+            				</p:column>
+	        			
+	        				<p:column headerText="Date" width="50">
+            						<p:outputLabel  value="#{tranData.transDate}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Create/Show Item" width="70">
+            					<p:commandButton update="itemDataId tabAddId" icon="fa fa-search" oncomplete="PF('dialogPay').show()" actionListener="#{deliveryBean.clickItemOrder(tranData)}" />
+            				</p:column>
+            				
+            				<p:column headerText="Receipt" width="70">
+            						<p:outputLabel  value="#{tranData.deliveryReceipt}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Supplier" width="150">
+            						<p:outputLabel  value="#{tranData.supplier.suppliername}"/>
+            				</p:column>
+                         	
+                         	<p:column headerText="Status" width="70">
+            							<f:view>
+                         			 		<my:if condition="#{tranData.status==3}">
+                         			 			<f:facet name="then">
+            										<p:outputLabel  value="Posting"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:outputLabel  value="Completed"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            				</p:column>
+                         	
+                         	<p:column width="100">
+                         		<f:facet name="header">Amount</f:facet>
+            						<p:outputLabel value="#{tranData.purchasedPrice}"/>
+            					<f:facet name="footer">Php#{deliveryBean.grandTotalSupplierPurchased}</f:facet>		
+            				</p:column>
+	        		
+	        		</p:dataTable>
+	        
+	        </p:tab>
+	        <p:tab id="addDeliveryTruckId" title="Product for Delivery" disabled="#{featuresBean.deliveryTruck}" rendered="#{menuBean.deliveryProduct}">
+	        			<p:toolbar id="tbAddDeliveryTruckId">
+    					<f:facet name="left">
+		        			<p:commandButton update="tabAddTruckId,msg" icon="ui-icon-document" value="New" actionListener="#{deliveryBean.addNewDeliveryItem}"/>
+    					</f:facet>
+    					<f:facet name="right">
+    						<p:commandButton update="tabAddTruckId,msg" value="Clear" icon="ui-icon-refresh" action="#{deliveryBean.addNewDeliveryItem}"/>
+    						<p:commandButton update="tabAddTruckId,addDeliveryDataId,msg" icon="ui-icon-note" value="Save" actionListener="#{deliveryBean.saveAddedDeliveryItem}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to create new item for delivery?" icon="ui-icon-alert" />
+	            			</p:commandButton>
+	            			<p:commandButton update="tabAddTruckId,addDeliveryDataId,msg" icon="ui-icon-note" value="Posted" actionListener="#{deliveryBean.addDeliveryItemPosted}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to post this item/s?" icon="ui-icon-alert" />
+	            			</p:commandButton>
+    					</f:facet>
+						</p:toolbar>
+	        			
+	        			<p:panelGrid id="tabAddTruckId"  columns="4">
+	        			
+	        			<p:outputLabel value="Date" />
+						<p:inputText value="#{deliveryBean.addDeliveryDateTrans}" a:placeholder="YYYY-MM-DD" a:type="date" style="width: 16em"/>
+	        			
+	        			
+						<p:outputLabel value="Product" />
+						<p:outputLabel>
+		        			<p:inputText  a:placeholder="Search..." value="#{deliveryBean.addSearchProdcut}" style="width: 16em">
+		        				<f:ajax render="addProductId1" event="change" listener="#{deliveryBean.loadProduct}" />
+		        			</p:inputText><br/>
+							<p:selectOneMenu id="addProductId1" value="#{deliveryBean.productId}" style="width: 16em">
+	            				<f:selectItem itemLabel="Select..."/>
+	                			<f:selectItems value="#{deliveryBean.products}"/>
+	                			<f:ajax render="tabAddTruckId" event="change" listener="#{deliveryBean.productPrice}"/>
+	            			</p:selectOneMenu>
+            			</p:outputLabel>
+	        		
+	        			<p:outputLabel value="Selling Price" />
+						<p:outputLabel id="priceId" value="Php #{deliveryBean.addDeliverySellingPrice}"  disabled="true" a:placeholder="0.00" a:type="number" style="width: 16em"/>
+	        			
+	        			<p:outputLabel value="Status" />
+						<p:outputLabel value="#{deliveryBean.addDeliveryStatus}"  disabled="true" style="width: 16em"/>
+	        			
+	        			<p:outputLabel value="Qty in Warehouse" />
+						<p:outputLabel id="remQtyId" value="#{deliveryBean.addDeliveryRemainingQtyinWarehouse}" disabled="true" a:placeholder="0.00" a:type="number" style="width: 16em"/>
+						
+						<p:outputLabel value="Quantity" />
+						<p:inputText value="#{deliveryBean.addDeliveryQty}" a:placeholder="0.00" a:type="number" style="width: 16em">
+							<f:ajax  event="change" render="tabAddTruckId" listener="#{deliveryBean.calculateAddDeliveryQty}"/>
+						</p:inputText>
+						
+						<p:outputLabel value="Remarks" />
+						<p:inputText value="#{deliveryBean.addDeliveryRemarks}"  a:placeholder="Remarks" style="width: 16em"/>
+	        			
+	        			</p:panelGrid>
+	        			
+	        			<p:toolbar id="tbSearchDelivery">
+    					<f:facet name="left">
+    						<p:inputText value="#{deliveryBean.addDeliveryDateFrom}" a:placeholder="YYYY-MM-DD" a:type="date" />
+    						<p:inputText value="#{deliveryBean.addDeliveryDateTo}" a:placeholder="YYYY-MM-DD" a:type="date" />
+    						<p:commandButton update="addDeliveryDataId" icon="ui-icon-search" action="#{deliveryBean.loadAddedItemDelivery}"/>	
+    					</f:facet>
+    					</p:toolbar>
+	        			
+	        			<p:dataTable id="addDeliveryDataId" value="#{deliveryBean.deliveryItems}" var="dels" rows="10" paginator="true" 
+	        			paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true"
+                         selection="#{deliveryBean.selectedAddedDeliveryItems}" rowKey="#{dels.id}" paginatorPosition="top"
+                         >
+                        
+							<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Delivery Item in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="addDeliveryDataId" fileName="DeliveryItem" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Delivery Item in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="addDeliveryDataId" fileName="DeliveryItem" />
+            						</h:commandLink>
+            				</f:facet>
+						
+                         
+                         	<p:column headerText="[*]" width="20">
+            					<p:commandButton update="addDeliveryDataId,msg" icon="fa fa-trash"  actionListener="#{deliveryBean.deleteAddDelivery(dels)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" icon="ui-icon-alert" />
+            					</p:commandButton>
+            				</p:column>
+	        			
+	        				<p:column selectionMode="multiple" headerText="Post" style="width:16px;text-align:center"/>
+	        			
+	        				<p:column headerText="Status" width="50">
+                         		<p:commandLink update="j_idt23:tabAddTruckId"  actionListener="#{deliveryBean.clickItemDelivery(dels)}" style="color: transparent;">
+            						<f:view>
+                         			 		<my:if condition="#{dels.status==1}">
+                         			 			<f:facet name="then">
+            										<h:outputText  value="NEW" style="color: black;"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<h:outputText  value="POSTED" style="color: black;"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            					</p:commandLink>
+            				</p:column>
+	        			
+	        				<p:column headerText="Date Transacted" width="50">
+                         		<p:commandLink update="j_idt23:tabAddTruckId"  actionListener="#{deliveryBean.clickItemDelivery(dels)}" style="color: transparent;">
+            						<h:outputText  value="#{dels.dateTrans}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Product" width="100">
+                         		<p:commandLink update="j_idt23:tabAddTruckId"  actionListener="#{deliveryBean.clickItemDelivery(dels)}" style="color: transparent;">
+            						<h:outputText  value="#{dels.product.productProperties.productname}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="40">
+                         		<p:commandLink update="j_idt23:tabAddTruckId"  actionListener="#{deliveryBean.clickItemDelivery(dels)}" style="color: transparent;">
+            						<h:outputText  value="#{dels.product.productProperties.uom.symbol}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column width="50">
+            					<f:facet name="header">Price</f:facet>
+                         		<p:commandLink update="j_idt23:tabAddTruckId"  actionListener="#{deliveryBean.clickItemDelivery(dels)}" style="color: transparent;">
+            						<h:outputText  value="#{dels.sellingPrice}" style="color: black;"/>
+            					</p:commandLink>
+            					<f:facet name="footer">Php#{deliveryBean.addDeliveryGrandTotalSelling}</f:facet>
+            				</p:column>
+            				
+            				<p:column width="50">
+            					<f:facet name="header">Quantiy</f:facet>
+                         		<p:commandLink update="j_idt23:tabAddTruckId"  actionListener="#{deliveryBean.clickItemDelivery(dels)}" style="color: transparent;">
+            						<h:outputText  value="#{dels.quantity}" style="color: black;"/>
+            					</p:commandLink>
+            					<f:facet name="footer">#{deliveryBean.addDeliveryTotalQty}</f:facet>
+            				</p:column>
+                         	
+                         	<p:column headerText="Remarks" width="50">
+                         		<p:commandLink update="j_idt23:tabAddTruckId"  actionListener="#{deliveryBean.clickItemDelivery(dels)}" style="color: transparent;">
+            						<h:outputText  value="#{dels.remarks}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+                         
+                         </p:dataTable>
+	        			
+	        </p:tab>
+	        <p:tab title="Product Transactions" id="soldtabId" disabled="#{featuresBean.deliveryTrans}" rendered="#{menuBean.deliveryProductTrans}">
+	        
+	        			<p:toolbar id="tbSoldDeliveryTruckId">
+    					<f:facet name="left">
+		        			<p:commandButton update="tabSoldTruckId" icon="ui-icon-document" value="New" actionListener="#{deliveryBean.soldNewDeliveryReceipt}"/>
+    					</f:facet>
+    					<f:facet name="right">
+    						<p:commandButton update="tabSoldTruckId" value="Clear" icon="ui-icon-refresh" action="#{deliveryBean.soldNewDeliveryReceipt}"/>
+    						<p:commandButton update="soldDataId,tabSoldTruckId,msg" icon="ui-icon-note" value="Save" actionListener="#{deliveryBean.saveSoldReceipt}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to save this receipt?" icon="ui-icon-alert" />
+	            			</p:commandButton>
+	            			<p:commandButton update="soldDataId,tabSoldTruckId,msg" icon="ui-icon-note" value="Posted" actionListener="#{deliveryBean.postSoldReceipt}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to post this receipt?" icon="ui-icon-alert" />
+	            			</p:commandButton>
+    					</f:facet>
+						</p:toolbar>
+						
+						<p:panelGrid id="tabSoldTruckId"  columns="4">
+						
+						<p:outputLabel value="Date" />
+						<p:inputText value="#{deliveryBean.soldDate}" a:placeholder="YYYY-MM-DD" a:type="date" style="width: 16em"/>
+						
+						<p:outputLabel value="Customer" />
+						<p:outputLabel>
+		        			<p:inputText  a:placeholder="Search..." value="#{deliveryBean.searchSoldCustomer}" style="width: 16em" disabled="#{deliveryBean.customerNameLock}">
+		        				<f:ajax render="soldCustId" event="change" listener="#{deliveryBean.loadSoldCustomer}" />
+		        			</p:inputText><br/>
+							<p:selectOneMenu id="soldCustId" value="#{deliveryBean.soldCustomerId}" style="width: 16em" disabled="#{deliveryBean.customerNameLock}">
+	            				<f:selectItem itemLabel="Select..."/>
+	                			<f:selectItems value="#{deliveryBean.soldCustomers}"/>
+	            			</p:selectOneMenu>
+            			</p:outputLabel>
+						
+						<p:outputLabel value="Receipt No" />
+						<p:outputLabel value="#{deliveryBean.soldReceiptNo}" />
+						
+						<p:outputLabel value="Number of Items" />
+						<p:outputLabel value="#{deliveryBean.soldQty}" />
+						
+						<p:outputLabel value="Payment Status" />
+						<p:outputLabel value="#{deliveryBean.soldPaymentStatus}" />
+						
+						<p:outputLabel value="Receipt Status" />
+						<p:outputLabel value="#{deliveryBean.soldStatus}" />
+						
+						<p:outputLabel value="Purchased Amount" />
+						<p:outputLabel value="Php #{deliveryBean.soldPrice}" />
+						
+						<p:outputLabel value="Charge Amount" />
+						<p:inputText value="#{deliveryBean.soldChargeAmount}" disabled="#{deliveryBean.isSoldItemPosted}" a:placeholder="0.00" a:type="number" style="width: 16em">
+							<f:ajax event="change" render="tabSoldTruckId" listener="#{deliveryBean.calculateBilling}" />
+						</p:inputText>
+						
+						<p:outputLabel value="Discount Amount" />
+						<p:inputText value="#{deliveryBean.soldDiscount}" disabled="#{deliveryBean.isSoldItemPosted}" a:placeholder="0.00" a:type="number" style="width: 16em">
+							<f:ajax event="change" render="tabSoldTruckId" listener="#{deliveryBean.calculateBilling}" />
+						</p:inputText>
+						
+						
+						<p:outputLabel value="Downpayment" />
+						<p:inputText value="#{deliveryBean.soldDownPayment}" disabled="#{deliveryBean.isSoldItemPosted}" a:placeholder="0.00" a:type="number" style="width: 16em">
+							<f:ajax event="change" render="tabSoldTruckId" listener="#{deliveryBean.calculateBilling}" />
+						</p:inputText>
+						
+						<p:outputLabel value="Grand Total" />
+						<p:outputLabel value="Php#{deliveryBean.soldGrandTotal}" />
+						
+						<p:outputLabel value="Remarks" />
+						<p:inputText value="#{deliveryBean.soldRemarks}" a:placeholder="Remarks" style="width: 16em"/>
+						
+						<p:outputLabel value="Balance Amount" />
+						<p:outputLabel value="Php #{deliveryBean.soldBalance}" />
+						
+						</p:panelGrid>
+						
+						<p:toolbar id="tbSearchSoldTrans">
+    					<f:facet name="left">
+    						<p:inputText value="#{deliveryBean.soldDateFrom}" a:placeholder="YYYY-MM-DD" a:type="date" />
+    						<p:inputText value="#{deliveryBean.soldDateTo}" a:placeholder="YYYY-MM-DD" a:type="date" />
+    						<p:commandButton update="soldDataId" icon="ui-icon-search" action="#{deliveryBean.loadSoldItemDelivery}"/>	
+    					</f:facet>
+    					</p:toolbar>
+						
+						<p:dataTable id="soldDataId" value="#{deliveryBean.receipts}" var="sold" rows="10" 
+						paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true"
+                         selection="#{deliveryBean.selectedReceipts}" rowKey="#{sold.id}" paginatorPosition="top"
+                         >
+                        
+						
+						<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Receipt in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="soldDataId" fileName="Receipt" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Receipt in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="soldDataId" fileName="Receipt" />
+            						</h:commandLink>
+            				</f:facet>
+						
+							<p:column headerText="[*]" width="20">
+            					<p:commandButton update="soldDataId,msg" icon="fa fa-trash"  actionListener="#{deliveryBean.deleteReceipt(sold)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" icon="ui-icon-alert" />
+            					</p:commandButton>
+            				</p:column>
+							
+							<p:column headerText="Details" width="40">
+                         		<p:commandLink update=":formId:itemSoldDataId,:formId:soldItemFieldId"  oncomplete="PF('dialogSoldItem').show()" actionListener="#{deliveryBean.clickReceiptDetails(sold)}" >
+                         			<h:outputText  value="Show Details" style="color: black;"/>
+                         		</p:commandLink>
+            				</p:column>
+                         	
+                         	<p:column selectionMode="multiple" headerText="Post" style="width:16px;text-align:center"/>
+                         	
+            				<p:column headerText="Status" width="50">
+                         		<p:commandLink update="j_idt23:tabSoldTruckId" actionListener="#{deliveryBean.clickItemReceipt(sold)}" style="color: transparent;">
+            							<f:view>
+                         			 		<my:if condition="#{sold.status==1}">
+                         			 			<f:facet name="then">
+            										<h:outputText  value="NEW" style="color: black;"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<h:outputText  value="POSTED" style="color: black;"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Payment" width="50">
+                         		<p:commandLink update="j_idt23:tabSoldTruckId" actionListener="#{deliveryBean.clickItemReceipt(sold)}" style="color: transparent;">
+            							<f:view>
+                         			 		<my:if condition="#{sold.paymentStatus==3}">
+                         			 			<f:facet name="then">
+            										<h:outputText  value="PARTIAL" style="color: black;"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<h:outputText  value="FULL" style="color: black;"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Receipt No" width="100">
+                         		<p:commandLink update="j_idt23:tabSoldTruckId" actionListener="#{deliveryBean.clickItemReceipt(sold)}" style="color: transparent;">
+            						<h:outputText  value="#{sold.receiptNo}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Customer" width="100">
+                         		<p:commandLink update="j_idt23:tabSoldTruckId" actionListener="#{deliveryBean.clickItemReceipt(sold)}" style="color: transparent;">
+            						<h:outputText  value="#{sold.customer.fullname}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column width="70">
+                         		<f:facet name="header">Purchased</f:facet>
+                         		<p:commandLink update="j_idt23:tabSoldTruckId" actionListener="#{deliveryBean.clickItemReceipt(sold)}" style="color: transparent;">
+            						<h:outputText  value="Php#{sold.totalAmount}" style="color: black;"/>
+            					</p:commandLink>
+            					<f:facet name="footer">Php#{deliveryBean.soldItemGrandTotalPurchased}</f:facet>
+            				</p:column>
+            				
+            				<p:column width="70">
+            					<f:facet name="header">Balance</f:facet>
+                         		<p:commandLink update="j_idt23:tabSoldTruckId" actionListener="#{deliveryBean.clickItemReceipt(sold)}" style="color: transparent;">
+            						<h:outputText  value="Php#{sold.balanceAmount}" style="color: black;"/>
+            					</p:commandLink>
+            					<f:facet name="footer">Php#{deliveryBean.soldItemGrandTotalBalance}</f:facet>
+            				</p:column>
+            				
+            		</p:dataTable>		
+	        
+	        </p:tab>
+	        <p:tab title="Product Sold From Delivery" disabled="#{featuresBean.deliverySold}" rendered="#{menuBean.deliverySold}">
+	        			
+	        			<p:toolbar id="tbsoldDelTruckId">
+    					<f:facet name="left">
+    						<p:inputText value="#{deliveryBean.soldProductItemDateFrom}" a:placeholder="YYYY-MM-DD" a:type="date" />
+    						<p:inputText value="#{deliveryBean.soldProductItemDateTo}" a:placeholder="YYYY-MM-DD" a:type="date" />
+		        			<p:commandButton update="soldDelDataId" icon="fa fa-search" action="#{deliveryBean.loadSoldProductOnly}"/>
+    					</f:facet>
+    					<f:facet name="right">
+    						<p:commandButton update="soldDelDataId" value="Refresh" icon="fa fa-refresh" action="#{deliveryBean.loadSoldProductOnly}"/>
+	            			<p:commandButton  icon="ui-icon-print" value="Print"/>
+    					</f:facet>
+						</p:toolbar>
+						
+	        <p:dataTable id="soldDelDataId" value="#{deliveryBean.soldProductItem}" var="sld" rows="10" 
+						paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100" paginatorPosition="top"
+                         scrollable="true">
+                         
+                         <f:facet name="{Exporters}">
+            						<h:commandLink title="Export SoldItem in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="soldDelDataId" fileName="SoldItem" />
+            						</h:commandLink>
+            						<h:commandLink title="Export SoldItem in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="soldDelDataId" fileName="SoldItem" />
+            						</h:commandLink>
+            				</f:facet>
+                         
+                         <p:column headerText="Date" width="60">
+            							<h:outputText  value="#{sld.dateTrans}" style="color: black;"/>
+            			</p:column>
+                         
+                         <p:column headerText="Product" width="100">
+            							<h:outputText  value="#{sld.product.productProperties.productname}" style="color: black;"/>
+            			</p:column>
+            			
+            			<p:column headerText="UOM" width="40">
+            							<h:outputText  value="#{sld.product.productProperties.uom.symbol}" style="color: black;"/>
+            			</p:column>
+            			
+            			<p:column width="50">
+            						<f:facet name="header">Price</f:facet>
+            							<h:outputText  value="#{sld.deliveryItem.sellingPrice}" style="color: black;"/>
+            						<f:facet name="footer">Php#{deliveryBean.soldProductItemPriceGrandTotal}</f:facet>	
+            			</p:column> 
+            			
+            			<p:column width="50">
+            						<f:facet name="header">Qty</f:facet>
+            							<h:outputText  value="#{sld.quantity}" style="color: black;"/>
+            						<f:facet name="footer">#{deliveryBean.soldProductItemQtyGrandTotal}</f:facet>	
+            			</p:column>
+                         
+                        <p:column width="50">
+                        	<f:facet name="header">Total</f:facet>
+            							<h:outputText  value="#{sld.sellingPrice}" style="color: black;"/>
+            				<f:facet name="footer">Php#{deliveryBean.soldProductItemGrandTotal}</f:facet>			
+            			</p:column> 
+                         
+                         
+            </p:dataTable>
+	        
+	        </p:tab>
+	        <p:tab title="Product Return From Delivery" disabled="#{featuresBean.deliveryReturn}" rendered="#{menuBean.deliveryReturn}">
+	        			
+	        			<p:toolbar id="tbretDelTruckId">
+    					<f:facet name="left">
+		        			<p:inputText value="#{deliveryBean.returnDateFrom}" a:placeholder="YYYY-MM-DD" a:type="date" />
+    						<p:inputText value="#{deliveryBean.returnDateTo}" a:placeholder="YYYY-MM-DD" a:type="date" />
+		        			<p:commandButton update="retDelDataId" icon="fa fa-search" action="#{deliveryBean.loadReturnDelivery}"/>
+    					</f:facet>
+    					<f:facet name="right">
+    						<p:commandButton update="retDelDataId" value="Refresh" icon="fa fa-refresh" action="#{deliveryBean.loadReturnDelivery}"/>
+	            			<p:commandButton  icon="ui-icon-print" value="Print"/>
+    					</f:facet>
+						</p:toolbar>
+						
+	        <p:dataTable id="retDelDataId" value="#{deliveryBean.returnItems}" var="ret" rows="10" 
+						paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100" paginatorPosition="top"
+                         scrollable="true">
+                         
+                         <f:facet name="{Exporters}">
+            						<h:commandLink title="Export ReturnItem in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="retDelDataId" fileName="ReturnItem" />
+            						</h:commandLink>
+            						<h:commandLink title="Export ReturnItem in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="retDelDataId" fileName="ReturnItem" />
+            						</h:commandLink>
+            				</f:facet>
+                         
+                         <p:column headerText="Date" width="60">
+            							<h:outputText  value="#{ret.dateTrans}" style="color: black;"/>
+            			</p:column>
+                         
+                         <p:column headerText="Product" width="100">
+            							<h:outputText  value="#{ret.product.productProperties.productname}" style="color: black;"/>
+            			</p:column>
+            			
+            			<p:column headerText="UOM" width="40">
+            							<h:outputText  value="#{ret.product.productProperties.uom.symbol}" style="color: black;"/>
+            			</p:column>
+            			
+            			<p:column width="50">
+            					<f:facet name="header">Price</f:facet>
+            							<h:outputText  value="#{ret.sellingPrice}" style="color: black;"/>
+            					<f:facet name="footer">Php#{deliveryBean.retrunProductItemPriceGrandTotal}</f:facet>		
+            			</p:column>
+            			
+            			<p:column width="50">
+            					<f:facet name="header">Qty</f:facet>
+            						<h:outputText  value="#{ret.quantity}" style="color: black;"/>
+            					<f:facet name="footer">#{deliveryBean.returnProductItemQtyGrandTotal}</f:facet>	
+            			</p:column>
+                         
+                        <p:column width="50">
+                        		<f:facet name="header">Total</f:facet>
+            							<h:outputText  value="#{ret.total}" style="color: black;"/>
+            					<f:facet name="footer">Php#{deliveryBean.returnProductItemGrandTotal}</f:facet>		
+            			</p:column> 
+                         
+            </p:dataTable>
+	        
+	        </p:tab>
+	        
+	        <p:tab title="Items Rented by Customer" disabled="#{featuresBean.deliveryRented}" rendered="#{menuBean.deliveryProductRented}">
+	        			
+	        			<p:toolbar id="tbrentMenuId">
+    					<f:facet name="left">
+		        			<p:commandButton update="tabRentId" value="New" icon="fa fa-file" action="#{deliveryBean.newRented}"/>
+    					</f:facet>
+    					<f:facet name="right">
+    						<p:commandButton update="tabRentId" value="Clear" icon="fa fa-file" action="#{deliveryBean.clearRentedFields}"/>
+	            			<p:commandButton update="tabRentId,rentDataId,msg" icon="fa fa-floppy-o" value="Save" actionListener="#{deliveryBean.saveRented}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to create new supplier transaction?" icon="ui-icon-alert" />
+	            			</p:commandButton>
+	            			<p:commandButton update="tabRentId,rentDataId,msg" value="Posted" icon="fa fa-floppy-o" action="#{deliveryBean.postRented}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to post it now?" icon="ui-icon-alert" />
+	            			</p:commandButton>
+    					</f:facet>
+						</p:toolbar>
+	        			
+	        			<p:panelGrid id="tabRentId"  columns="6">
+	        				
+	        				<p:outputLabel value="Date" />
+	        				<p:inputText value="#{deliveryBean.retDateTrans}" a:placeholder="YYYY-MM-DD" a:type="date" disabled="true" style="width: 16em"/>
+	        				
+	        				<p:outputLabel value="Customer" />
+	        				<p:outputLabel>
+		        			<p:inputText  a:placeholder="Search..." value="#{deliveryBean.searchName}" style="width: 16em">
+		        				<f:ajax render="rentCusId" event="change"/>
+		        			</p:inputText><br/>
+	        				<p:selectOneMenu id="rentCusId" value="#{deliveryBean.rentCustomerId}" style="width: 16em">
+	            				<f:selectItem itemLabel="Select..."/>
+	                			<f:selectItems value="#{deliveryBean.rentCustomer}" />
+	                			<f:ajax event="change" listener="#{deliveryBean.storeRentComboData}" />
+	            			</p:selectOneMenu>
+	            			</p:outputLabel>
+	        				
+	        				<p:outputLabel value="Product" />
+	        				<p:outputLabel>
+		        			<p:inputText  a:placeholder="Search..." value="#{deliveryBean.searchProduct}" style="width: 16em">
+		        				<f:ajax render="rentProdId" event="change"/>
+		        			</p:inputText><br/>
+	        				<p:selectOneMenu id="rentProdId" value="#{deliveryBean.rentProductId}" style="width: 16em">
+	            				<f:selectItem itemLabel="Select..."/>
+	                			<f:selectItems value="#{deliveryBean.rentProduct}" />
+	                			<f:ajax event="change" listener="#{deliveryBean.storeRentComboData}" />
+	            			</p:selectOneMenu>
+	        				</p:outputLabel>
+	        				
+	        				<p:outputLabel value="UOM" />
+	        				<p:selectOneMenu id="rentUOMId" value="#{deliveryBean.rentUomId}" style="width: 16em">
+	            				<f:selectItem itemLabel="Select..."/>
+	                			<f:selectItems value="#{deliveryBean.rentUom}" />
+	                			<f:ajax event="change" listener="#{deliveryBean.storeRentComboData}" />
+	            			</p:selectOneMenu>
+	            			
+	            			<p:outputLabel value="Quantity" />
+	        				<p:inputText value="#{deliveryBean.rentQuantity}" a:placeholder="0.00" a:type="number" style="width: 16em">
+	        					<f:ajax event="change" render="tabRentId" listener="#{deliveryBean.computeRented}"/>
+	        				</p:inputText>
+	        				
+	        				
+	        				<p:outputLabel value="Charge Per Item" />
+	        				<p:inputText value="#{deliveryBean.rentChargeitem}" a:placeholder="0.00" a:type="number" style="width: 16em">
+	        					<f:ajax event="change" render="tabRentId" listener="#{deliveryBean.computeRented}"/>
+	        				</p:inputText>
+	        				
+	        				<p:outputLabel value="Total Amount" />
+	        				<p:outputLabel id="rentTotalId" value="#{deliveryBean.rentTotalAmount}" a:placeholder="0.00" a:type="number" style="width: 16em" />
+	        				
+	        				<p:outputLabel value="Paid Amount" />
+	        				<p:inputText value="#{deliveryBean.rentPaidAmount}" a:placeholder="0.00" a:type="number" style="width: 16em">
+	        					<f:ajax event="change" render="tabRentId" listener="#{deliveryBean.computeRented}"/>
+	        				</p:inputText>
+	        				
+	        				<p:outputLabel value="Balance Amount" />
+	        				<p:outputLabel id="rentBalId" value="#{deliveryBean.rentBalance}" a:placeholder="0.00" a:type="number" style="width: 16em"/>
+	        				
+	        				<p:outputLabel value="Remarks" />
+	        				<p:inputText value="#{deliveryBean.rentRemarks}" a:placeholder="Remarks" style="width: 16em"/>
+	        				
+	        			</p:panelGrid>
+	        
+	        			<p:toolbar id="tbrentTruckId" style="#{skin.toolbar}">
+    					<f:facet name="left">
+    						<p:inputText value="#{deliveryBean.rentDescription}" a:placeholder="Search Customer"/>
+		        			<p:inputText value="#{deliveryBean.rentDateFrom}" a:placeholder="YYYY-MM-DD" a:type="date" />
+    						<p:inputText value="#{deliveryBean.rentDateTo}" a:placeholder="YYYY-MM-DD" a:type="date" />
+		        			<p:commandButton update="rentDataId" icon="ui-icon-search" action="#{deliveryBean.loadRented}"/>
+    					</f:facet>
+    					<f:facet name="right">
+    						<p:commandButton update="rentDataId" value="Refresh" icon="ui-icon-refresh" action="#{deliveryBean.loadRented}"/>
+    					</f:facet>
+						</p:toolbar>
+						
+						 <p:dataTable id="rentDataId" value="#{deliveryBean.rentedItems}" var="rent" rows="10" 
+						paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         selection="#{deliveryBean.selectedRentedTrans}" rowKey="#{rent.id}"
+                         >
+                         
+                         <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Rented Items in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="rentDataId" fileName="RentedItem" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Rented Items in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="rentDataId" fileName="RentedItem" />
+            						</h:commandLink>
+            				</f:facet>
+                         
+                         	<p:column headerText="[*]" width="30">
+            					<p:commandButton update="rentDataId,msg" icon="fa fa-trash"  actionListener="#{deliveryBean.deleteRentItem(rent)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" icon="ui-icon-alert" />
+            					</p:commandButton>
+            				</p:column>
+                         
+                         	<p:column selectionMode="multiple" headerText="Post" style="width:16px;text-align:center"/>
+                         
+                         	<p:column headerText="Date" width="70">
+                         		<p:commandLink update="formId" actionListener="#{deliveryBean.clickRentedItem(rent)}" >
+            						<h:outputText  value="#{rent.dateTrans}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Status" width="50">
+                         		<p:commandLink update="formId" actionListener="#{deliveryBean.clickRentedItem(rent)}" >
+            							<f:view>
+                         			 		<my:if condition="#{rent.status==1}">
+                         			 			<f:facet name="then">
+            										<h:outputText  value="NEW" style="color: black;"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<h:outputText  value="POSTED" style="color: black;"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Customer" width="100">
+                         		<p:commandLink update="formId" actionListener="#{deliveryBean.clickRentedItem(rent)}" >
+            						<h:outputText  value="#{rent.customer.fullname}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Product" width="100">
+                         		<p:commandLink update="formId" actionListener="#{deliveryBean.clickRentedItem(rent)}" >
+            						<h:outputText  value="#{rent.productProperties.productname}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="30">
+                         		<p:commandLink update="formId" actionListener="#{deliveryBean.clickRentedItem(rent)}" >
+            						<h:outputText  value="#{rent.uom.symbol}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Qty" width="50">
+                         		<p:commandLink update="formId" actionListener="#{deliveryBean.clickRentedItem(rent)}" >
+            						<h:outputText  value="#{rent.quantity}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Charge Per Bottle" width="50">
+                         		<p:commandLink update="formId" actionListener="#{deliveryBean.clickRentedItem(rent)}" >
+            						<h:outputText  value="#{rent.chargeitem}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Total Amount" width="50">
+                         		<p:commandLink update="formId" actionListener="#{deliveryBean.clickRentedItem(rent)}" >
+            						<h:outputText  value="#{rent.totalAmount}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Paid Amount" width="50">
+                         		<p:commandLink update="formId" actionListener="#{deliveryBean.clickRentedItem(rent)}" >
+            						<h:outputText  value="#{rent.paidAmount}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Balance" width="50">
+                         		<p:commandLink update="formId" actionListener="#{deliveryBean.clickRentedItem(rent)}" >
+            						<h:outputText  value="#{rent.balance}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+            				
+            				<p:column headerText="Remarks" width="50">
+                         		<p:commandLink update="formId" actionListener="#{deliveryBean.clickRentedItem(rent)}" >
+            						<h:outputText  value="#{rent.remarks}" style="color: black;"/>
+            					</p:commandLink>
+            				</p:column>
+						
+						</p:dataTable>
+	        </p:tab>
+	        
+	        </p:tabView>    
+	
+	</p:layoutUnit>
+	</p:layout>
+		
+		<p:dialog header="Sold Items" style="#{skin.dialog}" position="center top" widgetVar="dialogSoldItem" 
+		maximizable="true" fitViewport="true" responsive="true" closable="false" modal="false" draggable="false">
+		
+			<p:toolbar id="tbItemSold">
+    					<f:facet name="left">
+		        			<p:commandButton update="soldItemFieldId,msg" icon="fa fa-file" value="New" actionListener="#{deliveryBean.soldNewDeliveryItem}"/>
+    					</f:facet>
+    					<f:facet name="right">
+    						<p:commandButton update="soldItemFieldId,itemSoldDataId,msg" icon="fa fa-floppy-o" value="Save" actionListener="#{deliveryBean.saveSoldDeliveryItem}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to add this item?" icon="ui-icon-alert" />
+	            			</p:commandButton>
+	            			<p:commandButton update="soldItemFieldId,itemSoldDataId,msg" icon="fa fa-floppy-o" value="Posted" actionListener="#{deliveryBean.soldDeliveryItemPosted}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to post this item?" icon="ui-icon-alert" />
+	            			</p:commandButton>
+    						<p:commandButton update="formId" actionListener="#{deliveryBean.closeSoldItemWindow}" value="Close" styleClass="btn btn-primary"  onclick="PF('dialogSoldItem').hide();"/>
+    					</f:facet>
+						</p:toolbar>
+		
+			
+			<p:panelGrid id="soldItemFieldId"  columns="6" columnClasses="column" cellpadding="5">
+			
+				<p:outputLabel value="Date" />
+				<p:inputText value="#{deliveryBean.soldItemDate}" a:placeholder="YYYY-MM-DD" a:type="date" style="width: 16em"/>
+	        			
+	        			
+						<p:outputLabel value="Product" />
+						<p:outputLabel>
+		        			<p:inputText  a:placeholder="Search..." value="#{deliveryBean.soldSearchProduct}" style="width: 16em">
+		        				<f:ajax render="soldProductIdx" event="change" listener="#{deliveryBean.loadSoldProduct}" />
+		        			</p:inputText><br/>
+							<p:selectOneMenu id="soldProductIdx" value="#{deliveryBean.soldProductId}" style="width: 16em">
+	            				<f:selectItem itemLabel="Select..."/>
+	                			<f:selectItems value="#{deliveryBean.soldProducts}" />
+	                			<f:ajax event="change" render="soldItemFieldId" listener="#{deliveryBean.soldProductItemDetails}" />
+	            			</p:selectOneMenu>
+            			</p:outputLabel>
+	        		
+	        			<p:outputLabel value="Quantity Remaining on Delivery Truck" />
+						<p:outputLabel id="delQtyId" value="#{deliveryBean.soldItemQtyInDelivery}"/>
+	        		
+	        			<p:outputLabel value="Quantity" />
+						<p:inputText value="#{deliveryBean.soldItemQty}" a:placeholder="0.00" a:type="number" style="width: 16em">
+							<f:ajax event="change" render="soldItemFieldId" listener="#{deliveryBean.calculateSoldItemPrice}"/>
+						</p:inputText>
+						
+						<p:outputLabel value="Total Price" />
+						<p:outputLabel value="Php #{deliveryBean.soldItemPrice}"/>
+						
+						<p:outputLabel value="Selling Price" />
+						<p:outputLabel id="delSelPriceId" value="Php #{deliveryBean.soldItemSellingPrice}"/>
+						
+						<p:outputLabel value="Status" />
+						<p:outputLabel value="#{deliveryBean.soldItemStatus}"/>
+						
+						<p:outputLabel value="Remarks" />
+						<p:inputText value="#{deliveryBean.soldItemRemarks}" a:placeholder="Remarks"/>
+			
+			</p:panelGrid>
+			
+			<p:dataTable id="itemSoldDataId" value="#{deliveryBean.itemSolds}" var="item" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true"
+                         selection="#{deliveryBean.itemSoldSelected}" rowKey="#{item.id}" paginatorPosition="top"
+                         >
+                         <p:column headerText="[*]" width="20">
+            					<p:commandButton update="itemSoldDataId,msg" icon="ui-icon-circle-close"  actionListener="#{deliveryBean.deleteSoldItem(item)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" icon="ui-icon-alert" />
+            					</p:commandButton>
+            			</p:column>
+                        
+                        <p:column selectionMode="multiple" headerText="Post" style="width:16px;text-align:center"/>
+                        
+                        <p:column headerText="Date" width="70">
+                         		<p:commandLink update="soldItemFieldId" actionListener="#{deliveryBean.clickItemSold(item)}" style="color: transparent;">
+            							<h:outputText  value="#{item.dateTrans}" style="color: black;"/>
+            					</p:commandLink>
+            			</p:column>
+                        
+                        <p:column headerText="Status" width="70">
+                         		<p:commandLink update="soldItemFieldId" actionListener="#{deliveryBean.clickItemSold(item)}" style="color: transparent;">
+            							<f:view>
+                         			 		<my:if condition="#{item.status==3}">
+                         			 			<f:facet name="then">
+            										<h:outputText  value="NEW" style="color: black;"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<h:outputText  value="POSTED" style="color: black;"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            					</p:commandLink>
+            			</p:column> 
+                         
+                         <p:column headerText="Product" width="100">
+                         		<p:commandLink update="soldItemFieldId" actionListener="#{deliveryBean.clickItemSold(item)}" style="color: transparent;">
+            							<h:outputText  value="#{item.product.productProperties.productname}" style="color: black;"/>
+            					</p:commandLink>
+            			</p:column>
+            			
+            			<p:column headerText="UOM" width="40">
+                         		<p:commandLink update="soldItemFieldId" actionListener="#{deliveryBean.clickItemSold(item)}" style="color: transparent;">
+            							<h:outputText  value="#{item.product.productProperties.uom.symbol}" style="color: black;"/>
+            					</p:commandLink>
+            			</p:column>
+            			
+            			<p:column headerText="Qty" width="50">
+                         		<p:commandLink update="soldItemFieldId" actionListener="#{deliveryBean.clickItemSold(item)}" style="color: transparent;">
+            							<h:outputText  value="#{item.quantity}" style="color: black;"/>
+            					</p:commandLink>
+            			</p:column>
+            			
+            			<p:column headerText="Total" width="50">
+                         		<p:commandLink update="soldItemFieldId" actionListener="#{deliveryBean.clickItemSold(item)}" style="color: transparent;">
+            							<h:outputText  value="#{item.sellingPrice}" style="color: black;"/>
+            					</p:commandLink>
+            			</p:column>
+                         
+			</p:dataTable>
+			
+		</p:dialog>
+		
+		
+					<p:dialog header="Item Orders from Supplier" style="#{skin.dialog}" position="center top" 
+					widgetVar="dialogPay" fitViewport="true" responsive="true" closable="false" modal="false" draggable="false">
+						
+						<p:toolbar id="tbItemOrder">
+    					<f:facet name="left">
+		        			<p:commandButton update="tabAddId,msg" icon="fa fa-file-o" value="New" actionListener="#{deliveryBean.addNewItem}"/>
+    					</f:facet>
+    					<f:facet name="right">
+    						<p:commandButton update="tabAddId,itemDataId,tranDataId,msg" icon="fa fa-floppy-o" value="Save" actionListener="#{deliveryBean.addSave}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to add this item?" icon="ui-icon-alert" />
+	            			</p:commandButton>
+	            			<p:commandButton update="tabAddId,itemDataId,tranDataId,msg" icon="fa fa-floppy-o" value="Posted" actionListener="#{deliveryBean.addItemPosted}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to post this item?" icon="ui-icon-alert" />
+	            			</p:commandButton>
+    						<p:commandButton update="tranDataId" actionListener="#{deliveryBean.loadSupplierTransactions}" value="Close" icon="ui-icon-closethick" styleClass="btn btn-primary"  onclick="PF('dialogPay').hide();"/>
+    					</f:facet>
+						</p:toolbar>
+						
+						<p:panelGrid id="tabAddId"  columns="4" columnClasses="column" cellpadding="5">
+	        			
+	        			<p:outputLabel value="Date" />
+						<p:inputText value="#{deliveryBean.dateTransacted}" a:placeholder="YYYY-MM-DD" a:type="date" style="width: 16em"/>
+	        			
+	        			
+						<p:outputLabel value="Product" />
+							<p:selectOneMenu id="addProductId" value="#{deliveryBean.productId}" style="width: 16em" filter="true" filterMatchMode="contains">
+	            				<f:selectItem itemLabel="Select..."/>
+	                			<f:selectItems value="#{deliveryBean.productsSup}"/>
+	            			</p:selectOneMenu>
+            			
+	        		
+	        			<p:outputLabel value="Quantity" />
+						<p:inputText value="#{deliveryBean.quantity}" a:placeholder="0.00" a:type="number" style="width: 16em"/>
+						
+						<p:outputLabel value="Purchased Price" />
+						<p:inputText value="#{deliveryBean.priceAmount}"  a:placeholder="0.00" a:type="number" style="width: 16em"/>
+						
+						<p:outputLabel value="Product Expiration" />
+						<p:inputText value="#{deliveryBean.productExp}"  a:placeholder="YYYY-MM-DD" a:type="date" style="width: 16em"/>
+						
+						<p:outputLabel value="Remarks" />
+						<p:inputText value="#{deliveryBean.remarks}"  a:placeholder="Remarks" style="width: 16em"/>
+	        		
+	        		</p:panelGrid>
+						
+		       			 <p:dataTable id="itemDataId" value="#{deliveryBean.items}" var="itemData" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+                         
+                         <f:facet name="header">
+                         	Ordered Items
+                         </f:facet>
+                         	
+                         	<p:column headerText="[*]" width="20">
+            					<p:commandButton update=":formId:itemDataId,msg" icon="fa fa-trash"  actionListener="#{deliveryBean.deleteAddItem(itemData)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" icon="ui-icon-alert" />
+            					</p:commandButton>
+            				</p:column>
+                         	
+                         	<p:column headerText="Date Purchased" width="50">
+                         		<p:commandLink update=":formId:tabAddId"  actionListener="#{deliveryBean.clickItemEdit(itemData)}" style="color: transparent;">
+            						<h:outputText  value="#{itemData.datePurchased}" style="color: black;"/>
+            					</p:commandLink>	
+            				</p:column>
+                         	
+                         	<p:column headerText="Status" width="50">
+                         		<p:commandLink update=":formId:tabAddId" actionListener="#{deliveryBean.clickItemEdit(itemData)}" style="color: transparent;">
+            							<f:view>
+                         			 		<my:if condition="#{itemData.status==1}">
+                         			 			<f:facet name="then">
+            										<h:outputText  value="New" style="color: black;"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<h:outputText  value="Posted" style="color: black;"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            					</p:commandLink>
+            				</p:column>
+                         	
+                         	<p:column headerText="Product" width="100">
+                         		<p:commandLink update=":formId:tabAddId"  actionListener="#{deliveryBean.clickItemEdit(itemData)}" style="color: transparent;">
+            						<h:outputText  value="#{itemData.product.productProperties.productname}" style="color: black;"/>
+            					</p:commandLink>	
+            				</p:column>
+                         	
+            				<p:column headerText="UOM" width="50">
+            					<p:commandLink update=":formId:tabAddId"  actionListener="#{deliveryBean.clickItemEdit(itemData)}" style="color: transparent;">
+            						<h:outputText  value="#{itemData.product.productProperties.uom.symbol}" style="color: black;"/>
+            					</p:commandLink>	
+            				</p:column>
+            				
+            				<p:column headerText="Quantiy" width="50">
+            					<p:commandLink update=":formId:tabAddId"  actionListener="#{deliveryBean.clickItemEdit(itemData)}" style="color: transparent;">
+            						<h:outputText  value="#{itemData.quantity}" style="color: black;"/>
+            					</p:commandLink>	
+            				</p:column>
+            				
+            				<p:column headerText="Purchased Price" width="100">
+                         		<p:commandLink update=":formId:tabAddId"  actionListener="#{deliveryBean.clickItemEdit(itemData)}" style="color: transparent;">
+            						<h:outputText  value="#{itemData.purchasedPrice}" style="color: black;"/>
+            					</p:commandLink>	
+            				</p:column>
+            				
+            				<p:column headerText="Exp. Date" width="50">
+            					<p:commandLink update=":formId:tabAddId"  actionListener="#{deliveryBean.clickItemEdit(itemData)}" style="color: transparent;">
+            						<h:outputText  value="#{itemData.productExpiration}" style="color: black;"/>
+            					</p:commandLink>	
+            				</p:column>
+            				
+            				<p:column headerText="Remarks" width="50">
+            					<p:commandLink update=":formId:tabAddId"  actionListener="#{deliveryBean.clickItemEdit(itemData)}" style="color: transparent;">
+            						<h:outputText  value="#{itemData.remarks}" style="color: black;"/>
+            					</p:commandLink>	
+            				</p:column>
+            				
+					</p:dataTable>
+		  </p:dialog>		
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

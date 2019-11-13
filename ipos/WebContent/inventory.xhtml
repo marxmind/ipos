@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>SHEEDZ Inventory</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.css"/>
+            <h:outputStylesheet name="css/dashboard.css"/>
+            <h:outputStylesheet name="css/panel.css"/>
+            <h:outputStylesheet name="css/dataTables.bootstrap.mini.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.js" target="head"/>
+            
+            
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>SHEEDZ Inventory</title>
+
+<style>
+<!-- 
+.dataDesignTable{
+	font-style: normal; 	
+	font-family: Times New Roman; 
+	font-size: 80%;
+	font-weight: bold;
+}
+
+.centerPage1{
+	position: relative;
+	margin-left: 5px;
+	margin-bottom: 5px;
+	width: 100%;
+	height: 100%;
+	border: 3px solid black;
+	padding: 1px;
+}
+
+
+
+ -->
+ </style>
+
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>SHEEDZ Inventory</title>
+
+</h:head>
+
+<h:body>
+	
+
+<h:form prependId="false" id="formId" >
+	
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+	
+	<p:panel id="panel" header="Inventory">
+	<p:focus context="panel"/>
+    
+		
+		<p:toolbar id="tb">
+    		<f:facet name="left">
+		        <p:commandButton type="button" value="Menu" icon="ui-icon-contact" onclick="PF('multiDialog').show()"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton value="Logout" icon="ui-icon-power" action="#{loginBean.logout}"/>
+    		</f:facet>
+		</p:toolbar>
+ 
+			<!-- <div style="height:500px"></div> -->
+ 
+		<p:sticky target="tb" />
+		
+		<h3>Inventory</h3>
+    	<p:tabView orientation="left">
+        <p:tab title="Order">
+            <p:toolbar id="qtybar">
+            	<f:facet name="left">
+            		<p:outputLabel value="Search "/>
+    				<p:inputText value="#{aprodBean.searchProdQty}" a:placeholder="Search product" a:type="search">
+    					<f:ajax event="keyup" listener="#{aprodBean.initProductQty}" render="qtyDataId"/>
+    				</p:inputText>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="qtyDataId" value="Refresh" icon="ui-icon-refresh" action="#{aprodBean.initProductQty}"/>
+    				<p:commandButton value="Print" icon="ui-icon-print" action="#{aprodBean.printAll}"/>
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="qtyDataId" value="#{aprodBean.invs}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" styleClass="dataDesignTable"
+                         >
+                         	 
+                         
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+        <p:tab title="Return" id="priceTabId">
+            <p:toolbar id="pricebar">
+            	<f:facet name="left">
+            		<p:outputLabel value="Search "/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton value="Print" icon="ui-icon-print" action="#{aprodBean.printAll}"/>
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="priceDataId" value="#{aprodBean.pricingstans}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" styleClass="dataDesignTable"
+                         >				
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+         <p:tab title="Forecast" id="barcodeTabId">
+            <p:toolbar id="barcodebar">
+            	<f:facet name="left">
+            		
+            		<p:outputLabel value="Search "/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton value="Print" icon="ui-icon-print" action="#{aprodBean.printAll}"/>
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="barcodeDataId" value="#{aprodBean.bars}" var="rp" 
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" styleClass="dataDesignTable"
+                         >
+                         	
+          	
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+        <p:tab title="Adjustment" id="propertyId">
+            <p:toolbar id="propertybar">
+    			<f:facet name="left">
+    				<p:outputLabel value="Search "/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton value="Print" icon="ui-icon-print" action="#{aprodBean.printAll}"/>
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="propDataId" value="#{aprodBean.props}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" styleClass="dataDesignTable"
+                         >
+                         	
+          					
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+    	</p:tabView>
+		
+	</p:panel>		
+
+
+
+
+
+<h:outputScript>
+
+$(document).ready(
+      function(){fixPFDialogToggleMaximize('multiDialogProductLookUp');}
+ );
+
+function fixPFDialogToggleMaximize(dlg){
+if(undefined == dlg.doToggleMaximize) {
+    dlg.doToggleMaximize = dlg.toggleMaximize;
+    dlg.toggleMaximize = function() {
+        this.doToggleMaximize();
+
+        var marginsDiff = this.content.outerHeight() - this.content.height();
+        var newHeight = this.jq.innerHeight() - this.titlebar.outerHeight() - marginsDiff;
+        this.content.height(newHeight);
+    };
+}
+}
+</h:outputScript>
+
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

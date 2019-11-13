@@ -1,0 +1,194 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	>
+	
+<f:view renderKitId="PRIMEFACES_MOBILE"/>
+     <h:head>
+     </h:head>
+
+     <h:body>
+
+		<h:form id="formId" prependId="false">
+		<p:growl id="msg" showDetail="true" />
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+		<pm:page id="first">
+		
+            <pm:header title="Room Monitoring" fixed="true">
+                <p:tabMenu activeIndex="0" style="#{skin.menu}">
+                    <p:menuitem value="Menu" icon="ui-icon-home" url="main.xhtml" iconPos="bottom"/>
+                    <p:menuitem value="Reservation" icon="ui-icon-home" url="reservation.xhtml" iconPos="bottom"/>
+                    <p:menuitem value="Room Maintenance" icon="ui-icon-gear" url="maintenanceroom.xhtml" iconPos="bottom"/>
+                </p:tabMenu>
+                <pm:field>
+					<p:inputText id="search" value="#{mainBean.searchRoom}" a:placeholder="Search Room" a:type="search">
+		    			<f:ajax event="keyup" listener="#{mainBean.init}" render="roomId"/>
+		    		</p:inputText>
+	    		</pm:field>
+            </pm:header>
+            
+         <pm:content>
+         	
+    		
+         	
+         	<p:dataGrid id="roomId" var="room" value="#{mainBean.rooms}" columns="3" paginator="true" rows="9" style="#{skin.table}">
+		        <f:facet name="header">
+		            List Of Rooms
+		        </f:facet>
+ 
+		        <p:panel header="#{room.roomNumber} #{room.name} #{room.availableName}" style="text-align:center">
+		        	
+		            <h:panelGrid columns="1" style="width:100%">
+		            	<pm:content>
+		            	
+		            	<p:panelGrid columns="4">
+		            	<p:commandButton  title="Room Details" onclick="PF('panleDtls').show()" icon="ui-icon-search" actionListener="#{mainBean.clickDetails(room)}" update=":formId:first:roomDetailsId2"/>
+		            	<p:commandButton onclick="PF('pnl-basic').show()" icon="fa fa-hotel"  update=":formId:first:roomDetailsId" title="Check In Room" value="" actionListener="#{mainBean.clickRoom(room)}"/>
+		                <p:commandButton update=":formId:first:roomId,msg" icon="fa fa-remove" value="" actionListener="#{mainBean.clickCancelRoom(room)}" title="Cancel Room">
+		                	<p:confirm header="Confirmation" message="Are you sure you cancel this reservation?" icon="ui-icon-alert" />
+		                </p:commandButton>
+		                <p:commandButton update=":formId:first:roomId,msg" icon="fa fa-suitcase" value="" actionListener="#{mainBean.checkOutButton(room)}" title="Check Out Room">
+			  				<p:confirm header="Confirmation" message="Are you sure you want to Check Out?" icon="ui-icon-alert" />
+			  			</p:commandButton>
+			  			
+			  			</p:panelGrid>
+			  			
+				        
+		                </pm:content>
+		            </h:panelGrid>
+		        </p:panel>
+ 
+ 		   </p:dataGrid>
+         	
+         </pm:content>
+         
+         <p:overlayPanel  widgetVar="panleDtls" at="left" showEffect="overlay" dynamic="true" style="width: 30em;#{skin.panel}" >
+         	
+         	<p:panelGrid id="roomDetailsId2" columns="1">
+	    		<p:outputLabel value="Customer: #{mainBean.customerName}" style="#{skin.label}" />
+	    		<p:outputLabel value="Room No: #{mainBean.roomSelectedData.roomNumber}" style="#{skin.label}" />
+	    		<p:outputLabel alue="Name: #{mainBean.roomSelectedData.name}" style="#{skin.label}" />
+	    		<p:outputLabel value="Description: #{mainBean.roomSelectedData.description}" style="#{skin.label}" />
+	    		<p:outputLabel value="Check In: #{mainBean.roomSelectedData.checkInDateTime}" style="#{skin.label}" />
+	    		<p:outputLabel value="Check Out: #{mainBean.roomSelectedData.checkOutDateTime}" style="#{skin.label}" />
+	    		<p:outputLabel value="Add Ons: #{mainBean.roomSelectedData.addOnsDetails} Php: #{mainBean.roomSelectedData.addPrice}" style="#{skin.label}" />
+    			<p:outputLabel value="Day/s: #{mainBean.countDays}" style="#{skin.label}" />
+			    <p:outputLabel value="Payable: Php #{mainBean.roomSelectedData.amountRendered}" style="#{skin.label}"/>
+			 </p:panelGrid> 
+         	
+         </p:overlayPanel>
+         
+         <p:overlayPanel  widgetVar="pnl-basic" at="right" showEffect="overlay" dynamic="true" style="width: 30em;#{skin.panel}" >
+     		<h3>Check-In Details</h3>
+     		<p:panelGrid id="roomDetailsId" columns="2">
+		      	<p:outputLabel for="cusId" value="Customer:" style="#{skin.label}"/>
+	    		<p:inputText id="cusId" a:placeholder="Customer" value="#{mainBean.customerName}"/>
+	    		<p:outputLabel for="romId" value="Room No:" style="#{skin.label}"/>
+	    		<p:outputLabel id="romId" a:placeholder="Room No" value="#{mainBean.roomSelectedData.roomNumber}" style="#{skin.label}"/>
+	    		<p:outputLabel for="nameId" value="Name:" style="#{skin.label}"/>
+	    		<p:outputLabel id="nameId" a:placeholder="Name" value="#{mainBean.roomSelectedData.name}" style="#{skin.label}"/>
+	    		<p:outputLabel for="descId" value="Description:" style="#{skin.label}"/>
+	    		<p:outputLabel id="descId" a:placeholder="Description" value="#{mainBean.roomSelectedData.description}" style="#{skin.label}"/>
+	    		<p:outputLabel for="checkInId" value="Check In:" style="#{skin.label}"/>
+	    		<p:outputLabel id="checkInId" a:placeholder="Check In" value="#{mainBean.roomSelectedData.checkInDateTime}" style="#{skin.label}"/>
+	    		<p:outputLabel for="checkOutId" value="Check Out:" style="#{skin.label}"/>
+	    		<p:outputLabel id="checkOutId" a:placeholder="Check Out" value="#{mainBean.roomSelectedData.checkOutDateTime}" style="#{skin.label}"/>
+	    		<p:outputLabel for="addOnId" value="Additional:" style="#{skin.label}"/>
+	    		<p:inputTextarea id="addOnId" a:placeholder="Additional" value="#{mainBean.addOnsDetails}" />
+	    		<p:outputLabel for="addPriceId" value="Price:" style="#{skin.label}"/>
+	    		<p:inputText id="addPriceId" a:placeholder="0.00" value="#{mainBean.addPrice}" a:type="number"/>
+	    		<p:outputLabel for="dayId" value="Day/s:" style="#{skin.label}"/>
+    			<pm:inputSlider id="dayId" value="#{mainBean.countDays}" minValue="1" maxValue="10" valueChangeListener="#{mainBean.changeNumberDays}"/>
+			  <p:commandButton update=":formId:first:roomId,:formId:first:roomDetailsId,msg" value="Save" actionListener="#{mainBean.saveButton}" style="#{skin.button}">
+			  	<p:confirm header="Confirmation" message="Are you sure you want to saved?" icon="ui-icon-alert" />
+			  </p:commandButton>
+			  
+			  
+			  <p:commandButton onclick="PF('pnl-basic').hide()" update=":formId:first:roomId" value="Close" actionListener="#{roomBean.init}" style="#{skin.button}"/>
+			  
+			 </p:panelGrid> 
+ 		</p:overlayPanel>
+         
+         <p:overlayPanel  widgetVar="panleAvailable" at="right" showEffect="overlay" dynamic="true" style="width: 30em;#{skin.panel}" >
+     		<h3>Room Available</h3>
+     			<pm:field>
+					<p:inputText id="searchAvailable" value="#{mainBean.searchAvailableRoom}" a:placeholder="Search Room" a:type="search">
+		    			<f:ajax event="keyup" listener="#{mainBean.loadAvailableRooms}" render="availDataId"/>
+		    		</p:inputText>
+	    		</pm:field>
+     		<p:panelGrid id="roomAvailaDetailsId">
+		      
+		      <p:dataList id="availDataId" value="#{mainBean.availableRooms}" var="rpt" a:data-inset="true" >
+			    <h:outputLink value="#">
+			    	<p:commandLink actionListener="#{mainBean.showRoom(rpt)}" update=":formId:first:search,:formId:first:roomId" oncomplete="PF('panleAvailable').hide()">Show</p:commandLink>
+			        <h2>#{rpt.roomNumber} #{rpt.name}</h2>
+			        <p>#{rpt.description}</p>
+			        <p class="ui-li-aside"><strong>Php #{rpt.price}</strong></p>
+			    </h:outputLink>
+				</p:dataList> 
+		      
+			 </p:panelGrid> 
+ 		</p:overlayPanel>
+         
+         <p:overlayPanel  widgetVar="panleOccupied" at="right" showEffect="overlay" dynamic="true" style="width: 30em;#{skin.panel}" >
+     		<h3>Room Occupied</h3>
+     			<pm:field>
+					<p:inputText id="searchOccupied" value="#{mainBean.searchOccupiedRooms}" a:placeholder="Search Room" a:type="search">
+		    			<f:ajax event="keyup" listener="#{mainBean.loadOccupiedRooms}" render="occupiedDataId"/>
+		    		</p:inputText>
+	    		</pm:field>
+     		<p:panelGrid id="roomOccupiedDetailsId">
+		      
+		      <p:dataList id="occupiedDataId" value="#{mainBean.occupiedRooms}" var="rpt" a:data-inset="true" >
+			    <h:outputLink value="#">
+			    	<p:commandLink actionListener="#{mainBean.showRoom(rpt)}" update=":formId:first:search,:formId:first:roomId" oncomplete="PF('panleOccupied').hide()">Show</p:commandLink>
+			        <h2>#{rpt.roomNumber} #{rpt.name}</h2>
+			        <p>Check In #{rpt.checkInDateTime}</p>
+			    </h:outputLink>
+				</p:dataList> 
+		      
+			 </p:panelGrid> 
+ 		</p:overlayPanel>
+ 		
+ 		<p:overlayPanel  widgetVar="panleOutRoom" at="right" showEffect="overlay" dynamic="true" style="width: 30em;#{skin.panel}" >
+     		
+     		<h3>Check Out Today</h3>
+     			<pm:field>
+					<p:inputText id="searchOut" value="#{mainBean.searchOutRooms}" a:placeholder="Search Room" a:type="search">
+		    			<f:ajax event="keyup" listener="#{mainBean.loadForOutRooms}" render="outDataId"/>
+		    		</p:inputText>
+	    		</pm:field>
+     		<p:panelGrid id="roomOutDetailsId">
+		      
+		      <p:dataList id="outDataId" value="#{mainBean.outRooms}" var="rpt" a:data-inset="true" >
+			    <h:outputLink value="#">
+			    	<p:commandLink actionListener="#{mainBean.showRoom(rpt)}" update=":formId:first:search,:formId:first:roomId" oncomplete="PF('panleOutRoom').hide()">Show</p:commandLink>
+			        <h2>#{rpt.roomNumber} #{rpt.name}</h2>
+			        <p>Check In #{rpt.checkInDateTime}</p>
+			        <p>Check Out #{rpt.checkOutDateTime}</p>
+			    </h:outputLink>
+				</p:dataList> 
+		      
+			 </p:panelGrid> 
+     		
+ 		</p:overlayPanel>
+         
+          <pm:footer title="#{versionBean.copyright.appname} #{versionBean.copyright.currentversion}" fixed="true" style="#{skin.copyrightLabel}">
+                <p:tabMenu activeIndex="1" style="#{skin.menu}" >
+                    <p:menuitem value="Check Available Room" update=":formId:first:availDataId" icon="ui-icon-home" onclick="PF('panleAvailable').show()" actionListener="#{mainBean.loadAvailableRooms}" iconPos="top"/>
+                    <p:menuitem value="Check Out Room" update=":formId:first:outDataId" icon="ui-icon-home" onclick="PF('panleOutRoom').show()" actionListener="#{mainBean.loadForOutRooms}" iconPos="top"/>
+                    <p:menuitem value="Room History" icon="ui-icon-gear" url="historyroom.xhtml" iconPos="top"/>
+                    <p:menuitem value="Check Occupied Room" update=":formId:first:occupiedDataId" icon="ui-icon-home" onclick="PF('panleOccupied').show()" actionListener="#{mainBean.loadOccupiedRooms}" iconPos="top"/>
+                </p:tabMenu>
+            </pm:footer>
+        </pm:page>
+	</h:form>
+     </h:body>
+     
+</html>

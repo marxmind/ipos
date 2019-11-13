@@ -1,0 +1,851 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>#{versionBean.copyright.appname} Balance Sheet</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+           <h:outputStylesheet name="bootstrap/css/bootstrap.min.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <h:outputStylesheet name="css/pageHeaderFooter.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.min.js" target="head"/>
+            <h:outputStylesheet name="css/growl.css"/>
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>#{versionBean.copyright.appname} Balance Sheet</title>
+
+<style>
+<!-- 
+
+ -->
+ </style>
+
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>#{versionBean.copyright.appname} Balance Sheet</title>
+
+</h:head>
+
+<h:body>
+	
+
+<h:form prependId="false" id="formId" >
+		<p:growl id="msg" showDetail="true"/>
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" style="#{skin.msg}">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+	
+	
+	<div class="page-header">
+	 		<a><p:outputLabel value="Balance Sheet" style="#{skin.pageTitle};"/></a>
+	    </div>
+  
+  <p:layout fullPage="true" id="layId">
+
+		<p:layoutUnit position="north" size="100" visible="false">
+			<p:graphicImage name="gif/sparrow.png" style="width: 5em; height: 5em" styleClass="img-circle"/>
+			<p:graphicImage name="logo/logo.png" style="width: 5em; height: 5em" styleClass="img-circle" onclick="PF('multiDialogCoop').show()"/>
+			<p:outputLabel value="#{versionBean.copyright.appname} Business Management System" style="#{skin.pageTitle}"/>
+		</p:layoutUnit>
+		<p:layoutUnit position="south" size="50" visible="false">
+			<p:outputLabel style="#{skin.copyrightLabel}" value="#{versionBean.copyright.appname} | #{versionBean.copyright.copyrightname} | #{versionBean.copyright.author} | version:#{versionBean.copyright.currentversion}"/>
+		</p:layoutUnit>
+		<p:layoutUnit position="west" size="0" visible="false">
+		</p:layoutUnit>
+		<p:layoutUnit position="east" size="0" visible="false">
+		</p:layoutUnit>
+		<p:layoutUnit position="center">
+		
+    	<p:tabView  orientation="left" id="tabAcounting" style="#{skin.tabs}">
+    	
+    	<p:ajax event="tabChange" listener="#{accntBean.onTabChangeView}" update="tabAcounting"/>
+    	
+        <p:tab title="Incomes" disabled="#{featuresBean.accIncomes}">
+            
+            	<p:accordionPanel id="tabIncomes">
+            			
+            		<p:ajax event="tabChange" listener="#{accntBean.onTabChange}" update="tabIncomes"/>
+        			<p:ajax event="tabClose" listener="#{accntBean.onTabClose}" update="tabIncomes"/>	
+            		
+            		<p:tab title="Cash On Hand">
+            			<p:toolbar id="onbar">
+		            	<f:facet name="left">
+		    				<p:inputText value="#{accntBean.ioDescription}" a:placeholder="Search..." >
+		    					<f:ajax event="keyup" listener="#{accntBean.startOnHand}" render="onDataId"/>
+		    				</p:inputText>
+		    				<p:calendar value="#{accntBean.ioDateFrom}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    			<p:calendar value="#{accntBean.ioDateTo}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    			&nbsp;&nbsp;
+		    				<p:commandButton update="onDataId" icon="fa fa-search" action="#{accntBean.startOnHand}"/>
+		    			</f:facet>
+		    			<f:facet name="right">
+		    				<p:commandButton update="onDataId" icon="fa fa-search" value="Refresh" action="#{accntBean.startOnHand}"/>
+		    			</f:facet>
+				  		</p:toolbar>
+            			
+            			<h:panelGrid columns="2" cellpadding="10">	
+            			
+            			<p:dataTable id="onDataId" value="#{accntBean.ios}" var="caz" rows="10" 
+						paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+                        
+						<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Cash On Hand in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="onDataId" fileName="CashOnHand" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Cash On Hand in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="onDataId" fileName="CashOnHand" />
+            						</h:commandLink>
+            				</f:facet>
+														
+							<p:column  width="50">
+								<f:facet name="header">Date</f:facet>
+            						<p:outputLabel  value="#{caz.dateTrans}"/>
+            					<f:facet name="footer">Total</f:facet>
+            				</p:column>
+            				
+            				<p:column headerText="Description" width="200">
+            						<p:outputLabel value="#{caz.descripion}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Transaction" width="100">
+            						<p:outputLabel value="#{caz.transactionName}"/>
+            				</p:column>
+            				
+            				<p:column width="70">
+            						<f:facet name="header">Amount In</f:facet>
+            							<p:outputLabel value="#{caz.inAmount}"/>
+            						<f:facet name="footer">Php#{accntBean.ioIncome}</f:facet>
+            				</p:column>
+            				
+            				<p:column width="70">
+            						<f:facet name="header">Amount Out</f:facet>
+            							<p:outputLabel value="#{caz.outAmount}"/>
+            						<f:facet name="footer">Php#{accntBean.ioExpenses}</f:facet>
+            				</p:column>
+            				
+            				<p:columnGroup type="footer">
+            					<p:row>
+            						<p:column rowspan="2" headerText="" width="50"/>
+            						<p:column rowspan="2" headerText="" width="100"/>
+            						<p:column rowspan="2" headerText="" width="50"/>
+            						<p:column colspan="1" style="text-align:right" footerText="Php#{accntBean.ioIncome}" />
+            						<p:column colspan="1" style="text-align:right" footerText="Php#{accntBean.ioExpenses}" />
+            					</p:row>
+            					<p:row>
+            						<p:column footerText="Cash On Hand"/>
+                					<p:column footerText="Php#{accntBean.cashOnHandAmount}"/>
+            					</p:row>
+            				</p:columnGroup>
+            				
+            			</p:dataTable>
+            			
+            			</h:panelGrid>
+            		</p:tab>
+            		
+            		<p:tab title="Cash Collection">
+            			
+            			<p:toolbar id="cazbar">
+		            	<f:facet name="left">
+		    				<p:calendar value="#{accntBean.cashDateFrom}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    			<p:calendar value="#{accntBean.cashDateTo}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    			&nbsp;&nbsp;
+		    				<p:commandButton update="cazDataId" icon="fa fa-search" action="#{accntBean.startCash}"/>
+		    			</f:facet>
+		    			<f:facet name="right">
+		    				<p:commandButton update="cazDataId" icon="fa fa-refresh" value="Refresh" action="#{accntBean.startCash}"/>
+		    			</f:facet>
+				  		</p:toolbar>
+            			
+            			<h:panelGrid columns="2" cellpadding="10">	
+            			
+            			<p:dataTable id="cazDataId" value="#{accntBean.cashs}" var="caz" rows="10" 
+						paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true"  paginatorPosition="top"
+                         >
+                        
+						<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Cash in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="cazDataId" fileName="Cash" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Cash in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="cazDataId" fileName="Cash" />
+            						</h:commandLink>
+            				</f:facet>
+							
+							<p:column headerText="Action" width="70" exportable="false">
+                         			<p:commandLink action="clients.xhtml">
+            							<p:outputLabel value="Show Client"/>
+            						</p:commandLink>
+            			 	</p:column>
+							
+							<p:column headerText="Date" width="50">
+            						<p:outputLabel  value="#{caz.paymentdate}" />
+            				</p:column>
+            				
+            				<p:column headerText="Description" width="100">
+            						<p:outputLabel value="#{caz.description}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Transaction Type" width="100">
+            						<p:outputLabel value="#{caz.remarks}"/>
+            				</p:column>
+            				
+            				<p:column width="70">
+            						<f:facet name="header">Amount</f:facet>
+            							<p:outputLabel value="#{caz.amountpay}"/>
+            						<f:facet name="footer">Php#{accntBean.cashTotal}</f:facet>
+            				</p:column>
+            			
+            			</p:dataTable>
+            			
+            			</h:panelGrid>
+            			
+            			
+            		</p:tab>
+            		
+            		<p:tab title="Receipts">
+            			
+            			<p:toolbar id="rptbar">
+		            	<f:facet name="left">
+		    				<p:calendar value="#{accntBean.receiptDateFrom}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    			<p:calendar value="#{accntBean.receiptDateTo}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    			&nbsp;&nbsp;
+		    				
+		    				<p:commandButton update="rptDataId" icon="fa fa-search" action="#{accntBean.startReceipts}"/>
+		    			</f:facet>
+		    			<f:facet name="right">
+		    				<p:commandButton update="rptDataId" icon="fa fa-refresh" value="Refresh" action="#{accntBean.startReceipts}"/>
+		    			</f:facet>
+				  		</p:toolbar>
+            			
+            			<h:panelGrid columns="2" cellpadding="10">	
+            			
+            			<p:dataTable id="rptDataId" value="#{accntBean.receipts}" var="sold" rows="10" 
+						paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true"  paginatorPosition="top"
+                         >
+                        
+						<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Receipt in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="rptDataId" fileName="Receipt" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Receipt in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="rptDataId" fileName="Receipt" />
+            						</h:commandLink>
+            				</f:facet>
+							
+							<p:column headerText="Date" width="50">
+            						<p:outputLabel value="#{sold.dateTrans}"/>
+            				</p:column>
+							
+							<p:column headerText="Payment" width="50" exportable="false">
+            							<f:view>
+                         			 		<my:if condition="#{sold.paymentStatus==3}">
+                         			 			<f:facet name="then">
+            										<p:outputLabel value="CREDIT"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:outputLabel value="CASH"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            				</p:column>
+            				
+            				<p:column headerText="Receipt No" width="100">
+            						<p:outputLabel value="#{sold.receiptNo}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Customer" width="100">
+            						<p:outputLabel value="#{sold.customer.fullname}"/>
+            				</p:column>
+            				
+            				<p:column width="70">
+                         		<f:facet name="header">Purchased</f:facet>
+            						<p:outputLabel value="Php#{sold.totalAmount}"/>
+            					<f:facet name="footer">Php#{accntBean.purchasedTotal}</f:facet>
+            				</p:column>
+            				
+            				<p:column width="70">
+                         		<f:facet name="header">Charges</f:facet>
+            						<p:outputLabel value="Php#{sold.deliveryChargeAmount}"/>
+            					<f:facet name="footer">Php#{accntBean.chargeTotal}</f:facet>
+            				</p:column>
+            				
+            				<p:column width="70">
+                         		<f:facet name="header">Discount</f:facet>
+            						<p:outputLabel value="Php#{sold.discountAmount}"/>
+            					<f:facet name="footer">Php#{accntBean.discountTotal}</f:facet>
+            				</p:column>
+            				
+            				<p:column width="70">
+            					<f:facet name="header">Cash</f:facet>
+            						<p:outputLabel value="Php#{sold.downPayment}" />
+            					<f:facet name="footer">Php#{accntBean.downpaymentTotal}</f:facet>
+            				</p:column>
+            				
+            				<p:column width="70">
+            					<f:facet name="header">Balance</f:facet>
+            						<p:outputLabel value="Php#{sold.balanceAmount}"/>
+            					<f:facet name="footer">Php#{accntBean.balanceTotal}</f:facet>
+            				</p:column>
+            				
+            		</p:dataTable>	
+            		</h:panelGrid>
+            			
+            		</p:tab>
+            		<p:tab title="Sold Items" disabled="#{featuresBean.accSoldItems}">
+            		<p:toolbar id="qtybar">
+            	<f:facet name="left">
+    				<p:calendar value="#{accntBean.incomesDateFrom}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    	<p:calendar value="#{accntBean.incomesDateTo}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    	&nbsp;&nbsp;
+    				<p:commandButton update="incomeId" icon="fa fa-search" action="#{accntBean.startIncomes}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="incomeId" icon="fa fa-refresh" value="Refresh" action="#{accntBean.startIncomes}"/>
+    			</f:facet>
+		  	</p:toolbar>
+            		<h:panelGrid columns="2" cellpadding="10">
+            					
+               		 <p:dataTable id="incomeId" value="#{accntBean.soldItems}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+                         
+                         <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Incomes in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="incomeId" fileName="Incomes" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Incomes in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="incomeId" fileName="Incomes" />
+            						</h:commandLink>
+            				</f:facet>
+                         
+                         <p:column width="70">
+                         		<f:facet name="header">Date</f:facet>
+            						<p:outputLabel value="#{rpt.dateTrans}"/>
+            					<f:facet name="footer">Grand Total</f:facet>
+            			 </p:column>
+                         	 
+                         <p:column headerText="Description" width="100">
+            						<p:outputLabel value="#{rpt.description}"/>
+            			 </p:column>
+            			 <p:column headerText="Type" width="100">
+            						<p:outputLabel value="#{rpt.transactionType}"/>
+            			 </p:column>
+            			 
+            			 <p:column  width="70">
+            			 	<f:facet name="header">Price</f:facet>
+            						<p:outputLabel value="#{rpt.price}"/>
+            				<f:facet name="footer">Php#{accntBean.priceTotal}</f:facet>		
+            			 </p:column>
+            			 
+            			 <p:column  width="30">
+            			 	<f:facet name="header">VAT</f:facet>
+            						<p:outputLabel  value="#{rpt.vat}"/>
+            				<f:facet name="footer">#{accntBean.vatTotal}</f:facet>		
+            			 </p:column>
+            			 
+            			 <p:column headerText="Qty" width="35">
+            			 	<f:facet name="header">Qty</f:facet>
+            						<p:outputLabel value="#{rpt.quantity}"/>
+            				<f:facet name="footer">#{accntBean.qtyTotal}</f:facet>
+            			 </p:column>
+            			 
+            			 <p:column headerText="Uom" width="40">
+            						<p:outputLabel value="#{rpt.uom}"/>
+            			 </p:column>
+            			 
+            			 <p:column  width="70">
+            			 	<f:facet name="header">-VAT</f:facet>
+            						<p:outputLabel value="#{rpt.priceWihtOutVAT}" />
+            				<f:facet name="footer">Php#{accntBean.incomesMinususVatTotal}</f:facet>		
+            			 </p:column>
+            			 <p:column  width="70">
+            			 	<f:facet name="header">+VAT</f:facet>
+            						<p:outputLabel value="#{rpt.priceWihtVAT}"/>
+            				<f:facet name="footer">Php#{accntBean.incomesPlusVatTotal}</f:facet>		
+            			 </p:column>
+            			 
+            			 <p:column width="70">
+            			 	<f:facet name="header">Capital</f:facet>
+            						<p:outputLabel value="#{rpt.capitalAmount}"/>
+            				<f:facet name="footer">Php#{accntBean.capitalTotal}</f:facet>		
+            			 </p:column>
+            			 
+            			 <p:column width="70">
+            			 	<f:facet name="header">Sales</f:facet>
+            						<p:outputLabel  value="#{rpt.saleAmount}"/>
+            				<f:facet name="footer">Php#{accntBean.salesTotal}</f:facet>		
+            			 </p:column>
+            			 
+            			 <p:column width="70">
+            			 	<f:facet name="header">Net</f:facet>
+            						<p:outputLabel value="#{rpt.netAmount}"/>
+            				<f:facet name="footer">Php#{accntBean.netTotal}</f:facet>		
+            			 </p:column>	
+					</p:dataTable>
+					
+					</h:panelGrid>
+					</p:tab>
+					
+					</p:accordionPanel>
+					
+            
+        </p:tab>
+        <p:tab title="Expenses" id="priceTabId" disabled="#{featuresBean.accExpenses}">
+            <p:toolbar id="expbar">
+            	<f:facet name="left">
+    				<p:inputText value="#{accntBean.description}" a:placeholder="Search..." >
+    					<f:ajax event="keyup" listener="#{accntBean.startExpenses}" render="expDataId"/>
+    				</p:inputText>
+    				<p:calendar value="#{accntBean.expenseDateFrom}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    	<p:calendar value="#{accntBean.expenseDateTo}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    	&nbsp;&nbsp;
+    				
+    				<p:commandButton update="expDataId" icon="fa fa-search" action="#{accntBean.startExpenses}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="expDataId" icon="fa fa-refresh" value="Refresh" action="#{accntBean.startExpenses}"/>
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="expDataId" value="#{accntBean.expenses}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >				
+            			
+            			<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Expenses in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="expDataId" fileName="Expenses" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Expenses in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="expDataId" fileName="Expenses" />
+            						</h:commandLink>
+            				</f:facet>
+            			
+            			<p:column width="70" exportable="false">
+                         		<f:facet name="header">Action</f:facet>
+                         		
+            						<f:view>
+                         			 		<my:if condition="#{rpt.htmlPage==1}">
+                         			 			<f:facet name="then">
+                         			 				<p:commandLink action="suppliers.xhtml">
+            											<p:outputLabel value="#{rpt.actionName}"/>
+            										</p:commandLink>
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:commandLink action="xtras.xhtml">
+            											<p:outputLabel value="#{rpt.actionName}"/>
+            										</p:commandLink>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            						
+            							
+            					<f:facet name="footer">Grand Total</f:facet>
+            			 </p:column>
+            				
+            			<p:column headerText="Date" width="70">
+            						<p:outputLabel value="#{rpt.dateTrans}"/>
+            			 </p:column>
+                         	 
+                         <p:column headerText="Description" width="100">
+            						<p:outputLabel value="#{rpt.description}"/>
+            			 </p:column>
+            			 <p:column headerText="Type" width="100">
+            						<p:outputLabel value="#{rpt.transactionType}"/>
+            			 </p:column>	
+            			 <p:column width="70">
+            			 	<f:facet name="header">Amount</f:facet>
+            						<p:outputLabel value="#{rpt.amount}"/>
+            				<f:facet name="footer">Php#{accntBean.expensesTotal}</f:facet>		
+            			 </p:column>	
+            			<p:column headerText="Remarks" width="100">
+            						<p:outputLabel value="#{rpt.remarks}"/>
+            			 </p:column>	
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+         <p:tab title="Receivable" id="barcodeTabId" disabled="#{featuresBean.accReceivable}">
+            <p:toolbar id="recbar">
+            	<f:facet name="left">
+    				<p:inputText value="#{accntBean.recDescription}" a:placeholder="Search..." a:type="search" >
+    					<f:ajax event="keyup" listener="#{accntBean.startReceivable}" render="recDataId"/>
+    				</p:inputText>
+    				<p:commandButton update="recDataId" icon="fa fa-search" action="#{accntBean.startReceivable}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="recDataId" icon="fa fa-refresh" value="Refresh" action="#{accntBean.startReceivable}"/>
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="recDataId" value="#{accntBean.receivables}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >				
+            			
+            			<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Receivable in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="recDataId" fileName="Receivable" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Receivable in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="recDataId" fileName="Receivable" />
+            						</h:commandLink>
+            				</f:facet>
+            			 
+            			 <p:column headerText="Action" width="70" exportable="false">
+                         			<p:commandLink action="clients.xhtml">
+            							<p:outputLabel value="Show Client" />
+            						</p:commandLink>
+            			 </p:column>
+            			 	 
+                         <p:column headerText="Description" width="100">
+            						<p:outputLabel value="#{rpt.description}"/>
+            			 </p:column>
+            			 <p:column headerText="Type" width="100">
+            						<p:outputLabel value="#{rpt.transactionType}"/>
+            			 </p:column>	
+            			 <p:column width="70">
+            			 	<f:facet name="header">Amount</f:facet>
+            						<p:outputLabel value="#{rpt.amount}"/>
+            				<f:facet name="footer">Php#{accntBean.recTotal}</f:facet>		
+            			 </p:column>	       				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+        <p:tab title="Payable" id="propertyId" disabled="#{featuresBean.accPayable}">
+            <p:toolbar id="paybar">
+            	<f:facet name="left">
+    				<p:inputText value="#{accntBean.payDescription}" a:placeholder="Search...">
+    					<f:ajax event="keyup" listener="#{accntBean.startPayable}" render="payDataId"/>
+    				</p:inputText>
+    				<p:calendar value="#{accntBean.payDateFrom}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    	<p:calendar value="#{accntBean.payDateTo}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    	&nbsp;&nbsp;
+    				<p:commandButton update="payDataId" icon="fa fa-search" action="#{accntBean.startPayable}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="payDataId" icon="fa fa-refresh" value="Refresh" action="#{accntBean.startPayable}"/>
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="payDataId" value="#{accntBean.payables}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >				
+            			
+            			<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Payable in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="payDataId" fileName="Payable" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Payable in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="payDataId" fileName="Payable" />
+            						</h:commandLink>
+            				</f:facet>
+            				
+            			<p:column width="70" exportable="false">
+                         		<f:facet name="header">Action</f:facet>
+                         			<p:commandLink action="suppliers.xhtml">
+            							<p:outputLabel value="Show Supplier"/>
+            						</p:commandLink>	
+            					<f:facet name="footer">Grand Total</f:facet>
+            			 </p:column>
+            				
+            			<p:column headerText="Date" width="70">
+            						<p:outputLabel value="#{rpt.dateTrans}"/>
+            			 </p:column>
+                         	 
+                         <p:column headerText="Description" width="100">
+            						<p:outputLabel  value="#{rpt.description}"/>
+            			 </p:column>
+            			 <p:column headerText="Type" width="100">
+            						<p:outputLabel value="#{rpt.transactionType}"/>
+            			 </p:column>	
+            			 <p:column width="70">
+            			 	<f:facet name="header">Amount</f:facet>
+            						<p:outputLabel value="#{rpt.amount}"/>
+            				<f:facet name="footer">Php#{accntBean.payTotal}</f:facet>		
+            			 </p:column>	
+            			            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+        
+        <p:tab title="Summary Report" id="smmaryId" disabled="#{featuresBean.accSummary}">
+            <p:toolbar id="summarybar">
+            	<f:facet name="left">
+            		<h:selectOneMenu value="#{accntBean.transTypeId}" style="color: black">
+							<f:selectItems value="#{accntBean.tranTypes}"/>
+					</h:selectOneMenu>&nbsp;&nbsp;
+					<h:selectOneMenu value="#{accntBean.summaryFilterId}" style="color: black">
+							<f:selectItems value="#{accntBean.summaryFilters}"/>
+					</h:selectOneMenu>&nbsp;&nbsp;
+    				<p:calendar value="#{accntBean.dateFromSummary}" pattern="yyyy-MM-dd" effect="slideDown" style="#{skin.calendar}"/>
+			    	<p:calendar value="#{accntBean.dateToSummary}" pattern="yyyy-MM-dd" effect="slideDown" style="#{skin.calendar}"/>
+			    	&nbsp;&nbsp;
+    				<p:commandButton update="sumDataId,retDelDataId,storeDataId" icon="fa fa-search" action="#{accntBean.startSummary}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="sumDataId,retDelDataId,storeDataId" icon="ui-icon-refresh" value="Refresh" action="#{accntBean.startSummary}"/>&nbsp;&nbsp;
+    				<h:commandLink title="Export Summary in pdf format" target="_blank" actionListener="#{accntBean.printSummary}">
+                		    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+            		</h:commandLink>
+    			</f:facet>
+		  	</p:toolbar>
+        	
+        	<p:dataTable id="sumDataId" value="#{accntBean.summaryData}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >	
+                         
+                         <f:facet name="header">Products Sold</f:facet>
+                         
+                         <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Summary in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="sumDataId" fileName="SummaryReport" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Summary in pdf format" target="_blank" actionListener="#{accntBean.printSummary}">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+            						</h:commandLink>
+            			</f:facet>
+                         
+                        <p:column headerText="Date" width="70">
+            						<p:outputLabel value="#{rpt.f1}"/>
+            			</p:column>
+            			
+            			<p:column headerText="Product" width="100">
+            						<p:outputLabel value="#{rpt.f2}"/>
+            			</p:column> 
+                        
+                        <p:column headerText="UOM" width="50">
+            						<p:outputLabel value="#{rpt.f3}"/>
+            			</p:column>
+                        
+                        <p:column width="50">
+                        	<f:facet name="header">Item Price</f:facet>
+            						<p:outputLabel value="#{rpt.f4}"/>
+            				<f:facet name="footer">Php#{accntBean.totalSummaryItemPrice}</f:facet>		
+            			</p:column>
+                        
+                        <p:column  width="50">
+                        	<f:facet name="header">Qty</f:facet>
+            						<p:outputLabel value="#{rpt.f5}"/>
+            				<f:facet name="footer">#{accntBean.totalSummaryQty}</f:facet>
+            			</p:column>
+                         
+                         <p:column  width="50">
+                        	<f:facet name="header">Capital</f:facet>
+            						<p:outputLabel value="#{rpt.f6}"/>
+            				<f:facet name="footer">Php#{accntBean.totalSummaryCapital}</f:facet>		
+            			</p:column>
+                         
+                         <p:column  width="50">
+                        	<f:facet name="header">Sale</f:facet>
+            						<p:outputLabel value="#{rpt.f7}"/>
+            				<f:facet name="footer">Php#{accntBean.totalSummarySale}</f:facet>		
+            			</p:column>
+                         
+                         <p:column  width="50">
+                        	<f:facet name="header">Net</f:facet>
+            						<p:outputLabel  value="#{rpt.f8}"/>
+            				<f:facet name="footer">Php#{accntBean.totalSummaryNet}</f:facet>		
+            			</p:column>
+            			
+            </p:dataTable>
+        	
+        	<p:dataTable id="invDataId" value="#{accntBean.warehouseProduct}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >	
+                         
+                         <f:facet name="header">Remaining Product on Warehouse</f:facet>
+                         
+                         <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Summary in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="invDataId" fileName="SummaryReport" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Summary in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="invDataId" fileName="SummaryReport" />
+            						</h:commandLink>
+            			</f:facet>
+                         
+                        <p:column headerText="Product" width="100">
+            						<p:outputLabel value="#{rpt.productProperties.productname}"/>
+            			</p:column>
+            			
+            			<p:column headerText="UOM" width="50">
+            						<p:outputLabel value="#{rpt.productProperties.uom.symbol}"/>
+            			</p:column>
+            			
+            			<p:column width="50">
+            				<f:facet name="header">Quantity</f:facet>
+            						<p:outputLabel value="#{rpt.newqty}"/>
+            				<f:facet name="footer">#{accntBean.warehouseTotalQty}</f:facet>		
+            			</p:column> 
+                         
+        	</p:dataTable>
+        	
+        	             
+        	<p:dataTable id="retDelDataId" value="#{accntBean.returnItems}" var="ret" rows="10"
+						paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100" paginatorPosition="top"
+                         scrollable="true" >
+                         
+                         <f:facet name="header">Remaining Product on Delivery Truck</f:facet>
+                         
+                         <f:facet name="{Exporters}">
+            						<h:commandLink title="Export ReturnItem in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="retDelDataId" fileName="ReturnItem" />
+            						</h:commandLink>
+            						<h:commandLink title="Export ReturnItem in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="retDelDataId" fileName="ReturnItem" />
+            						</h:commandLink>
+            				</f:facet>
+                         
+                         <p:column headerText="Date" width="60">
+            							<p:outputLabel value="#{ret.dateTrans}"/>
+            			</p:column>
+                         
+                         <p:column headerText="Product" width="100">
+            							<p:outputLabel value="#{ret.product.productProperties.productname}"/>
+            			</p:column>
+            			
+            			<p:column headerText="UOM" width="40">
+            							<p:outputLabel value="#{ret.product.productProperties.uom.symbol}"/>
+            			</p:column>
+            			
+            			<p:column width="50">
+            					<f:facet name="header">Price</f:facet>
+            							<p:outputLabel value="#{ret.sellingPrice}"/>
+            					<f:facet name="footer">Php#{accntBean.retrunProductItemPriceGrandTotal}</f:facet>		
+            			</p:column>
+            			
+            			<p:column width="50">
+            					<f:facet name="header">Qty</f:facet>
+            						<p:outputLabel value="#{ret.quantity}"/>
+            					<f:facet name="footer">#{accntBean.returnProductItemQtyGrandTotal}</f:facet>	
+            			</p:column>
+                         
+                        <p:column width="50">
+                        		<f:facet name="header">Total</f:facet>
+            							<p:outputLabel value="#{ret.total}"/>
+            					<f:facet name="footer">Php#{accntBean.returnProductItemGrandTotal}</f:facet>		
+            			</p:column> 
+                         
+            </p:dataTable>
+            
+            <p:dataTable id="storeDataId" value="#{accntBean.stores}" var="st" rows="10"
+						paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100" paginatorPosition="top" 
+                         scrollable="true" > 
+                         
+                         <f:facet name="header">Remaining Product in Store</f:facet>
+                         
+                         <f:facet name="{Exporters}">
+            						<h:commandLink title="Export ReturnItem in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="storeDataId" fileName="StoreProduct" />
+            						</h:commandLink>
+            						<h:commandLink title="Export ReturnItem in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="storeDataId" fileName="StoreProduct" />
+            						</h:commandLink>
+            				</f:facet>
+                         
+                        <p:column headerText="Product" width="100">
+            							<p:outputLabel  value="#{st.productName}"/>
+            			</p:column>
+            			
+            			<p:column headerText="UOM" width="40">
+            							<p:outputLabel value="#{st.uomSymbol}"/>
+            			</p:column>
+            			
+            			<p:column width="50">
+            					<f:facet name="header">Price</f:facet>
+            							<p:outputLabel value="#{st.sellingPrice}"/>
+            					<f:facet name="footer">Php#{accntBean.retrunProductItemPriceGrandTotal}</f:facet>		
+            			</p:column>
+            			
+            			<p:column width="50">
+            					<f:facet name="header">Qty</f:facet>
+            						<p:outputLabel value="#{st.quantity}"/>
+            					<f:facet name="footer">#{accntBean.returnProductItemQtyGrandTotal}</f:facet>	
+            			</p:column>
+                         
+                        <p:column width="50">
+                        		<f:facet name="header">Total</f:facet>
+            							<p:outputLabel value="#{st.total}"/>
+            					<f:facet name="footer">Php#{accntBean.returnProductItemGrandTotal}</f:facet>		
+            			</p:column> 
+                         
+            </p:dataTable>
+            
+        </p:tab>
+    	</p:tabView>
+	</p:layoutUnit>
+	
+</p:layout>			
+
+
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

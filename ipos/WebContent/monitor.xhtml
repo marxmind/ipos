@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui"   
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>#{versionBean.copyright.appname}</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>#{versionBean.copyright.appname}</title>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>#{versionBean.copyright.appname}</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+[class*="col-"] {
+  float: left;
+  padding: 15px;
+}
+
+html {
+  font-family: "Lucida Sans", sans-serif;
+}
+
+.header {
+  background: #9053c7;
+  background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
+  background: -o-linear-gradient(-135deg, #c850c0, #4158d0);
+  background: -moz-linear-gradient(-135deg, #c850c0, #4158d0);
+  background: linear-gradient(-135deg, #c850c0, #4158d0);
+  color: #ffffff;
+  padding: 15px;
+}
+
+.menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu li {
+  padding: 8px;
+  margin-bottom: 7px;
+  background-color: #33b5e5;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.menu li:hover {
+  background-color: #0099cc;
+}
+
+.aside {
+  background-color: #33b5e5;
+  padding: 15px;
+  color: #ffffff;
+  text-align: center;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.footer {
+  background-color: #0099cc;
+  color: #ffffff;
+  text-align: center;
+  font-size: 12px;
+  padding: 15px;
+}
+
+/* For mobile phones: */
+[class*="col-"] {
+  width: 100%;
+}
+
+@media only screen and (min-width: 600px) {
+  /* For tablets: */
+  .col-s-1 {width: 8.33%;}
+  .col-s-2 {width: 16.66%;}
+  .col-s-3 {width: 25%;}
+  .col-s-4 {width: 33.33%;}
+  .col-s-5 {width: 41.66%;}
+  .col-s-6 {width: 50%;}
+  .col-s-7 {width: 58.33%;}
+  .col-s-8 {width: 66.66%;}
+  .col-s-9 {width: 75%;}
+  .col-s-10 {width: 83.33%;}
+  .col-s-11 {width: 91.66%;}
+  .col-s-12 {width: 100%;}
+}
+@media only screen and (min-width: 768px) {
+  /* For desktop: */
+  .col-1 {width: 8.33%;}
+  .col-2 {width: 16.66%;}
+  .col-3 {width: 25%;}
+  .col-4 {width: 33.33%;}
+  .col-5 {width: 41.66%;}
+  .col-6 {width: 50%;}
+  .col-7 {width: 58.33%;}
+  .col-8 {width: 66.66%;}
+  .col-9 {width: 75%;}
+  .col-10 {width: 83.33%;}
+  .col-11 {width: 91.66%;}
+  .col-12 {width: 100%;}
+}
+
+</style>
+
+
+</h:head>
+
+<h:body id="page-top">
+	
+<div class="header">
+  <h1>STORE MONITORING</h1>
+</div>
+
+<div class="row">
+  <div class="col-3 col-s-3" style="background-color:#aaa;">
+    <h3>CASH ON HAND</h3>
+    <p>Php #{monBean.cashToday}</p>
+  </div>
+  <div class="col-3 col-s-3" style="background-color:#bbb;">
+    <h3>EXPENSES TODAY</h3>
+    <p>Php #{monBean.expensesToday}</p>
+  </div>
+  <div class="col-3 col-s-3" style="background-color:#ccc;">
+    <h3>CASH COLLECTED TODAY</h3>
+    <p>Php #{monBean.collectedCashToday}</p>
+  </div>
+  <div class="col-3 col-s-3" style="background-color:#ddd;">
+    <h3>SALE TODAY</h3>
+    <p>Php #{monBean.salesToday}</p>
+  </div>
+</div>
+<div class="row">
+  <div class="col-3 col-s-3" style="background-color:#aaa;">
+    <h3>SALES(#{monBean.monthYearTodayLabel})</h3>
+    <p>Php #{monBean.monthlyGrossSales}</p>
+  </div>
+  <div class="col-3 col-s-3" style="background-color:#bbb;">
+    <h3>EXPENSES(#{monBean.monthYearTodayLabel})</h3>
+    <p>Php #{monBean.monthlyExpenses}</p>
+  </div>
+  <div class="col-3 col-s-3" style="background-color:#ccc;">
+    <h3>OTC TODAY</h3>
+    <p>Php #{monBean.overTheCounterAmount}</p>
+  </div>
+  <div class="col-3 col-s-3" style="background-color:#ddd;">
+    <h3>OTC (#{monBean.monthYearTodayLabel})</h3>
+    <p>Php #{monBean.overTheCounterAmountMonthly}</p>
+  </div>
+</div>
+<div class="row">
+  <div class="col-3 col-s-3" style="background-color:#aaa;">
+    <h3>PAYABLE</h3>
+    <p>Php #{monBean.payable}</p>
+  </div>
+  <div class="col-3 col-s-3" style="background-color:#bbb;">
+    <h3>RECEIVABLE</h3>
+    <p>Php #{monBean.receivable}</p>
+  </div>
+  <div class="col-3 col-s-3" style="background-color:#ccc;">
+    <h3>STORE ITEMS</h3>
+    <p>Qty: #{monBean.storeItems}</p>
+    <p>Worth: Php #{monBean.worthStoreItems}</p>
+  </div>
+  <div class="col-3 col-s-3" style="background-color:#ddd;">
+    <h3>WAREHOUSE STOCKS</h3>
+    <p>Qty: #{monBean.warehouseStokcs}</p>
+  </div>
+</div>
+<div class="footer">
+  <p>MARXMIND All Right Reserved 2019</p>
+</div>
+	
+
+</h:body>	
+</html>

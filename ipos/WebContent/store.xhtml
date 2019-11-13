@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>SHEEDZ Store</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.min.css"/>
+            <h:outputStylesheet name="css/pageHeaderFooter.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.min.js" target="head"/>
+            <h:outputStylesheet name="css/growl.css"/>
+            
+    </f:facet>
+        
+    
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+	</f:facet>
+
+    <title>Store</title>
+
+<style>
+<!-- 
+
+ -->
+ </style>
+
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Store</title>
+
+</h:head>
+
+<h:body>
+
+<h:form prependId="false" id="formId" >
+		<p:growl id="msg" showDetail="true" />
+		
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+	
+	<div class="page-header">
+	 		<a><p:outputLabel value="Store Setup" style="#{skin.pageTitle};"/></a>
+	</div>
+	
+		<p:layout fullPage="true">
+			
+		<p:layoutUnit position="north" size="100" visible="false"/>
+		<p:layoutUnit position="south" size="50" visible="false"/>
+		<p:layoutUnit position="west" size="0" visible="false"/>
+		<p:layoutUnit position="east" size="0" visible="false"/>
+		<p:layoutUnit position="center">
+	
+    	<p:tabView orientation="left" id="tabProduct" prependId="false" style="#{skin.tabs}" dynamic="true">
+    	
+    	<p:ajax event="tabChange" listener="#{storeBean.onTabChange}" update="tabProduct msg" />
+    	
+    	<p:tab title="Hold Transaction">
+    	
+    		 <p:toolbar id="disbar">
+            	<f:facet name="left">
+            		<p:commandButton update="runDataId,msg"  value="Return to Store" icon="fa fa-long-arrow-left"  actionListener="#{storeBean.addToInventoryProductFailed}">
+            			<p:confirm header="Confirmation" message="Are you sure you want to Recall item's quantity to store?" />
+            		</p:commandButton>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="runDataId" value="Refresh" icon="fa fa-refresh" action="#{storeBean.initFailedDispenseProductInStore}"/>
+    				
+    			</f:facet>
+		  	</p:toolbar>
+		  	
+               		 <p:dataTable id="runDataId" value="#{storeBean.productRunning}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top" paginatorAlwaysVisible="false"
+                         >
+                         	 
+                         	 <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Product in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="runDataId" fileName="ProductFailedInDispense" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Product in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="runDataId" fileName="ProductFailedInDispense" />
+            						</h:commandLink>
+            				</f:facet>
+            				
+            				<p:column headerText="Date" width="70">
+            						<p:outputLabel value="#{rpt.qtyrundate}"/>
+            				</p:column>
+            				
+            				
+            				<p:column headerText="Status" width="70">
+            							<f:view>
+                         			 		<my:if condition="#{rpt.qtystatus==1}">
+                         			 			<f:facet name="then">
+            										<p:outputLabel value="ON HOLD"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:outputLabel value="RECALLED"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            				</p:column>
+            				
+            				<p:column headerText="Product" width="100">
+            						<p:outputLabel value="#{rpt.product.productProperties.productname}"/>
+            				</p:column>
+            						
+            				<p:column headerText="UOM" width="50">
+            						<p:outputLabel value="#{rpt.product.productProperties.uom.symbol}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Qty" width="50">
+            						<p:outputLabel value="#{rpt.qtyhold}"/>
+            				</p:column>
+            				
+            				
+            				
+            		</p:dataTable>	
+    		
+    	</p:tab>
+    	
+        <p:tab title="Store Product">
+            
+            <p:toolbar id="toolStore">
+            	<f:facet name="left">
+            		<p:outputLabel value="Filter quantity: " />
+        			<p:selectBooleanCheckbox value="#{storeBean.nonZero}">
+            			<p:ajax update="storeDataId,msg" listener="#{storeBean.nonZeroMessage}" />
+        			</p:selectBooleanCheckbox>
+        			<p:separator/><p:separator/>
+        			<p:outputLabel value="Load All: " />
+        			<p:selectBooleanCheckbox value="#{storeBean.loadAll}">
+            			<p:ajax update="storeDataId,msg" listener="#{storeBean.loadAllMessage}" />
+        			</p:selectBooleanCheckbox>
+        			<p:separator/><p:separator/>
+    				<p:inputText value="#{storeBean.searchStoreProduct}" a:placeholder="Search product">
+    					<f:ajax event="keyup" listener="#{storeBean.loadStore}" render="storeDataId"/>
+    				</p:inputText>
+    				<p:separator/>
+    				<p:commandButton update="storeDataId" icon="fa fa-search" action="#{storeBean.loadStore}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="storeDataId" value="Refresh" icon="fa fa-search" action="#{storeBean.loadStore}"/>
+    			</f:facet>
+		  	</p:toolbar>
+            
+            
+             <p:dataTable id="storeDataId" value="#{storeBean.storeProducts}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top" paginatorAlwaysVisible="false"
+                         >
+                         	 
+                         	 <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Product in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="storeDataId" fileName="Store" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Product in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="storeDataId" fileName="Store" />
+            						</h:commandLink>
+            				</f:facet>
+            				
+            				<p:column headerText="Barcode" width="70">
+            						<p:outputLabel value="#{rpt.barcode}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Product" width="120">
+            						<p:outputLabel value="#{rpt.productName}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="30">
+            						<p:outputLabel value="#{rpt.uomSymbol}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Quantity" width="50">
+            						<p:outputLabel value="#{rpt.quantity}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Purchased" width="50">
+            						<p:outputLabel value="#{rpt.purchasedPrice}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Sale" width="50">
+            						<p:outputLabel value="#{rpt.sellingPrice}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Net" width="50">
+            						<p:outputLabel value="#{rpt.netPrice}"/>
+            				</p:column>
+            				
+            		</p:dataTable>
+            
+        </p:tab>
+        <p:tab title="Product Loading">
+           
+           <p:toolbar id="loadingStore">
+            	<f:facet name="left">
+    				<p:inputText value="#{storeBean.searchStoreProduct}" a:placeholder="Search product">
+    					<f:ajax event="keyup" listener="#{storeBean.loadLoading}" render="tranDataId"/>
+    				</p:inputText>
+    				<p:commandButton update="tranDataId" icon="fa fa-search" action="#{storeBean.loadLoading}"/>
+    			</f:facet>
+    			
+    			<f:facet name="right">
+    				<p:commandButton update="transId" value="Clear" icon="fa fa-refresh" action="#{storeBean.clearLoading}"/>
+    				<p:commandButton update="transId,tranDataId,msg" value="Save" icon="fa fa fa-floppy-o" action="#{storeBean.saveTrans}">
+    					<p:confirm header="Confirmation" message="Are you sure you want to add this item?" icon="ui-icon-alert" />
+    				</p:commandButton>
+    				<p:commandButton update="transId,tranDataId,msg" value="Posted" icon="fa fa fa-floppy-o" action="#{storeBean.postedLoading}">
+    					<p:confirm header="Confirmation" message="Are you sure you want to post this item?" />
+    				</p:commandButton>
+    				<p:commandButton update="tranDataId" value="Refresh" icon="fa fa-refresh" action="#{storeBean.loadLoading}"/>
+    			</f:facet>
+		  	</p:toolbar>
+            
+            <p:panelGrid id="transId"  columns="6">
+            			
+            			<p:outputLabel value="Date" />
+						<p:inputText value="#{storeBean.dateTrans}" a:placeholder="YYYY-MM-DD" a:type="date" style="width: 16em"/>
+            	
+            			<p:outputLabel value="Status" />
+						<p:outputLabel value="#{storeBean.status}" style="width: 16em"/>
+	        			
+	        			<p:outputLabel value="Product" />
+	        				
+	        				<p:selectOneMenu id="prodId" value="#{storeBean.productId}" style="width: 16em" filter="true" filterMatchMode="contains">
+	            				<f:selectItem itemLabel="Select..."/>
+	                			<f:selectItems value="#{storeBean.products}" />
+	                			<p:ajax  event="change" listener="#{storeBean.productQty}" update="idQty uid remId"/>
+	            			</p:selectOneMenu>
+	        			
+						
+						<p:outputLabel value="Quantity" />
+	        			<p:inputText id="idQty" value="#{storeBean.quantity}" a:placeholder="0.00" a:type="number" style="width: 16em"/>
+	        			
+	        			<p:outputLabel value="UOM" />
+	        			<p:outputLabel id="uid" value="#{storeBean.uomSymbol}" />
+            
+            			<p:outputLabel value="Remaining Qty in Warehouse" />
+	        			<p:outputLabel id="remId" value="#{storeBean.inventoryQty}" />
+            			
+            </p:panelGrid>
+            
+             <p:dataTable id="tranDataId" value="#{storeBean.storeTrans}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top" paginatorAlwaysVisible="false"
+                         selection="#{storeBean.selectedPost}" rowKey="#{rpt.id}"
+                         >
+                         	 
+                         	 <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Product in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="tranDataId" fileName="Store" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Product in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="tranDataId" fileName="Store" />
+            						</h:commandLink>
+            				</f:facet>
+            				
+            				<p:column selectionMode="multiple" headerText="Post" style="width:16px;text-align:center"/>
+            				
+            				<p:column headerText="Date" width="70">
+            						<p:outputLabel  value="#{rpt.dateTrans}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Action" width="20">
+            					<p:commandButton update="transId" icon="fa fa-search"  actionListener="#{storeBean.clickItem(rpt)}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Status" width="50">
+            							<f:view>
+                         			 		<my:if condition="#{rpt.status==1}">
+                         			 			<f:facet name="then">
+            										<p:outputLabel value="NEW"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:outputLabel value="POSTED"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            				</p:column>
+            				
+            				<p:column headerText="Product" width="200">
+            						<p:outputLabel value="#{rpt.productProperties.productname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="30">
+            						<p:outputLabel value="#{rpt.uom.symbol}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Quantity" width="50">
+            						<p:outputLabel value="#{rpt.quantity}"/>
+            				</p:column>
+            				
+            		</p:dataTable>
+           
+        </p:tab>
+        
+        <p:tab title="Return Loading">
+           
+           <p:toolbar id="loadingReturn">
+            	<f:facet name="left">
+            		
+    				<p:inputText value="#{storeBean.searchReturnStoreProduct}" a:placeholder="Search product">
+    					<f:ajax event="keyup" listener="#{storeBean.returnLoading}" render="retDataId"/>
+    				</p:inputText>
+    				<p:commandButton update="retDataId" icon="fa fa-search" action="#{storeBean.returnLoading}"/>
+    			</f:facet>
+    			
+    			<f:facet name="right">
+    				<p:commandButton update="retFieldId" value="Clear" icon="ui-icon-refresh" action="#{storeBean.clearReturn}"/>
+    				<p:commandButton update="retFieldId,retDataId,msg" value="Save" icon="fa fa-floppy-o" action="#{storeBean.saveReturn}">
+    					<p:confirm header="Confirmation" message="Are you sure you want to add this item?" icon="ui-icon-alert" />
+    				</p:commandButton>
+    				<p:commandButton update="retFieldId,retDataId,msg" value="Posted" icon="fa fa-floppy-o" action="#{storeBean.postedReturn}">
+    					<p:confirm header="Confirmation" message="Are you sure you want to post this item?" />
+    				</p:commandButton>
+    				<p:commandButton update="retDataId" value="Refresh" icon="fa fa-refresh" action="#{storeBean.returnLoading}"/>
+    			</f:facet>
+		  	</p:toolbar>
+        	
+        	<p:panelGrid id="retFieldId"  columns="6">
+            			
+            			<p:outputLabel value="Date" />
+						<p:inputText value="#{storeBean.dateTransReturn}" a:placeholder="YYYY-MM-DD" a:type="date" style="width: 16em"/>
+            	
+            			<p:outputLabel value="Status" />
+						<p:outputLabel value="#{storeBean.statusReturn}" style="width: 16em"/>
+	        			
+	        			<p:outputLabel value="Product" />
+	        				<p:selectOneMenu id="prodRetId" value="#{storeBean.productIdReturn}" style="width: 16em" filter="true" filterMatchMode="contains">
+	                			<f:selectItem itemLabel="Select" />
+	                			<f:selectItems value="#{storeBean.productsReturn}" />
+	                			<f:ajax event="change" listener="#{storeBean.productStoreQty}" render="retFieldId"/>
+	            			</p:selectOneMenu>
+						
+						
+						<p:outputLabel value="Quantity" />
+	        			<p:inputText value="#{storeBean.quantityReturn}" a:placeholder="0.00" a:type="number" style="width: 16em"/>
+	        			
+	        			<p:outputLabel value="UOM" />
+	        			<p:outputLabel value="#{storeBean.uomSymbolReturn}" />
+            
+            			<p:outputLabel value="Remaining Qty in Store" />
+	        			<p:outputLabel value="#{storeBean.storeQtyReturn}" />
+            			
+            </p:panelGrid>
+        	
+        	<p:dataTable id="retDataId" value="#{storeBean.retrunTrans}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top" paginatorAlwaysVisible="false"
+                         selection="#{storeBean.selectedRetunPost}" rowKey="#{rpt.id}"
+                         >
+                         	 
+                         	 <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Product in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="retDataId" fileName="Store" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Product in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="retDataId" fileName="Store" />
+            						</h:commandLink>
+            				</f:facet>
+            				
+            				<p:column selectionMode="multiple" headerText="Post" style="width:16px;text-align:center"/>
+            				
+            				<p:column headerText="Date" width="70">
+            						<p:outputLabel value="#{rpt.dateTrans}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Action" width="20">
+            					<p:commandButton update="retFieldId" icon="fa fa-search"  actionListener="#{storeBean.clickItemReturn(rpt)}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Status" width="50">
+            							<f:view>
+                         			 		<my:if condition="#{rpt.status==1}">
+                         			 			<f:facet name="then">
+            										<p:outputLabel value="NEW"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:outputLabel value="POSTED"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            				</p:column>
+            				
+            				<p:column headerText="Product" width="200">
+            						<p:outputLabel value="#{rpt.productProperties.productname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="30">
+            						<p:outputLabel value="#{rpt.uom.symbol}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Quantity" width="50">
+            						<p:outputLabel value="#{rpt.quantity}"/>
+            				</p:column>
+            				
+            		</p:dataTable>
+        	
+        </p:tab>
+    	</p:tabView>
+    	
+    </p:layoutUnit>
+    </p:layout>	
+
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

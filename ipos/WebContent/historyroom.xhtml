@@ -1,0 +1,102 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+	
+<f:view renderKitId="PRIMEFACES_MOBILE"/>
+     <h:head>
+     </h:head>
+
+     <h:body>
+		
+		<h:form id="formId" prependId="false">
+		<p:growl id="msg" showDetail="true" />
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" style="#{skin.msg}">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+		<pm:page id="first">
+		
+            <pm:header title="Room Monitoring" fixed="true">
+                <p:tabMenu activeIndex="1" style="#{skin.menu}">
+                    <p:menuitem value="Home" icon="ui-icon-home" url="roommain.xhtml" iconPos="bottom"/>
+                    <p:menuitem value="Room History" icon="ui-icon-gear" url="historyroom.xhtml" iconPos="bottom"/>
+                    <p:menuitem value="Menu" icon="ui-icon-power" url="main.xhtml" iconPos="bottom"/>
+                </p:tabMenu>
+                <pm:field>
+                <p:inputText id="search" value="#{historyBean.searchRoom}" a:placeholder="Search Room" a:type="search" style="#{skin.textInput}">
+    				<f:ajax event="keyup" listener="#{historyBean.init}" render="roomId"/>
+    			</p:inputText>
+    			<p:calendar value="#{historyBean.calendarFrom}" pattern="yyyy-MM-dd" effect="slideDown" style="#{skin.calendar}"/>
+			    <p:calendar value="#{historyBean.calendarTo}" pattern="yyyy-MM-dd" effect="slideDown" style="#{skin.calendar}"/>
+			    <p:commandButton update="roomId" icon="ui-icon-search" actionListener="#{historyBean.init}"/>
+                </pm:field>
+            </pm:header>
+		
+         <pm:content>
+         	
+         	<p:dataTable id="roomId" var="room" value="#{historyBean.rooms}" 
+                 rows="10" 
+						paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100" tableStyleClass="ui-table-columntoggle"
+                         >
+			        
+			        <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Room History in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="roomId" fileName="RoomHistory" />
+            						</h:commandLink>
+            				</f:facet>
+			        
+			        <p:column headerText="Date" sortBy="#{room.dateTrans}" priority="1" style="#{skin.header}">
+			            <p:outputLabel value="#{room.dateTrans}" style="#{skin.label}" />
+			        </p:column>
+			 	
+			        <p:column headerText="Room" sortBy="#{room.roomNumber} #{room.name}" priority="2" style="#{skin.header}">
+			            <p:outputLabel value="#{room.roomNumber} #{room.name}" style="#{skin.label}" />
+			        </p:column>
+                    
+                    <p:column headerText="Customer" sortBy="#{room.customerName}" priority="1" style="#{skin.header}">
+			            <p:outputLabel value="#{room.customerName}" style="#{skin.label}" />
+			        </p:column>
+                    
+                    <p:column headerText="Check In" sortBy="#{room.checkInDateTime}" priority="2" style="#{skin.header}">
+			            <p:outputLabel value="#{room.checkInDateTime}" style="#{skin.label}" />
+			        </p:column>
+			        
+			        <p:column headerText="Check Out" sortBy="#{room.checkOutDateTime}" priority="1" style="#{skin.header}">
+			            <p:outputLabel value="#{room.checkOutDateTime}" style="#{skin.label}" />
+			        </p:column>
+			        
+			        <p:column headerText="# of Days" sortBy="#{room.countDays}" priority="2" style="#{skin.header}">
+			            <p:outputLabel value="#{room.countDays}" style="#{skin.label}" />
+			        </p:column>
+                    			        			        
+			        <p:column headerText="Details" sortBy="#{room.description}" priority="2" style="#{skin.header}">
+			            <p:outputLabel value="#{room.description}" style="#{skin.label}" />
+			        </p:column>
+			        
+			        <p:column headerText="Paid Amount" sortBy="#{room.price}" priority="1" style="#{skin.header}">
+			            <p:outputLabel value="#{room.price}" style="#{skin.label}" />
+			        </p:column>
+			        
+			    </p:dataTable>
+         	
+         </pm:content>
+         
+         
+        
+         
+         <pm:footer title="#{versionBean.copyright.appname} #{versionBean.copyright.currentversion}" fixed="true" style="#{skin.copyrightLabel}">
+                <p:tabMenu activeIndex="1" style="#{skin.menu}">
+                    <p:menuitem value="Home" icon="ui-icon-home" url="roommain.xhtml" iconPos="top"/>
+                    <p:menuitem value="Room Maintenance" icon="ui-icon-gear" url="maintenanceroom.xhtml" iconPos="top"/>
+                    <p:menuitem value="Menu" icon="ui-icon-power" url="main.xhtml" iconPos="top"/>
+                </p:tabMenu>
+            </pm:footer>
+        </pm:page>
+	</h:form>
+     </h:body>
+</html>

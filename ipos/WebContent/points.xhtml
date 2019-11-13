@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>#{versionBean.copyright.appname} Points</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+             <h:outputStylesheet name="bootstrap/css/bootstrap.min.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <h:outputStylesheet name="css/pageHeaderFooter.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.min.js" target="head"/>
+            <h:outputStylesheet name="css/growl.css"/>
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>#{versionBean.copyright.appname} Points</title>
+
+<style>
+<!-- 
+
+ -->
+ </style>
+
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>#{versionBean.copyright.appname} Points</title>
+
+</h:head>
+
+<h:body>
+	
+
+<h:form prependId="false" id="formId" >
+
+	    <div class="page-header">
+	 		<a><p:outputLabel value="Customer Points" style="#{skin.pageTitle};"/></a>
+	    </div>
+	
+	<p:growl id="msg" showDetail="true" />
+	
+	<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" style="#{skin.msg}">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+	
+	
+<p:layout fullPage="true" id="layId">
+			
+		<p:layoutUnit position="north" size="100" visible="false"/>
+		<p:layoutUnit position="south" size="50" visible="false"/>
+		<p:layoutUnit position="west" size="400" visible="false"/>
+			
+		<p:layoutUnit position="east" size="400" visible="true">
+		
+		<p:dataTable id="hisId" value="#{pointBean.poHis}" var="his" 
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top" style="#{skin.table}" paginatorAlwaysVisible="false"
+                         >
+                         	
+                         	<p:column headerText="Date" width="70">
+            						<p:outputLabel  value="#{his.dateTrans}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Type" width="70">
+            						<p:outputLabel  value="#{his.typeName}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Points" width="50">
+            						<p:outputLabel  value="#{his.points}"/>
+            				</p:column>
+            				
+		</p:dataTable>
+		</p:layoutUnit>
+		
+		<p:layoutUnit position="center">
+		<p:toolbar id="tbCus" style="#{skin.toolbar}">
+    		<f:facet name="left">
+        		<p:inputText value="#{pointBean.searchName}" a:placeholder="Search Name" style="width: 15em">
+    					<f:ajax event="keyup" listener="#{pointBean.init}" render="recPointId hisId"/>
+    			</p:inputText>&nbsp;&nbsp;
+    			<p:commandButton update="recPointId hisId" icon="ui-icon-search" action="#{pointBean.init}"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			
+    		</f:facet>
+			</p:toolbar>
+		<p:dataTable id="recPointId" value="#{pointBean.points}" var="pt" 
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100" 
+                         scrollable="true" paginatorPosition="top" paginatorAlwaysVisible="false"
+                         style="#{skin.table}"
+                         >
+                        	
+                        	<p:column headerText="Activate" width="20">
+		        				 <p:selectBooleanCheckbox value="#{pt.checked}">
+	            					<p:ajax update="recPointId msg" listener="#{pointBean.activatePoints(pt)}" />
+	        					 </p:selectBooleanCheckbox>		 
+	        				</p:column>
+	        				
+	        				<p:column headerText="History" width="20">
+            					<p:commandButton update="hisId" icon="fa fa-search"  actionListener="#{pointBean.clickCustomerPoints(pt)}"/>
+            				</p:column>
+                        	 
+                        	<p:column headerText="Card No" width="100">
+            						<p:outputLabel  value="#{pt.customer.cardno}"/>
+            				</p:column> 
+                        	 	
+                         	<p:column headerText="Name" width="100">
+            						<p:outputLabel  value="#{pt.customer.fullname}"/>
+            				</p:column>
+                         	
+                         	<p:column headerText="Current" width="30">
+            						<p:outputLabel  value="#{pt.currentPoints}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Added" width="30">
+            						<p:outputLabel  value="#{pt.latestAddedPoints}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Deducted" width="30">
+            						<p:outputLabel  value="#{pt.latestDeductedPoints}"/>
+            				</p:column>
+            				
+		</p:dataTable>
+		
+		</p:layoutUnit>
+</p:layout>
+
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

@@ -1,0 +1,88 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h = "http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      >
+ 
+    <ui:composition>
+        <div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menuId">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <p:commandButton update="dialogbuy" value="#{versionBean.copyright.appname}" oncomplete="PF('ibuyDialog').show()" 
+                    style="width: 10px;
+    height: 50px;
+    background: white;
+    -moz-border-radius: 100px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+    width: 50px;
+    top: 1px;
+    right: 9px;"/>
+                </div>
+                <div class="navbar-collapse collapse" id="menuId">
+                    <ul class="nav navbar-nav navbar-right">
+                    		<li><a href="#">About Us</a></li>
+				        	<li><a href="#">Contact Us</a></li>
+				        	
+        			</ul>
+                </div>
+            </div>
+        </div>
+        
+        <p:dialog style="background: transparent; !important;"  position="left center" visible="false" 
+        header="Software Information"  widgetVar="ibuyDialog" modal="false" showHeader="false"
+        showEffect="folded" hideEffect="fade" resizable="false" width="400" height="100%" closable="true">
+        <p:outputPanel id="dialogbuy" style="text-align:left;">
+        	<p:commandButton  value="#{versionBean.copyright.appname}" 
+                    style="width: 10px;
+    color: white;                
+    height: 50px;
+    background: black;
+    -moz-border-radius: 100px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+    width: 50px;
+    top: 1px;
+    right: 9px;"/>
+    
+    <br/>
+    
+        	<h:outputLabel style="color: red; font-size: 200%; font-variant: small-caps; text-transform: none; font-weight: 100;  margin-bottom: 0;" value="#{versionBean.copyright.appname}"/>
+        	<h:outputText value="#{versionBean.copyright.currentversion}" style="color: black;font-size: 70%; text-transform: none; font-weight: 50; margin-bottom: 0;"/><br/>
+        	<h:outputLabel value="Developed by: "/><h:outputText value=" #{versionBean.copyright.author}" /><br/>
+        	<h:outputLabel value="Email: "/><h:outputText value=" #{versionBean.copyright.email}" /><br/>
+        	<h:outputLabel value="Phone: "/><h:outputText value=" #{versionBean.copyright.contactno}" /><br/>
+        	<p:commandButton style="background: transparent; !important; width: 10em;" value="Build info." icon="ui-icon-contact" onclick="PF('buildDialog').show();"/>         
+            <p:commandButton style="background: transparent; !important; width: 10em;" value="Close" icon="ui-icon-closethick" onclick="PF('ibuyDialog').hide();"/>  
+            
+		</p:outputPanel>
+		</p:dialog>
+		
+		<p:dialog position="right center" visible="false" style="background: transparent; !important;"
+        header="Build Details"  widgetVar="buildDialog" modal="false" showHeader="true"
+        showEffect="fade" hideEffect="fade" resizable="false" width="400" height="100%" closable="true">
+        
+        	<h:outputLabel value="Date updated: "/><h:outputText value=" #{versionBean.versionController.buildapplieddate}"/><br/>
+        	<h:outputLabel value="Latest version: "/><h:outputText value=" #{versionBean.copyright.currentversion}"/><br/>
+        	<h:outputLabel value="Previous version: "/><h:outputText value=" #{versionBean.copyright.oldversion}"/><br/>
+        	<h:outputLabel value="Note: "/><h:outputText value="A software update can include, but is not limited to: (1)Application stability improvements, bug fixes. (2)New or Enhanced features. (3)Further improvements to performance."/><br/>
+        <p:dataList value="#{versionBean.fixes}" var="rpt" type="ordered">
+        			<f:facet name="header">Build Details</f:facet>
+        			#{rpt.fixdesc}
+        </p:dataList>
+        <p:dataList value="#{versionBean.licenses}" var="md" type="ordered">
+        			<f:facet name="header">Modules Expiration</f:facet>
+        			#{md.moduleName} - #{md.monthExpiration}
+        </p:dataList>
+        
+        </p:dialog>
+		
+    </ui:composition>
+</html>

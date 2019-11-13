@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>SHEEDZ Supplier</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.min.css"/>
+            <h:outputStylesheet name="css/pageHeaderFooter.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.min.js" target="head"/>
+            
+            
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>Supplier</title>
+
+<style>
+<!-- 
+
+ -->
+ </style>
+
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Supplier</title>
+
+</h:head>
+
+<h:body>
+	
+
+<h:form prependId="false" id="formId" >
+	
+	<div class="page-header">
+	 		<a><p:outputLabel value="Supplier Setup" style="#{skin.pageTitle};"/></a>
+	</div>
+	
+	<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+	<p:focus context="tb"/>
+    
+		
+		
+		<p:layout fullPage="true">
+			
+		<p:layoutUnit position="north" size="100" visible="false"/>
+		<p:layoutUnit position="south" size="50" visible="false"/>
+		<p:layoutUnit position="west" size="0" visible="false"/>
+		<p:layoutUnit position="east" size="0" visible="false"/>
+		<p:layoutUnit position="center">
+		
+		<p:toolbar id="tb" style="#{skin.toolbar}">
+    		<f:facet name="left">
+        		<p:inputText value="#{supplierBean.searchSupplier}" a:placeholder="Search Supplier Name">
+    					<f:ajax event="keyup" listener="#{supplierBean.init}" render="supId"/>
+    		</p:inputText>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update=":formId:usersupId" actionListener="#{supplierBean.clearFields}" value="New" icon="fa fa-file-o" onclick="PF('multiDialogSUP').show()"/>
+    		</f:facet>
+		</p:toolbar>
+		
+		
+		
+		<p:dataTable id="supId" value="#{supplierBean.sups}" var="rpt" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100" paginatorPosition="top"
+                         scrollable="true" style="#{skin.table}"
+                         >
+                         	
+          					<p:column headerText="[*]" width="20">
+            					<p:commandButton update=":formId:supId" icon="fa fa-trash"  actionListener="#{supplierBean.deleteRow(rpt)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" icon="ui-icon-alert" />
+            					</p:commandButton>
+            				</p:column>
+            				
+            				<p:column headerText="Action" width="20">
+            					<p:commandButton update="usersupId" icon="fa fa-search"  actionListener="#{supplierBean.clickItem(rpt)}" oncomplete="PF('multiDialogSUP').show()"/>
+            				</p:column>            
+                         
+                         	<p:column headerText="Supplier Name" width="100">
+            						<p:outputLabel value="#{rpt.suppliername}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Owner Name" width="70">
+            						<p:outputLabel value="#{rpt.ownername}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Address" width="70">
+            						<p:outputLabel value="#{rpt.address}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Contact No" width="70">
+            						<p:outputLabel  value="#{rpt.contactno}"/>
+            				</p:column>
+            				 
+						
+		</p:dataTable>
+	
+	</p:layoutUnit>
+	</p:layout>		
+
+<p:dialog header="Supplier Profile" position="center top" widgetVar="multiDialogSUP" Height="80" width="500" style="#{skin.dialog}">
+		
+		<p:toolbar id="tbSup" >
+    		<f:facet name="left">
+        		
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="supId" value="Save"  icon="fa fa-floppy-o" actionListener="#{supplierBean.save}" />
+     				<p:commandButton update="supId" value="Close" icon="ui-icon-closethick" actionListener="#{supplierBean.close}" onclick="PF('multiDialogSUP').hide();"/>
+    		</f:facet>
+		</p:toolbar>
+		
+		<p:panelGrid id="usersupId" columns="2">
+						
+				<p:outputLabel value="Name:" />
+            	<p:inputText value="#{supplierBean.suppliername}"/>
+        		
+        		<p:outputLabel value="Address:" />
+            	<p:inputText value="#{supplierBean.address}"/>
+        		
+        		<p:outputLabel value="Owner Name:" />
+            	<p:inputText value="#{supplierBean.ownername}"/>
+        		
+        		<p:outputLabel value="Contact No:" />
+            	<p:inputText value="#{supplierBean.contactno}"/>
+        		   	
+     </p:panelGrid> 
+	 
+</p:dialog>
+
+
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

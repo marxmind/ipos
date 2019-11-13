@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h = "http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      >
+ 
+    <ui:composition>
+		
+		<p:ajaxStatus widgetVar="loadWidget" styleClass="ui-noborder" onstart="showLoading();" onsuccess="hideLoading();" /> 
+			<div id="loader" style="display: none;position: fixed; bottom: 300px; right: 600px; z-index: 9999999999;">
+				<p:graphicImage name="/gif/loader.gif" style="width: 10em;height: 10em"/>
+			</div>	
+		<script>
+	
+	function showLoading() {
+		$("#loader").show();
+	}
+	function hideLoading() {
+		$("#loader").hide();
+	}
+	
+	</script>
+		
+		
+    </ui:composition>
+</html>

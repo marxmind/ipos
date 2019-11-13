@@ -1,0 +1,778 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>#{versionBean.copyright.appname} Cashiering</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.min.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.min.js" target="head"/>
+            <h:outputStylesheet name="css/growl.css"/>
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>#{versionBean.copyright.appname} Cashiering</title>
+
+<style>
+<!-- 
+
+
+ -->
+ </style>
+ <!-- 
+ <h:outputScript library="js" name="classie.js"/>
+<h:outputStylesheet library="css" name="normalize.css" />
+<h:outputStylesheet library="css" name="set2.css" /> -->
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>#{versionBean.copyright.appname} Cashiering</title>
+
+</h:head>
+
+<h:body>
+
+<h:form prependId="false" id="formIdPos" >
+
+<h:outputScript>
+
+$(':input').keydown(function (event){
+	
+		
+	if(event.which == 113){ //f2 customer
+		PF('multiDialogCustomerLookUp').show();
+	}
+	
+	if(event.which == 115){ //f4 product
+		PF('multiDialogProductLookUp').show();
+	}
+	
+	if(event.which == 118){ //f7 void trans
+		$( "#voidId" ).trigger( "click" );
+	}
+	
+	if(event.which == 16){ //shift cash
+		PF('multiDialogCash').show();
+	}
+	
+	//if(event.which == 18){ //alt discount
+	if(event.which == 47){ // / discount
+		PF('multiDialogDiscount').show();
+	}
+	if(event.which == 119){ // f8 xtra product
+		PF('multiDialogXtras').show();
+	}
+	
+	if(event.which == 120){ //f9 Dispense
+		$( "#disId" ).trigger( "click" );
+	}
+	
+	if(event.which == 27){ //esc close all
+		closeAll();
+	}
+   
+});
+
+$('#discountId').keydown(function (event){
+	if(event.which == 27){ //esc close all
+		closeAll();
+	}
+});
+
+$('#cashId').keydown(function (event){
+	if(event.which == 27){ //esc close all
+		closeAll();
+	}
+});
+
+//close all
+$(document).bind('keydown', 'esc', closeAll);
+function closeAll(){ 
+	PF('multiDialogCustomerLookUp').hide();
+	PF('multiDialogProductLookUp').hide();
+	PF('multiDialogCash').hide();
+	PF('multiDialogDiscount').hide();
+	PF('multiDialogReceipt').hide();
+	PF('multiDialogXtras').hide();
+	$( "#freshId" ).trigger( "click" );
+}
+
+$(document).bind('keydown', 'f9', dispense);
+function dispense(){ 
+	$( "#disId" ).trigger( "click" );
+}
+
+$(document).bind('keydown', 'f7', voidtrans);
+function voidtrans(){
+	$( "#voidId" ).trigger( "click" );
+}
+
+$('#discountId').keydown(function (event){
+	if(event.which == 13){ //enter
+		$( "#addId" ).trigger( "click" );
+	}
+});
+
+$('#cashId').keydown(function (event){
+	if(event.which == 13){ //enter
+		$( "#amountId" ).trigger( "click" );
+	}
+});
+
+</h:outputScript>	
+
+
+	<p:growl id="growl" life="2000" />
+			
+		<p:confirmDialog widgetVar="cfNote" header="Dispensing Items" message="Please confirm" severity="info" showEffect="fade" hideEffect="fade">
+	       		
+	       		<p:panelGrid id="chargeDispenseId" columns="2">
+				       		<f:facet name="header">
+				       			<p:outputLabel value="Please provide details for charge invoice" />
+				       		</f:facet>
+	       					<p:outputLabel value="Terms"/>
+	       					<p:selectOneMenu id="termId" value="#{cashBean.termId}" style="width: 16em" filter="true" filterMatchMode="contains" disabled="#{!cashBean.enableCharge}">
+	                			<f:selectItems value="#{cashBean.terms}" />
+	            			</p:selectOneMenu>
+	            			<p:outputLabel value="Due Date" />
+	            			<p:calendar value="#{cashBean.dueDate}" pattern="yyyy-MM-dd" effect="slideDown" disabled="#{!cashBean.enableCharge}"/>
+	       		</p:panelGrid>
+	       		<p:commandButton value="Save and Dispense" actionListener="#{cashBean.chargeDispense}" update="orderDataId grandTotalId toolbarCommands rptId rptPopup discountId cashId growl" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" oncomplete="PF('cfNote').hide()" />
+	       		<p:commandButton value="Cancel"  styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('cfNote').hide()"/>
+	    </p:confirmDialog>   			
+			
+		 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" style="#{skin.msg}">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+		
+		<p:layout fullPage="true" id="layId">
+
+		<p:layoutUnit position="north" size="100" visible="false"/>
+		<p:layoutUnit position="south" size="50" visible="false"/>
+		
+		<p:layoutUnit position="west" size="270" visible="true">
+		
+						<p:hotkey bind="f8" handler="PF('multiDialogXtras').show()"/>
+						<p:hotkey bind="f2" handler="PF('multiDialogCustomerLookUp').show()"/>
+						<p:hotkey bind="f4" handler="PF('multiDialogProductLookUp').show()" update="idProdSearch" actionListener="#{cashBean.clearSearchProduct}"/>
+						<p:hotkey bind="shift" handler="PF('multiDialogCash').show()"/>
+						<p:hotkey bind="/" handler="PF('multiDialogDiscount').show()"/>
+		<p:panelGrid id="toolbarCommands" layout="grid" style="#{skin.grid}" columns="1">
+			
+				<p:panelGrid columns="1" layout="grid">
+					<p:outputLabel value="Item Count: #{cashBean.itemCount}"/>
+					<p:outputLabel value="Cashier: #{cashBean.cashiername}"/>
+					<p:outputLabel value="Customer: #{cashBean.customername}"/>
+				</p:panelGrid>
+				<p:panelGrid columns="2" layout="grid">	
+						<p:commandButton id="voidId" style="width: 9em; height: 8em" update="orderDataId grandTotalId toolbarCommands rptId rptPopup growl" value="(f7)Void" icon="ui-icon-cart" actionListener="#{cashBean.voidTrans}">
+							<p:confirm header="Confirmation" message="Are you sure you want to void this transactions?" icon="ui-icon-alert" />
+						</p:commandButton>
+						
+						<p:commandButton style="width: 9em; height: 8em" type="button" value="(f2)Customer" icon="ui-icon-search" onclick="PF('multiDialogCustomerLookUp').show()" disabled="#{featuresBean.cashierCustomer}"/>
+						<p:commandButton style="width: 9em; height: 8em" value="(/)Discount/Redeem" icon="ui-icon-pencil" onclick="PF('multiDialogDiscount').show()" disabled="#{cashBean.lockDispense}" actionListener="#{cashBean.checkPoints}" update="discId"/>
+						<p:commandButton style="width: 9em; height: 8em" type="button" value="(shift)Cash" icon="ui-icon-pencil" onclick="PF('multiDialogCash').show()" disabled="#{cashBean.lockDispense}"/>
+						<p:commandButton id="disId" style="width: 9em; height: 8em" update="chargeDispenseId" value="(f9)Dispense" icon="ui-icon-cart" onclick="PF('cfNote').show();" disabled="#{cashBean.lockDispense}"/>
+							
+						<p:commandButton disabled="#{featuresBean.onHold}"  style="width: 9em; height: 8em" update="holdDataId" actionListener="#{cashBean.loadHoldItems}" value="On Hold" icon="ui-icon-search" onclick="PF('multiDialogHoldLookUp').show()"/>
+						<p:commandButton disabled="#{featuresBean.recallHistory}" style="width: 9em; height: 8em" update="hisDataId" actionListener="#{cashBean.loadHistory}" value="History" icon="ui-icon-search" onclick="PF('multiDialogHistoryLookUp').show()"/>
+						
+						<p:commandButton id="printOrederId"  actionListener="#{cashBean.printOrder}" value="Print Order" style="width: 9em; height: 8em" icon="ui-icon-calculator" disabled="#{cashBean.lockDispense}"/>
+				</p:panelGrid>	
+		</p:panelGrid>
+		
+		</p:layoutUnit>
+		<p:layoutUnit position="east" size="300" visible="true">
+			
+			<p:panelGrid columns="1" id="rptId">
+		
+				<p:inputTextarea onclick="PF('multiDialogReceipt').show();" id="idAreaRpt" value="#{cashBean.receiptView}" 
+					rows="50" 
+					style="background-color:white; 
+					#{skin.textInput}" 
+					cols="40" autoResize="false" readonly="true"  disabled="false"/>
+		
+			</p:panelGrid>
+			
+		</p:layoutUnit>
+		
+		<p:layoutUnit position="center">
+		
+		
+		<p:toolbar id="grandTotalId">
+			<f:facet name="left">
+    			<h1>
+    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    			<p:outputLabel  value="#{cashBean.businessName}"/>
+    			</h1>
+    		</f:facet>
+    		<f:facet name="right">
+    			<h1>
+    			<p:outputLabel id="priceId" value="Php#{cashBean.grandTotalPrice}" 
+    			style="color: red;
+    			font-style: normal; 	
+				font-family: Times New Roman; 
+				font-size: 120%;
+				font-weight: bold;"/>
+    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    			</h1>
+    		</f:facet>
+    	</p:toolbar>	
+		<p:sticky target="grandTotalId" />
+		
+		<h:panelGrid id="orderItemId"  columns="1" border="0" cellpadding="0" cellspacing="1" 
+				style="border-radius: 1em;  color: white; background-color: white; ">
+	
+	
+	<p:focus context="tb" id="focusId"/>
+				
+				
+		<p:toolbar id="tb" style="#{skin.toolbar}">
+    		<f:facet name="left">
+    			
+		        <p:inputText id="searchId"  a:placeholder="Search Code" value="#{cashBean.searchCode}">
+		        	<p:ajax event="change" listener="#{cashBean.search}" update="#{cashBean.refreshCashier}"/>
+		        </p:inputText>&nbsp;&nbsp;
+		        <p:commandButton type="button" update="productDataId idProdSearch" value="(f4)Products" icon="ui-icon-search" onclick="PF('multiDialogProductLookUp').show()" actionListener="#{cashBean.clearSearchProduct}"/>
+		        <p:commandButton type="button" update="productXtrasId" value="(f8)Xtras" icon="ui-icon-search" onclick="PF('multiDialogXtras').show()" disabled="#{featuresBean.xtraProduct}"/>
+		        <p:commandButton type="button" update="productReturnId" value="Returning" icon="ui-icon-search" onclick="PF('multiDialogReturn').show()" disabled="#{featuresBean.cashierProductReturn}"/>
+		        
+    		</f:facet>
+    		<f:facet name="right">
+    			
+    			<f:view>
+                    <my:if condition="#{cashBean.onLoadDemand==true}">
+                    	<f:facet name="then">
+            				<h:outputText value="Auto Hold is On: "/>
+            			</f:facet>
+            			<f:facet name="else">
+            				<h:outputText value="Auto Hold is Off: "/>
+            			</f:facet>
+            		</my:if>
+            	 </f:view>
+        		<p:selectBooleanCheckbox value="#{cashBean.onLoadDemand}" disabled="#{featuresBean.autohold}">
+            			<p:ajax update="orderDataId grandTotalId toolbarCommands rptId growl" listener="#{cashBean.activateAutoSave}" />
+        		</p:selectBooleanCheckbox>&nbsp;&nbsp;
+    			<p:commandButton id="freshId" update="orderDataId grandTotalId toolbarCommands rptId clearId" value="Refresh" icon="fa fa-refresh"/>
+    			
+    		</f:facet>
+		</p:toolbar>
+		
+		
+		<p:sticky target="tb" />		
+		
+		<p:toolbar id="tbOther" style="#{skin.toolbar}">
+    		<f:facet name="left">
+    			<p:commandButton id="clearId" update="orderDataId grandTotalId toolbarCommands rptId growl"  actionListener="#{cashBean.moveToHoldPurchased}" value="Move To On Hold" icon="ui-icon-calculator" disabled="#{cashBean.moveToOnHoldButton}">
+					<p:confirm header="Confirmation" message="Are you sure you want to clear the list? Clearing the list will move to On Hold items." icon="ui-icon-alert" />
+         		</p:commandButton>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="orderDataId grandTotalId toolbarCommands rptId" value="Clear" icon="fa fa-trash" action="#{cashBean.clearAll}"/>
+    		</f:facet>
+		</p:toolbar>
+		
+		
+         
+         			   		
+		<p:dataTable id="orderDataId" value="#{cashBean.orders}" var="rpt" 
+							rows="5" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" style="#{skin.table}" paginatorPosition="top" paginatorAlwaysVisible="false"
+                         >
+                         	
+                         	<p:column headerText="#" width="10">
+            						<p:outputLabel  value="#{rpt.count}"/>
+            				</p:column>
+            				
+            				<p:column headerText="[X]" width="40">
+            					<p:commandButton update="orderDataId grandTotalId toolbarCommands rptId rptPopup growl" icon="fa fa-trash" actionListener="#{cashBean.deleteRow(rpt)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" icon="ui-icon-alert" />
+            					</p:commandButton>
+            				</p:column>  
+            				
+            				<p:column headerText="View" width="40" exportable="false">
+            					<p:commandButton icon="fa fa-search" update="productDataId idProdSearch" actionListener="#{cashBean.clickItem(rpt)}" oncomplete="PF('multiDialogProductLookUp').show()"/>
+            				</p:column>
+            				
+            				<p:column headerText="Product" width="150">
+            						<p:outputLabel value="#{rpt.productName}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Qty" width="30">
+            						<p:outputLabel  value="#{rpt.qty}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="40">
+            						<p:outputLabel  value="#{rpt.uomSymbol}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Price" width="100">
+            						<p:outputLabel value="Php#{rpt.sellingPrice}"/>
+            				</p:column>
+            				
+            				<p:column width="100">
+            					<f:facet name="header">
+            						<p:outputLabel value="Total Price"/>
+            					</f:facet>
+            					<p:outputLabel value="Php#{rpt.totalPrice}" />
+            					<f:facet name="footer">
+            						<p:outputLabel  value="Php#{cashBean.grandTotalPrice}"/>
+            					</f:facet>	
+            				</p:column>
+            				
+					</p:dataTable>
+					
+		</h:panelGrid>
+		
+		
+		
+		
+		</p:layoutUnit>
+		
+</p:layout>	
+		
+		<p:sticky target="toolbarCommands" />
+		
+<p:dialog style="#{skin.dialog}" header="Discount/Redeem Points" widgetVar="multiDialogDiscount" position="center center"  Height="100" 
+width="500" maximizable="false" minimizable="false" modal="false" showEffect="fade" hideEffect="fade" resizable="false" closable="false" closeOnEscape="false">
+	
+	<p:toolbar id="toolisc">
+    		<f:facet name="left">
+				<p:commandButton  update="discId growl" value="Redeem Points Now" icon="fa fa-tags" actionListener="#{cashBean.calculatePointsAmount}">
+		        		<p:confirm header="Confirmation" message="Are you sure you want to redeem? Please note that recalling redeem points is not allowed" icon="ui-icon-alert" />
+		        </p:commandButton>
+		        
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton id="addId" update="orderDataId grandTotalId toolbarCommands rptId rptPopup" actionListener="#{cashBean.addDiscount}" value="Save and Close" icon="ui-icon-pencil" onclick="PF('multiDialogDiscount').hide()"/>
+    		</f:facet>
+		</p:toolbar>
+	
+	<p:panelGrid columns="2" layout="grid" id="discId">
+		
+		<p:outputLabel value="Total Points:"/>
+		<p:outputLabel value="#{cashBean.totalpoints}"/>
+		
+		<p:outputLabel value="Remaining Points:"/>
+		<p:outputLabel value="#{cashBean.remainingpoints}"/>
+		
+		<p:outputLabel value="Discount:"/>
+		<p:inputNumber id="discountId" value="#{cashBean.discountAmount}" a:placeholder="Discount Amnt"/>
+		
+	</p:panelGrid>
+	
+	
+</p:dialog>
+
+<p:dialog style="#{skin.dialog}" header="Cash" widgetVar="multiDialogCash" position="center center"  
+Height="100" width="350" maximizable="false" minimizable="false" modal="false" showEffect="fade" hideEffect="fade" resizable="false" closable="false" closeOnEscape="false">
+	<p:panelGrid columns="2" layout="grid">
+		<p:inputNumber id="cashId" value="#{cashBean.amountin}" a:placeholder="Cash Amount" style="width: 20em;"/> 
+	<p:commandButton id="amountId" update="orderDataId grandTotalId toolbarCommands rptId rptPopup searchId clearId" value="Enter" icon="ui-icon-pencil" actionListener="#{cashBean.keyButton}" onclick="PF('multiDialogCash').hide()"/>
+	</p:panelGrid>
+</p:dialog>
+
+<p:dialog style="#{skin.dialog}" header="Receipt" widgetVar="multiDialogReceipt" showHeader="false" 
+position="right center" closable="false" Height="1000" width="450" maximizable="false" minimizable="false" 
+modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+	<p:inputTextarea id="rptPopup" onclick="PF('multiDialogReceipt').hide();" value="#{cashBean.receiptView}" rows="40" 
+					style="background-color:white; 
+					color: black;font-style: normal; 	
+					font-family: Times New Roman; 
+					font-size: 100%;
+					font-weight: bold;" 
+					cols="40" autoResize="false" readonly="true"  disabled="false"/>
+</p:dialog>
+<p:sidebar position="left" 	widgetVar="multiDialogCustomerLookUp" style="width: 600px;">	
+			<p:toolbar id="customerlookupbar" style="#{skin.toolbar}">
+            	<f:facet name="left">
+            	    <p:focus for="idCusSearch"/>
+    				<p:inputText id="idCusSearch" value="#{cashBean.searchCustomer}" a:placeholder="Search Customer" style="width: 20em">
+    					<f:ajax event="keyup" listener="#{cashBean.initCustomer}" render="customerDataId"/>
+    				</p:inputText>
+    				
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="toolbarCommands rptId rptPopup" value="Close" icon="ui-icon-closethick" onclick="PF('multiDialogCustomerLookUp').hide()"/>
+    			</f:facet>
+		  	</p:toolbar>
+		  	<p:scrollPanel style="width:550px;height:450px" mode="native">
+		  	<p:dataScroller id="customerDataId" value="#{cashBean.customers}" var="rp" mode="inline" chunkSize="10" rows="10" style="#{skin.table}">
+				 			
+                			<p:panelGrid columns="3" layout="grid">
+                				
+                				<p:commandButton style="#{skin.button}" update="toolbarCommands rptId rptPopup" id="savecusId" value="Tag" onclick="PF('multiDialogCustomerLookUp').hide();" icon="fa fa-tags" actionListener="#{cashBean.updateCustomer(rp)}"/>
+                				
+                				<p:outputLabel style="#{skin.label}" value="#{rp.fullname}"/>
+                				
+                				<p:outputLabel style="#{skin.label}" value="#{rp.cardno}"/>
+                				
+                			</p:panelGrid>
+                			 
+				<f:facet name="loader">
+					<p:commandButton type="button" value="View More" style="#{skin.button}"/>
+				</f:facet>
+			</p:dataScroller>
+		  	</p:scrollPanel>  	
+</p:sidebar>
+			
+<p:sidebar position="left" widgetVar="multiDialogCustomerLookUpReturn" style="width: 600px;">
+			<p:toolbar id="customerlookupReturnbar" style="#{skin.toolbar}">
+            	<f:facet name="left">
+    				<p:inputText value="#{cashBean.searchCustomer}" a:placeholder="Search Customer" style="width: 20em">
+    					<p:ajax event="keyup" listener="#{cashBean.initCustomer}" delay="800" update="customerDataReturnId"/>
+    				</p:inputText>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="productReturnId toolbarCommands rptId clearId rptPopup printOrederId" value="Close" icon="ui-icon-closethick" onclick="PF('multiDialogCustomerLookUpReturn').hide()"/>
+    			</f:facet>
+		  	</p:toolbar>
+		  	
+		  	<p:scrollPanel style="width:550px;height:450px" mode="native">
+		  	<p:dataScroller id="customerDataReturnId" value="#{cashBean.customers}" var="rp" mode="inline" chunkSize="10" rows="10" style="#{skin.table}">
+				 
+							<p:commandButton update="productReturnId orderDataId grandTotalId toolbarCommands rptId rptPopup" id="savecusReturnId" value="Tag" onclick="PF('multiDialogCustomerLookUpReturn').hide();" icon="fa fa-tags" actionListener="#{cashBean.updateCustomer(rp)}">
+                				<p:confirm header="Confirmation" message="Are you sure you want to tag this customer?" icon="ui-icon-alert" />
+                			</p:commandButton>
+                			#{rp.fullname}
+				<f:facet name="loader">
+					<p:commandButton type="button" value="View More" />
+				</f:facet>
+			</p:dataScroller>
+		  	</p:scrollPanel>  	
+</p:sidebar>
+
+<p:dialog style="#{skin.dialog};z-index: 1000" header="Product Look Up" 
+widgetVar="multiDialogProductLookUp" position="left top" closable="false" 
+maximizable="true" minimizable="false" modal="false" showEffect="fade" hideEffect="fade" resizable="false" fitViewport="true">
+ <p:ajax event="close" listener="#{cashBean.initOrders}" />
+        	<p:toolbar id="productlookupbar">
+            	<f:facet name="left">
+    				<p:inputText id="idProdSearch" value="#{cashBean.searchProduct}" a:placeholder="Search product" style="width: 20em">
+    					<p:ajax event="keyup" listener="#{cashBean.initProduct}" delay="800" update="productDataId"/>
+    				</p:inputText>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="toolbarCommands productReturnId orderDataId grandTotalId rptId clearId rptPopup printOrederId" value="Close" icon="ui-icon-closethick" onclick="PF('multiDialogProductLookUp').hide()"/>
+    			</f:facet>
+		  	</p:toolbar>
+        	
+        	<p:dataGrid id="productDataId" var="rpt" value="#{cashBean.prods}" columns="4" lazy="true"
+                	rows="8" paginator="true" style="margin-top:20px" paginatorAlwaysVisible="false" paginatorPosition="top">
+ 
+        		<p:panel header="#{rpt.productName}" style="text-align:center;width: 16em">
+            		<h:panelGrid columns="1" style="width: 15em">
+                		<!-- <p:graphicImage name="img/{rpt.productProperties.productcode}.jpg" height="70px" width="80px"/> -->
+                		<p:outputLabel value="Price : Php#{rpt.sellingPrice}" style="font-weight: bold"/>
+                		<p:outputLabel value="In stock : #{rpt.quantity}"/>
+                		<p:outputLabel value="UOM : #{rpt.uomSymbol}"/>
+                		<p:outputLabel value="Brand : #{rpt.productProperties.productBrand.productbrandname}"/>
+            		</h:panelGrid>
+            		<f:facet name="footer">
+                			<p:outputLabel  value="Qty"/>
+                			<p:inputText id="qtyId" value="#{cashBean.qtyToCartTmp}" style="width: 5em" a:type="number">
+                				<f:ajax event="change"  listener="#{cashBean.qtyCheck}" render="qtyId"/>
+                			</p:inputText>
+                			<p:commandButton update="qtyId,growl" id="savecartId" value="Add To Order" icon="ui-icon-cart" actionListener="#{cashBean.addToCart(rpt)}"/>
+                			
+                		</f:facet>
+        		</p:panel>
+ 
+    		</p:dataGrid>
+        
+        
+        
+		 	
+		</p:dialog>
+		
+		<p:dialog style="#{skin.dialog}" header="Xtra Product" widgetVar="multiDialogXtras" 
+		position="center top" closable="false"  fitViewport="true" maximizable="true" minimizable="false" modal="false" 
+		showEffect="fade" hideEffect="fade" resizable="false">
+			<p:toolbar id="productXtrasBar">
+            	<f:facet name="left">
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="tabXtra,productXtrasId,growl" icon="ui-icon-note" value="Save" actionListener="#{cashBean.addXtras}">
+	            		<p:confirm header="Confirmation" message="Are you sure you want to add this product?" icon="ui-icon-alert" />
+	            	</p:commandButton>
+    				<p:commandButton update="toolbarCommands productReturnId orderDataId grandTotalId rptId clearId rptPopup printOrederId" value="Close" icon="ui-icon-closethick" actionListener="#{cashBean.initOrders}" onclick="PF('multiDialogXtras').hide()"/>
+    			</f:facet>
+		  	</p:toolbar>
+			
+			<p:panelGrid id="tabXtra"  columns="6" columnClasses="column" cellpadding="5">
+			
+				<p:outputLabel value="Product Name" />
+				<p:inputText value="#{cashBean.xtraDescription}" a:placeholder="Product" style="width: 16em"/>
+				
+				<p:outputLabel value="Type" />
+				<p:selectOneMenu id="addXtraId" value="#{cashBean.xtraTypeId}" style="width: 16em">
+	                <f:selectItems value="#{cashBean.xtraTypes}"/>
+	            </p:selectOneMenu>
+	            
+	            <p:outputLabel value="Amount" />
+	            <p:inputText value="#{cashBean.xtraAmount}" a:placeholder="0.00" a:type="number" style="width: 16em"/>
+				
+			</p:panelGrid>
+			
+			
+            <p:dataTable id="productXtrasId" value="#{cashBean.xtras}" var="rpt" paginatorPosition="top" paginatorAlwaysVisible="false">
+            	
+            	<p:column headerText="[*]" width="20">
+            		<p:commandButton update="productXtrasId,growl" icon="ui-icon-circle-close"  actionListener="#{cashBean.deleteXtras(rpt)}">
+            			<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" icon="ui-icon-alert" />
+            		</p:commandButton>
+            	</p:column>
+            	
+            	<p:column headerText="Product Name" width="150">
+            			<h:outputText  value="#{rpt.description}" style="color: black;"/>
+            	</p:column>
+            	
+            	<p:column headerText="Type" width="50">
+	            		<f:view>
+	                        <my:if condition="#{rpt.addOnType==1}">
+	                        	<f:facet name="then">
+	            					<h:outputText  value="Additional" style="color: black;"/>
+	            				</f:facet>
+	            				<f:facet name="else">
+	            					<h:outputText  value="Less" style="color: black;"/>
+	            				</f:facet>
+	            			</my:if>
+	            		 </f:view>
+            	</p:column>			
+            	
+            	<p:column headerText="Amount" width="50">
+            			<h:outputText  value="#{rpt.amount}" style="color: black;"/>
+            	</p:column>
+            	
+            	<p:column headerText="Change" width="20">
+            		<p:commandButton update="tabXtra" value="Change" actionListener="#{cashBean.clickItemXtra(rpt)}"/>
+            	</p:column>
+            	
+            </p:dataTable>             
+                	
+		</p:dialog>
+		
+		
+		<p:dialog style="#{skin.dialog}" header="Product Return" widgetVar="multiDialogReturn" position="center top" closable="false"  
+		fitViewport="true" maximizable="true" minimizable="false" modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+			
+			<p:toolbar id="productReturnBar">
+            	<f:facet name="left">
+            			<p:outputLabel value="Search "/>
+    					<p:inputText value="#{cashBean.searchProductReturn}" a:placeholder="Search product" style="width: 20em">
+    						<p:ajax event="keyup" listener="#{cashBean.initReturn}" delay="800" update="productReturnId"/>
+    					</p:inputText>
+    					
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton value="Close" icon="ui-icon-closethick" onclick="PF('multiDialogReturn').hide()"/>
+    			</f:facet>
+		  	</p:toolbar>
+			
+			<p:scrollPanel style="width:1000;height:450px" mode="native">
+			<p:dataTable id="productReturnId" value="#{cashBean.prodReturn}" var="rpt" paginatorAlwaysVisible="false" paginatorPosition="top">
+			
+				<p:column headerText="Product Name" width="150">
+            		<h:outputText  value="#{rpt.productName} per #{rpt.uomSymbol}" style="color: black;"/>
+            	</p:column>
+            	
+            	<p:column headerText="Price" width="50">
+            		<h:outputText  value="Php #{rpt.sellingPrice}" style="color: black;"/>
+            	</p:column>
+            	
+            	<p:column headerText="Qty Return" width="50">
+            		<p:inputText  value="#{rpt.qtyReturn}" style="color: black;" a:type="number" />
+            	</p:column>
+            	
+            	<p:column headerText="Customer" width="100">
+	            	<p:commandButton icon="ui-icon-search" value="#{cashBean.customer.fullname}" onclick="PF('multiDialogCustomerLookUpReturn').show()"/>
+	            </p:column>
+            	
+            	<p:column headerText="Save" width="50">
+	            	<p:commandButton update="productReturnId rptId clearId rptPopup printOrederId growl" icon="ui-icon-note" value="Save" actionListener="#{cashBean.saveReturn(rpt)}">
+		            		<p:confirm header="Confirmation" message="Are you sure you want to return this product?" icon="ui-icon-alert" />
+		            </p:commandButton>
+	            </p:column>
+				
+			</p:dataTable>
+			</p:scrollPanel>
+		</p:dialog>
+		
+		<p:dialog style="#{skin.dialog}"  header="On Hold Look Up" widgetVar="multiDialogHoldLookUp" position="center top" 
+		closable="true" fitViewport="true" maximizable="true" minimizable="false" modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+			<p:dataGrid id="holdDataId" var="rp" value="#{cashBean.productHolds}" columns="3" layout="grid"
+                	rows="12" paginator="true" style="margin-top:20px" paginatorAlwaysVisible="false" paginatorPosition="top">
+                	
+                	<p:panel header="#{rp.rundate} #{rp.customer.fullname}" style="text-align:center">
+	            		<h:panelGrid columns="1" style="width:100%">
+	            			<f:facet name="footer">
+                				<p:commandButton update="orderDataId grandTotalId toolbarCommands rptId clearId rptPopup printOrederId" id="saveHoldId" value="Open" onclick="PF('multiDialogHoldLookUp').hide();" icon="ui-icon-cart" actionListener="#{cashBean.openHoldTrans(rp)}"/>
+                			</f:facet>
+	            		</h:panelGrid>
+            		</p:panel>
+            </p:dataGrid>    	
+		</p:dialog>	
+		
+		<p:dialog style="#{skin.dialog}" header="Receipt History" widgetVar="multiDialogReceiptHistory" showHeader="false" 
+		position="center center" closable="false" fitViewport="true" maximizable="false" minimizable="false" 
+		modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+		<p:inputTextarea id="viewRecptId" onclick="PF('multiDialogReceiptHistory').hide();" value="#{cashBean.receiptViewHistory}" rows="40" 
+					style="background-color:white; 
+					color: black;font-style: normal; 	
+					font-family: Times New Roman; 
+					font-size: 100%;
+					font-weight: bold;" 
+					cols="40" autoResize="false" readonly="true"  disabled="false"/>
+		</p:dialog>
+		
+		<p:dialog style="#{skin.dialog}" header="History Look Up" 
+		widgetVar="multiDialogHistoryLookUp" position="center top" closable="false" 
+		fitViewport="true" maximizable="false" minimizable="false" modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+			<p:toolbar id="historylookupbar">
+            	<f:facet name="left">
+    				<p:inputText value="#{cashBean.searchHistory}" a:placeholder="Search..." style="width: 20em">
+    					<p:ajax event="keyup" listener="#{cashBean.loadHistory}" delay="800" update="hisDataId"/>
+    				</p:inputText>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton id="closeHisId" value="Close" actionListener="#{cashBean.removeTransactions}" onclick="PF('multiDialogAccessRight').hide();PF('multiDialogHistoryLookUp').hide();"/>
+    			</f:facet>
+		  	</p:toolbar>
+		  	<p:scrollPanel style="width:1000;height:450px" mode="native">
+		  	<p:dataTable id="hisDataId" value="#{cashBean.transactions}" var="rp" paginatorAlwaysVisible="false"
+                         scrollable="true">
+            			   	
+            			   	<p:column headerText="Payment" width="70">	
+            			   		<p:outputLabel  value="#{rp.paymentTypeName}"/>
+            			   	</p:column>
+            			   	
+            			   	<p:column headerText="Dispensed" width="70">	
+            						<f:view>
+                         			<my:if condition="#{rp.cancelledTrans==false}">
+                         			 			<f:facet name="then">
+            										<p:outputLabel value="Completed"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:outputLabel value="Cancelled" style="color: red"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            				 </p:column>
+            			   	
+            				<p:column headerText="Date" width="70">
+            						<p:outputLabel  value="#{rp.transdate}"/>
+            				</p:column>
+            				<p:column headerText="Receipt No" width="100">
+            						<p:outputLabel value="#{rp.receipts}"/>
+            				</p:column>
+            				<p:column headerText="Customer" width="150">
+            						<p:outputLabel value="#{rp.customer.fullname}"/>
+            				</p:column>
+            				<p:column headerText="Purchased" width="70">
+            						<p:outputLabel value="#{rp.amountpurchased}" />
+            				</p:column>
+            				
+            				<p:column headerText="Sales" width="50">
+            						<p:commandLink disabled="#{rp.cancelledTrans}" title="Print Sale Invoice in PDF" target="_blank" action="#{cashBean.printSalesInvoice(rp)}" ajax="false" immediate="false" >
+            				 			<p:graphicImage name="img/pdf.jpg" width="25" height="25"/>
+									</p:commandLink>
+            				</p:column>
+            				<p:column headerText="Charge" width="50">
+            						<p:commandLink disabled="#{rp.cancelledTrans}" title="Print Charge Invoice in PDF" target="_blank" action="#{cashBean.printChargeInvoice(rp)}" ajax="false" immediate="false" >
+            				 			<p:graphicImage name="img/pdf.jpg" width="25" height="25"/>
+									</p:commandLink>
+            				</p:column>
+            				<p:column headerText="Command" width="80">
+            						<p:commandButton disabled="#{rp.cancelledTrans}" update="authId" id="showHistorydId" value="Recall" onclick="PF('multiDialogAccessRight').show();" icon="ui-icon-cart" actionListener="#{cashBean.showHistory(rp)}"/>
+            				</p:column>
+            				<p:column headerText="Reprint" width="80">
+            						<p:commandButton disabled="#{rp.cancelledTrans}" id="openRecieptId" update="viewRecptId" value="Reprint" actionListener="#{cashBean.viewReceiptHistory(rp)}" onclick="PF('multiDialogReceiptHistory').show();">
+            							<p:confirm header="Confirmation" message="Are you sure you want to reprint receipt?" icon="ui-icon-alert" />
+            						</p:commandButton>
+            				</p:column>
+            </p:dataTable>             
+		  	</p:scrollPanel>
+		  	 	
+		</p:dialog>	
+		
+		
+		<p:dialog  position="center center" showHeader="true" visible="false" style="background: white; !important;#{skin.dialog}" 
+			header="Login" widgetVar="multiDialogAccessRight" modal="false" showEffect="fade" closable="true"
+			hideEffect="fade" resizable="false" width="300" height="100%">
+        
+        
+        <p:panelGrid columns="2" id="authId">
+        	
+        	<f:facet name="header">
+        		<p>BUSINESS MANAGEMENT SYSTEM</p>
+        	</f:facet>
+        	
+        	<h:outputText value="Username:"/>
+			<h:inputText styleClass="form-control"  id="unameId" value="#{cashBean.userName}"/>
+        	
+        	<h:outputText value="Password:"/>
+			<h:inputSecret styleClass="form-control" id="passwordId" value="#{cashBean.password}"/>
+			
+			<f:facet name="footer">
+				<p:commandButton id="logId" value="Validate" update="#{cashBean.validateResponse}" onclick="#{cashBean.onClickLog}" actionListener="#{cashBean.validateRecall}"/>
+				<p:commandButton id="closeId" value="Close" actionListener="#{cashBean.removeTransactions}" update="orderDataId grandTotalId toolbarCommands rptId rptPopup" onclick="PF('multiDialogAccessRight').hide();PF('multiDialogHistoryLookUp').hide();"/>
+			</f:facet>
+			
+        </p:panelGrid>
+        
+</p:dialog>
+
+
+		
+<h:outputScript>
+
+			
+
+
+$(document).ready(
+      function(){fixPFDialogToggleMaximize('multiDialogProductLookUp');}
+ );
+
+function fixPFDialogToggleMaximize(dlg){
+if(undefined == dlg.doToggleMaximize) {
+    dlg.doToggleMaximize = dlg.toggleMaximize;
+    dlg.toggleMaximize = function() {
+        this.doToggleMaximize();
+
+        var marginsDiff = this.content.outerHeight() - this.content.height();
+        var newHeight = this.jq.innerHeight() - this.titlebar.outerHeight() - marginsDiff;
+        this.content.height(newHeight);
+    };
+}
+}
+</h:outputScript>	
+<p:defaultCommand target="#{cashBean.keyPress}"/>
+<ui:include src="loader.xhtml" />
+
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

@@ -1,0 +1,117 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	>
+	
+<f:view renderKitId="PRIMEFACES_MOBILE"/>
+     <h:head>
+     </h:head>
+
+     <h:body>
+
+		<h:form id="formId" prependId="false">
+		<p:growl id="msg" showDetail="true" />
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" style="#{skin.msg}">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+		<pm:page id="first">
+		
+            <pm:header title="Room Monitoring" fixed="true">
+                <p:tabMenu activeIndex="0" style="#{skin.menu}">
+                    <p:menuitem value="Home" icon="ui-icon-home" url="roommain.xhtml" iconPos="bottom"/>
+                    <p:menuitem value="Room Maintenance" icon="ui-icon-gear" url="maintenanceroom.xhtml" iconPos="bottom"/>
+                    <p:menuitem value="Menu" icon="ui-icon-power" url="main.xhtml" iconPos="bottom"/>
+                </p:tabMenu>
+            </pm:header>
+            
+         <pm:content>
+         	
+    	
+    	<h:panelGrid columnClasses="value">
+	        <h3 style="margin-top: 0">Room Reservation</h3>
+	        <p:schedule id="schedule" value="#{schedBean.eventModel}" widgetVar="myschedule" timeZone="GMT+8">
+	 
+	            <p:ajax event="dateSelect" listener="#{schedBean.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+	            <p:ajax event="eventSelect" listener="#{schedBean.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+	            <p:ajax event="eventMove" listener="#{schedBean.onEventMove}" update="msg" />
+	            <p:ajax event="eventResize" listener="#{schedBean.onEventResize}" update="msg" />
+	 
+	        </p:schedule>      
+	        
+    	</h:panelGrid>	
+         
+         </pm:content>
+         
+        <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip" style="#{skin.dialog}">
+        <h:panelGrid id="eventDetails" columns="2">
+        	
+            <p:outputLabel for="title" value="Descriptions:" />
+            <p:inputText id="title" value="#{schedBean.event.title}" required="true" a:placeholder="Description of reservation" />
+ 
+            <p:outputLabel for="from" value="From:" />
+            <p:calendar id="from" value="#{schedBean.event.startDate}" timeZone="GMT+8" pattern="dd/MM/yyyy"/>
+ 
+            <p:outputLabel for="to" value="To:" />
+            <p:calendar id="to" value="#{schedBean.event.endDate}" timeZone="GMT+8" pattern="dd/MM/yyyy"/>
+ 
+            <p:outputLabel for="allDay" value="All Day:" />
+            <h:selectBooleanCheckbox id="allDay" value="#{schedBean.event.allDay}" />
+         </h:panelGrid>   
+ 		<h:panelGrid columns="4">
+            <p:commandButton type="reset" value="Reset"/>
+            <p:commandButton id="remButton" value="Remove" actionListener="#{schedBean.removeEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
+            <p:commandButton id="addButton" value="Save" actionListener="#{schedBean.addEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
+            <p:commandButton onclick="PF('eventDialog').hide();" value="Close"/>
+        </h:panelGrid>
+    	</p:dialog>	
+         	
+         	
+         
+       
+         
+         <pm:footer title="#{versionBean.copyright.appname} #{versionBean.copyright.currentversion}" fixed="true" style="#{skin.copyrightLabel}">
+                <p:tabMenu activeIndex="0" style="#{skin.menu}" >
+                    <p:menuitem value="Room History" icon="ui-icon-gear" url="historyroom.xhtml" iconPos="top"/>
+                </p:tabMenu>
+            </pm:footer>
+        </pm:page>
+	</h:form>
+	
+	
+	<h:outputScript>
+    PrimeFaces.locales['tr'] = {
+        closeText: 'sarado',
+        prevText: 'kaina',
+        nextText: 'sunod',
+        currentText: 'Ngayong Adlaw',
+        monthNames: ['Enero','Pebrero','Marso','Abril','Mayo','Hunyo',
+            'Hulyo','Agusto','Setyembre','Oktubre','Nobyembre','Disyembre'],
+        monthNamesShort: ['Jan','Feb','Mar','Apr','May','Jun',
+            'Jul','Aug','Sep','Oct','Nov','Dec'],
+        dayNames: ['Domingo','Lunes','Martes','Miyerkules','Huwebes','Biyernes','Sabado'],
+        dayNamesShort: ['Dom','Lun','Mar','Mer','Huw','Biy','Sab'],
+        dayNamesMin: ['Dom','Lun','Mar','Mer','Huw','Biy','Sab'],
+        weekHeader: 'Hf',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: '',
+        month: 'Month',
+        week: 'Week',
+        day: 'Day',
+        allDayText : 'All Day'
+    };
+</h:outputScript>
+<h:outputScript>
+    .value {
+        width: 1000px;
+    }
+</h:outputScript>
+	
+     </h:body>
+     
+</html>

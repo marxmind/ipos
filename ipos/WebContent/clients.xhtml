@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>#{versionBean.copyright.appname} Clients</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+             <h:outputStylesheet name="bootstrap/css/bootstrap.min.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <h:outputStylesheet name="css/pageHeaderFooter.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.min.js" target="head"/>
+            <h:outputStylesheet name="css/growl.css"/>
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>#{versionBean.copyright.appname} Clients</title>
+
+<style>
+<!-- 
+
+ -->
+ </style>
+
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>#{versionBean.copyright.appname} Clients</title>
+
+</h:head>
+
+<h:body>
+	
+
+<h:form prependId="false" id="formId" >
+
+	    <div class="page-header">
+	 		<a><p:outputLabel value="Clients Over The Counter Transactions" style="#{skin.pageTitle};"/></a>
+	    </div>
+	
+	<p:growl id="msg" showDetail="true" />
+	
+	<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" style="#{skin.msg}">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+	
+	
+<p:layout fullPage="true" id="layId">
+			
+		<p:layoutUnit position="north" size="100" visible="false"/>
+		<p:layoutUnit position="south" size="50" visible="false"/>
+		<p:layoutUnit position="west" size="0" visible="false"/>
+		<p:layoutUnit position="east" size="0" visible="false"/>
+		<p:layoutUnit position="center">	
+	 
+    <p:tabView orientation="left" id="clientViewId" style="#{skin.tabs}">
+    
+    	<p:ajax event="tabChange" listener="#{clientsBean.onTabChangeView}"/>
+    
+    	<p:tab title="Payments" rendered="#{menuBean.clientsOverCounterTabPayments}">
+    	
+    	
+		<p:tabView orientation="top" id="payIdView">
+		
+		<p:ajax event="tabChange" listener="#{clientsBean.onTabChange}" />
+        <p:ajax event="tabClose" listener="#{clientsBean.onTabClose}" />
+		
+		<p:tab title="Payments">
+		<p:toolbar id="tb">
+    		<f:facet name="left">
+        		<p:inputText value="#{clientsBean.searchClients}" a:placeholder="Search Name" >
+    					<f:ajax event="keyup" listener="#{clientsBean.startPaymnets}" render="cusId"/>
+    			</p:inputText>&nbsp;&nbsp;
+    			<p:commandButton update="cusId" icon="fa fa-search" action="#{clientsBean.startPaymnets}"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="cusId" icon="fa fa-refresh" value="Refresh" action="#{clientsBean.startPaymnets}"/>
+    			<p:commandButton id="updateId" update="cusId,msg" value="Update"  icon="fa fa-floppy-o" actionListener="#{clientsBean.updateBalance}">
+            			<p:confirm header="Confirmation" message="Are you sure you want to update client's balance?" icon="ui-icon-alert" />
+            	</p:commandButton>
+    		</f:facet>
+    		
+		</p:toolbar>
+ 		
+		<p:dataTable id="cusId" value="#{clientsBean.customers}" var="rpt" stickyHeader="false" editable="true" editMode="cell" widgetVar="cellTrans"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                          selection="#{clientsBean.paymentData}" rowKey="#{rpt.cpayid}" 
+                         >
+                         	
+                         	<p:ajax event="cellEdit"  listener="#{clientsBean.onCellEdit}" />	
+                         	
+                         	<p:column headerText="Receipts" width="30" exportable="false">
+                         		<p:commandButton icon="fa fa-refresh" update="itemDataId,tranDataId" actionListener="#{clientsBean.clickItem(rpt)}" oncomplete="PF('multiDialogCUS').show()"/> 
+                         	</p:column>
+                         	
+                         	<p:column headerText="Client's Name" width="100">
+            						<p:outputLabel  value="#{rpt.customer.fullname}"/>
+            				</p:column>
+            				
+            				<p:column selectionMode="multiple" headerText="Check" style="width:16px;text-align:center" />
+            				
+            				<p:column headerText="Input Amnt" width="50">
+            					<p:cellEditor>
+              	  					<f:facet name="output"><p:outputLabel value="#{rpt.inputAmount}"/></f:facet>
+              	  					<f:facet name="input"><p:inputText  id="intId" value="#{rpt.inputAmount}" a:placeholder="0.00" a:type="number" style="width:80%;color:black"/></f:facet>
+              					</p:cellEditor>	
+            				</p:column>
+            				
+            				<p:column headerText="Payable" width="50">
+            						<p:outputLabel value="#{rpt.amountbalance}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Prev. Bal. Amnt" width="50">
+            						<p:outputLabel value="#{rpt.amountprevbalance}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Amount Paid" width="50">
+            						<p:outputLabel value="#{rpt.amountpaid}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Paid Date" width="50">
+            						<p:outputLabel value="#{rpt.amountpaiddate}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Prev. Amnt Paid" width="50">
+            						<p:outputLabel value="#{rpt.amountprevpaid}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Prev. Amnt Paid Date" width="50">
+            						<p:outputLabel  value="#{rpt.amountprevpaiddate}"/>
+            				</p:column>
+            				
+						
+		</p:dataTable>
+		
+		</p:tab>
+		
+		<p:tab title="History">
+		
+			<p:toolbar id="tbHis">
+    		<f:facet name="left">
+        		<p:inputText value="#{clientsBean.hisName}" a:placeholder="Search Name" >
+    					<f:ajax event="keyup" listener="#{clientsBean.startHistory}" render="hisId"/>
+    			</p:inputText>&nbsp;&nbsp;
+    			<p:commandButton update="hisId" icon="fa fa-refresh" action="#{clientsBean.startHistory}"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="hisId" icon="fa fa-refresh" value="Refresh" action="#{clientsBean.startHistory}"/>
+    		</f:facet>
+		</p:toolbar>
+ 		
+		<p:dataTable id="hisId" value="#{clientsBean.customerPays}" var="rpt" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+                         	<p:column headerText="Show Details" width="30" exportable="false">
+                         		<p:commandButton icon="fa fa-search" update=":formId:payHisId" actionListener="#{clientsBean.clickPaymentDetails(rpt)}" oncomplete="PF('multiDialogPayments').show()"/>
+                         	</p:column>
+                         	
+                         	
+                         	<p:column headerText="Name" width="120">
+            						<p:outputLabel value="#{rpt.customer.fullname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Balance" width="50">
+            						<p:outputLabel value="#{rpt.amountbalance}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Prev. Balance" width="50">
+            						<p:outputLabel  value="#{rpt.amountprevbalance}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Amount Paid" width="50">
+            						<p:outputLabel value="#{rpt.amountpaid}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Paid Date" width="50">
+            						<p:outputLabel value="#{rpt.amountpaiddate}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Prev. Amnt Paid" width="50">
+            						<p:outputLabel value="#{rpt.amountprevpaid}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Prev. Amnt Paid Date" width="50">
+            						<p:outputLabel value="#{rpt.amountprevpaiddate}"/>
+            				</p:column>
+            				
+						
+		</p:dataTable>
+			
+		</p:tab>
+		
+	</p:tabView>
+				
+	</p:tab>
+	
+	<p:tab title="Product Receipts" rendered="#{menuBean.clientsOverCounterTabProductReceipts}">
+		
+		<p:toolbar id="tbBought">
+    		<f:facet name="left">
+        		<p:inputText value="#{clientsBean.searchBought}" a:placeholder="Search Name" >
+    					<f:ajax event="keyup" listener="#{clientsBean.startBought}" render="boughtDataId"/>
+    			</p:inputText>&nbsp;&nbsp;
+    			<p:calendar value="#{clientsBean.receiptDateFrom}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    <p:calendar value="#{clientsBean.receiptDateTo}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    &nbsp;&nbsp;
+    			<p:commandButton id="receptSearchId" update="boughtDataId" icon="fa fa-search" action="#{clientsBean.startBought}"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="boughtDataId" icon="fa fa-search" value="Refresh" action="#{clientsBean.startBought}"/>
+    		</f:facet>
+			</p:toolbar>
+		
+		
+		<p:dataTable id="boughtDataId" value="#{clientsBean.customerReceipts}" var="client" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+				
+						<p:column headerText="Name" width="120">
+            						<p:outputLabel  value="#{client.fullname}"/>
+            			</p:column>
+						
+						<p:column headerText="Ordered Details" width="200">
+							<p:rowToggler collapseLabel="Close Details" expandLabel="Open Details"/>
+						</p:column>
+						
+						<p:rowExpansion>
+							<p:dataTable id="receiptDataId" value="#{client.receipts}" var="rpt" stickyHeader="false"
+                         scrollable="true" >
+						
+						<p:column headerText="Details" width="30" exportable="false">
+							<p:commandButton icon="ui-icon-search" update=":formId:itemSoldDataId" actionListener="#{clientsBean.clickItemOrder(rpt)}" oncomplete="PF('multiDialogOrder').show()"/>
+            			</p:column>
+						
+						<p:column headerText="Date" width="70">
+            						<p:outputLabel value="#{rpt.dateTrans}"/>
+            			</p:column>
+						
+						<p:column headerText="Status" width="50" exportable="false">
+            							<f:view>
+                         			 		<my:if condition="#{rpt.status==5}">
+                         			 			<f:facet name="then">
+            										<p:outputLabel value="CANCELLED"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:outputLabel value="POSTED"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+           				</p:column>
+						
+						<p:column headerText="Payment" width="50" exportable="false">
+            							<f:view>
+                         			 		<my:if condition="#{rpt.paymentStatus==3}">
+                         			 			<f:facet name="then">
+            										<p:outputLabel value="PARTIAL" />
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:outputLabel value="FULL"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+           				</p:column>
+						
+						<p:column headerText="Receipt No" width="100">
+            						<p:outputLabel  value="#{rpt.receiptNo}"/>
+            			</p:column>
+            			
+            			<p:column headerText="Items Cnt" width="50">
+            						<p:outputLabel value="#{rpt.quantity}"/>
+            			</p:column>
+            			
+            			<p:column headerText="Purchased" width="70">
+            						<p:outputLabel value="#{rpt.totalAmount}"/>
+            			</p:column>
+            			
+            			<p:column headerText="Charges" width="70">
+            						<p:outputLabel value="#{rpt.deliveryChargeAmount}"/>
+            			</p:column>
+            			
+            			<p:column headerText="Discount" width="70">
+            						<p:outputLabel value="#{rpt.discountAmount}" />
+            			</p:column>
+            			
+            			<p:column headerText="Paid" width="70">
+            						<p:outputLabel value="#{rpt.downPayment}"/>
+            			</p:column>
+            			
+            			<p:column headerText="Balance" width="70">
+            						<p:outputLabel value="#{rpt.balanceAmount}" />
+            			</p:column>
+            			
+						</p:dataTable>
+						</p:rowExpansion>
+						
+					
+						
+						
+		</p:dataTable>
+		
+	</p:tab>
+	
+	<p:tab title="Rented Items Balances" disabled="#{featuresBean.clientRented}" rendered="#{menuBean.clientsOverCounterTabRentedItems}">
+		
+		
+		<p:tabView orientation="top" id="rentedIdVied">
+		
+		<p:ajax event="tabChange" listener="#{clientsBean.onTabChangeRented}"/>
+		
+		<p:tab title="Balances">
+			
+			<p:toolbar id="tbRented">
+    		<f:facet name="left">
+        		<p:inputText value="#{clientsBean.searchClientsRented}" a:placeholder="Search Client's Name" >
+    					<f:ajax event="keyup" listener="#{clientsBean.startRented}" render="clientRentedDataId"/>
+    			</p:inputText>&nbsp;&nbsp;
+    			<p:commandButton update="clientRentedDataId" icon="fa fa-search" action="#{clientsBean.startRented}"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="clientRentedDataId" icon="fa fa-search" value="Refresh" action="#{clientsBean.startRented}"/>
+    		</f:facet>
+			</p:toolbar>
+			
+			<p:dataTable id="clientRentedDataId" value="#{clientsBean.rents}" var="client" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+						
+						<p:column headerText="Name" width="120">
+            						<p:outputLabel value="#{client.fullname}"/>
+            			</p:column>
+					
+						<p:column headerText="Rented Items" width="700">
+						
+						
+						<p:dataTable id="rentedDataId" value="#{client.rentedBottle}" var="rpt" stickyHeader="false"
+                         scrollable="true" style="#{skin.table}">
+                         	
+            				<p:column headerText="Product" width="100">
+            						<p:outputLabel value="#{rpt.productProperties.productname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="30">
+            						<p:outputLabel value="#{rpt.uom.symbol}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Balance" width="70">
+            						<p:outputLabel value="#{rpt.currentBalance}"/>
+            				</p:column>
+            				
+            			</p:dataTable>				
+            			</p:column>
+            				
+            		</p:dataTable>		
+            				
+		
+		</p:tab>
+		
+		<p:tab title="History">
+			
+			<p:toolbar id="tbRentedHistory">
+    		<f:facet name="left">
+        		<p:inputText value="#{clientsBean.searchClientsRentedHistory}" a:placeholder="Search Client's Name" >
+    					<f:ajax event="keyup" listener="#{clientsBean.startRentedHistory}" render="clinetRentedHistoryDataId"/>
+    			</p:inputText>&nbsp;&nbsp;
+    			<p:commandButton update="clinetRentedHistoryDataId" icon="ui-icon-search" action="#{clientsBean.startRentedHistory}"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="clinetRentedHistoryDataId" icon="ui-icon-refresh" value="Refresh" action="#{clientsBean.startRentedHistory}"/>
+    		</f:facet>
+			</p:toolbar>
+			
+			<p:dataTable id="clinetRentedHistoryDataId" value="#{clientsBean.rentHistory}" var="client" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+			
+							<p:column headerText="Name" width="120">
+            						<p:outputLabel value="#{client.fullname}"/>
+            				</p:column>
+							
+							<p:column headerText="Rented Items" width="800">
+							
+							<p:dataTable id="rentedHistoryDataId" value="#{client.rentedBottle}" var="rpt" stickyHeader="false"
+                        		 scrollable="true">
+            				
+            				<p:column headerText="Product" width="100">
+            						<p:outputLabel value="#{rpt.productProperties.productname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="30">
+            						<p:outputLabel value="#{rpt.uom.symbol}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Recent Date Trans" width="70">
+            						<p:outputLabel value="#{rpt.currentDateTrans}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Bal." width="70">
+            						<p:outputLabel value="#{rpt.currentBalance}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Paid Amnt" width="70">
+            						<p:outputLabel value="#{rpt.currentPaidAmount}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Prev. Date Trans" width="70">
+            						<p:outputLabel value="#{rpt.prevDateTrans}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Prev Bal." width="70">
+            						<p:outputLabel value="#{rpt.prevBalance}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Prev. Paid Amnt" width="70">
+            						<p:outputLabel value="#{rpt.prevPaidAmount}"/>
+            				</p:column>
+            				
+            				</p:dataTable>	
+							</p:column>
+							
+					</p:dataTable>		
+		</p:tab>
+		
+		</p:tabView>
+		
+	</p:tab>
+	<p:tab title="Collectible Items" disabled="#{featuresBean.clientCollectible}" rendered="#{menuBean.clientsOverCounterTabCollectible}">
+		
+		
+		<p:tabView orientation="top" id="returnIdView">
+		
+		<p:ajax event="tabChange" listener="#{clientsBean.onTabChangeReturn}"/>
+		
+		<p:tab title="Items">
+			
+			<p:toolbar id="tbReturn">
+    		<f:facet name="left">
+        		<p:inputText value="#{clientsBean.searchClientsReturn}" a:placeholder="Search Client's Name" >
+    					<f:ajax event="keyup" listener="#{clientsBean.startReturn}" render="clientReturnDataId"/>
+    			</p:inputText>&nbsp;&nbsp;
+    			<p:commandButton update="clientReturnDataId" icon="fa fa-search" action="#{clientsBean.startReturn}"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="clientReturnDataId" icon="fa fa-search" value="Refresh" action="#{clientsBean.startReturn}"/>
+    		</f:facet>
+			</p:toolbar>
+			
+			<p:dataTable id="clientReturnDataId" value="#{clientsBean.returns}" var="clientRet" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+			
+							<p:column headerText="Name" width="200">
+            						<p:outputLabel value="#{clientRet.fullname}"/>
+            				</p:column>
+							
+							<p:column headerText="Rented Items" width="700">
+							
+							<p:dataTable id="returnDataId" value="#{clientRet.rentedBottle}" var="rpt" stickyHeader="false"
+							rows="10" scrollable="true" >
+                         	
+                         	<p:column headerText="Action" width="30">
+                         		<p:commandButton icon="ui-icon-search" update=":formId:returnView" actionListener="#{clientsBean.clickReturnView(rpt)}"  oncomplete="PF('multiDialogReturn').show()"/>	
+            				</p:column>
+                         	
+            				<p:column headerText="Product" width="100">
+            						<p:outputLabel value="#{rpt.productProperties.productname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="30">
+            						<p:outputLabel value="#{rpt.uom.symbol}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Current Qty" width="50">
+            						<p:outputLabel value="#{rpt.currentQty}"/>
+            				</p:column>
+            				            				
+            				<p:column headerText="Prev. Qty" width="50">
+            						<p:outputLabel value="#{rpt.prevQty}"/>
+            				</p:column>
+            				
+            				</p:dataTable>
+            				
+            				</p:column>	
+				</p:dataTable>			
+		</p:tab>
+		
+		<p:tab title="History">
+			
+			<p:toolbar id="tbReturnHistory">
+    		<f:facet name="left">
+        		<p:inputText value="#{clientsBean.searchClientsReturnHistory}" a:placeholder="Search Name" >
+    					<f:ajax event="keyup" listener="#{clientsBean.startReturnHistory}" render="clientReturnHistoryDataId"/>
+    			</p:inputText>&nbsp;&nbsp;
+    			<p:calendar value="#{clientsBean.returnHistoryDateFrom}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    <p:calendar value="#{clientsBean.returnHistoryDateTo}" pattern="yyyy-MM-dd" effect="slideDown" />
+			    &nbsp;&nbsp;
+    			
+    			<p:commandButton update="clientReturnHistoryDataId" icon="fa fa-search" action="#{clientsBean.startReturnHistory}"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="clientReturnHistoryDataId" icon="fa fa-search" value="Refresh" action="#{clientsBean.startReturnHistory}"/>
+    		</f:facet>
+			</p:toolbar>
+			
+			<p:dataTable id="clientReturnHistoryDataId" value="#{clientsBean.returnHistory}" var="clientRet" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+							
+							<p:column headerText="Action" width="70" exportable="false">
+								<p:commandButton icon="ui-icon-search" update=":formId:returnView" actionListener="#{clientsBean.clickReturnHis(clientRet)}"  oncomplete="PF('multiDialogReturn').show()"/>
+            				</p:column>
+							
+							<p:column headerText="Date" width="70">
+            						<p:outputLabel value="#{clientRet.dateTrans}"/>
+            				</p:column>
+			
+							<p:column headerText="Name" width="100">
+            						<p:outputLabel value="#{clientRet.customer.fullname}"/>
+            				</p:column>
+							
+							 <p:column headerText="Status" width="70" exportable="false">
+            							<f:view>
+                         			 		<my:if condition="#{clientRet.status==1}">
+                         			 			<f:facet name="then">
+            										<p:outputLabel value="INCOMPLETE"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:outputLabel value="COMPLETED"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            			     </p:column> 
+							
+							<p:column headerText="Product" width="100">
+            						<p:outputLabel  value="#{clientRet.productProperties.productname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="40">
+            						<p:outputLabel value="#{clientRet.uom.symbol}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Item Condition" width="70" exportable="false">
+            							<f:view>
+                         			 		<my:if condition="#{clientRet.itemCondition==1}">
+                         			 			<f:facet name="then">
+            										<p:outputLabel value="GOOD"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:outputLabel value="DAMAGED"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            			     </p:column> 
+            				
+            				<p:column headerText="Return Qty" width="40">
+            						<p:outputLabel value="#{clientRet.quantity}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Charges" width="40">
+            						<p:outputLabel value="#{clientRet.charges}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Remarks" width="70">
+            						<p:outputLabel value="#{clientRet.remarks}"/>
+            				</p:column>
+							
+				</p:dataTable>	
+			
+		</p:tab>
+		
+		</p:tabView>
+	
+	</p:tab>
+</p:tabView>
+
+</p:layoutUnit>
+</p:layout>
+
+<p:dialog header="Return Item" widgetVar="multiDialogReturn" Height="400" width="800" closable="false" draggable="false" showEffect="clip" hideEffect="clip" style="#{skin.dialog}">
+		<p:toolbar id="tbReturnView">
+    		<f:facet name="right">
+    			<p:commandButton update="returnView,msg" icon="ui-icon-note" value="Save" actionListener="#{clientsBean.saveReturn}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to save?" icon="ui-icon-alert" />
+	            </p:commandButton>
+	            <p:commandButton update="returnView,msg" icon="ui-icon-note" value="Posted" actionListener="#{clientsBean.postedReturn}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to post this item?" icon="ui-icon-alert" />
+	            </p:commandButton>
+	            <p:commandButton icon="ui-icon-closethick" value="Close" onclick="PF('multiDialogReturn').hide();"/>
+    		</f:facet>
+			</p:toolbar>
+
+		<p:panelGrid id="returnView" columns="4" columnClasses="column" cellpadding="5">
+		
+		<p:outputLabel value="Date"/>
+		<p:outputLabel value="#{clientsBean.returnDate}"/>
+		
+		<p:outputLabel value="Status"/>
+		<p:outputLabel value="#{clientsBean.returnStatus}"/>
+		
+		<p:outputLabel value="Product"/>
+		<p:outputLabel value="#{clientsBean.returnProductName}"/>
+		
+		<p:outputLabel value="UOM"/>
+		<p:outputLabel value="#{clientsBean.returnUom}"/>
+		
+		<p:outputLabel value="Quantity for Return"/>
+		<p:outputLabel value="#{clientsBean.returnRemainingQty}"/>
+		
+		<p:outputLabel value="Quantity"/>
+		<p:inputText value="#{clientsBean.returnQty}" a:type="number" style="width: 16em"/>
+		
+		<p:outputLabel value="Charge"/>
+		<p:inputText value="#{clientsBean.returnCharges}" a:type="number" style="width: 16em"/>
+		
+		<p:outputLabel value="Item Condition"/>
+		<p:selectOneMenu id="itemId" value="#{clientsBean.itemConditionId}" style="width: 16em">
+	        <f:selectItem itemLabel="Select..."/>
+	        <f:selectItems value="#{clientsBean.itemCondition}"/>
+	    </p:selectOneMenu>
+		
+		<p:outputLabel value="Remarks"/>
+		<p:outputLabel value="#{clientsBean.returnRemarks}"/>
+		
+		</p:panelGrid>
+</p:dialog>
+
+<p:dialog header="Payment History" widgetVar="multiDialogPayments" Height="500" width="800" showEffect="clip" hideEffect="clip" style="#{skin.dialog}">
+	
+	<p:dataTable id="payHisId" value="#{clientsBean.historys}" var="pay" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+                         	
+                         	<p:column headerText="Receipts" width="50" exportable="false">
+                         		<p:commandButton disabled="#{pay.enableEdit}" icon="ui-icon-search" update="itemDataId,tranDataId" actionListener="#{clientsBean.clickItem(pay.customerPayment)}" oncomplete="PF('multiDialogCUS').show()"/> 
+                         	</p:column>
+                         	
+                        	<p:column headerText="Date" width="50">
+            						<p:outputLabel value="#{pay.paymentdate}"/>
+            				</p:column>
+            				<p:column headerText="Receipt" width="70">
+            						<p:outputLabel value="#{pay.receiptNo}"/>
+            				</p:column>
+            				<p:column  width="50">
+            						<f:facet name="header">Paid</f:facet>
+            							<p:outputLabel value="#{pay.amountpay}"/>
+            						<f:facet name="footer">#{clientsBean.hisTotal}</f:facet>
+            				</p:column>
+            				<p:column headerText="Remarks"  width="100">
+            							<p:outputLabel value="#{pay.remarks}"/>
+            				</p:column>
+                         
+    </p:dataTable>                     
+	
+</p:dialog>
+
+<p:dialog header="Ordered Items" widgetVar="multiDialogOrder" maximizable="true" Height="600" width="800" closable="false" modal="true" draggable="false" showEffect="clip" hideEffect="clip" style="#{skin.dialog}">
+
+		<p:toolbar id="tbItemSold">
+    		<f:facet name="right">
+    			<p:commandButton value="Close" icon="ui-icon-closethick"  onclick="PF('multiDialogOrder').hide();"/>
+    		</f:facet>
+		</p:toolbar>
+		
+		<p:dataTable id="itemSoldDataId" value="#{clientsBean.itemSolds}" var="item" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100" paginatorPosition="top"
+                         scrollable="true" >
+                         
+                        <p:column headerText="Date" width="70">
+            				<p:outputLabel value="#{item.dateTrans}"/>
+            			</p:column>
+                        
+                        <p:column headerText="Status" width="70" exportable="false">
+            							<f:view>
+                         			 		<my:if condition="#{item.status==3}">
+                         			 			<f:facet name="then">
+            										<p:outputLabel value="NEW"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:outputLabel value="POSTED"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            			</p:column> 
+                         
+                         <p:column headerText="Product" width="100">
+            					<p:outputLabel value="#{item.product.productProperties.productname}"/>
+            			</p:column>
+            			
+            			<p:column headerText="UOM" width="40">
+            					<p:outputLabel value="#{item.product.productProperties.uom.symbol}"/>
+            			</p:column>
+            			
+            			<p:column headerText="Qty" width="50">
+            					<p:outputLabel value="#{item.quantity}"/>
+            			</p:column>
+            			
+            			<p:column headerText="Total" width="50">
+            					<p:outputLabel value="#{item.sellingPrice}"/>
+            			</p:column>
+                         
+			</p:dataTable>
+
+</p:dialog>
+
+
+
+<p:sidebar widgetVar="multiDialogCUS" position="left" style="width: 500px">
+		<p:toolbar id="tb" style="#{skin.toolbar}">
+    					<f:facet name="left">
+		        			
+    					</f:facet>
+    					<f:facet name="right">
+    						<p:commandButton update="itemDataId" value="Clear" icon="fa fa-trash" action="#{clientsBean.clearReceiptsTrans}"/>
+    						<p:commandButton update="itemDataId,tranDataId,msg" icon="fa fa-floppy-o" value="Save" actionListener="#{clientsBean.savePaymentType}">
+	            				<p:confirm header="Confirmation" message="Are you sure you want to save? Reminding you that once you selected the status to FULL PAID receipt no won't availbale anymore here. Please select Yes to save your changes otherwise select No" icon="ui-icon-alert" />
+	            			</p:commandButton>
+    					</f:facet>
+						</p:toolbar>
+	<p:outputLabel value="Please note that the purpose of this module is only tagging of receipt payment status transacted from cashier." style="color: red"/>
+	 <p:panelGrid columns="2" layout="grid" id="itemDataId" style="#{skin.grid}">
+	    <p:outputLabel value="Name" />
+	    <p:outputLabel value="#{clientsBean.customer.fullname}" />
+	    <p:outputLabel value="Payable" />
+	    <p:outputLabel value="#{clientsBean.customerPayment.amountbalance}" />
+	 	<p:outputLabel value="Receipt No" />
+	 	<p:outputLabel value="#{clientsBean.transReceiptNo}"/>
+	 	<p:outputLabel value="Amount" />
+	 	<p:outputLabel value="#{clientsBean.transReceiptAmount}"/>
+	 	<p:outputLabel value="Payment Type" />
+	 	<p:selectOneMenu  value="#{clientsBean.receiptStatusId}">
+	                			<f:selectItems value="#{clientsBean.receiptStatus}"/>
+	            			</p:selectOneMenu>
+	 </p:panelGrid>
+	 <p:dataTable id="tranDataId" value="#{clientsBean.transReceipt}" var="tr" rows="10" 
+	 					paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5" paginatorPosition="top"
+                         scrollable="true" style="#{skin.table}">
+                         
+                         <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Receipts in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="tranDataId" fileName="Receipts" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Receipts in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="tranDataId" fileName="Receipts" />
+            						</h:commandLink>
+            				</f:facet>
+                         
+                         	<p:column headerText="View" width="40">
+            					<p:commandButton update="itemDataId" icon="fa fa-search" actionListener="#{clientsBean.clickReciept(tr)}" />
+            				</p:column>
+            				
+            				<p:column headerText="Date" width="50">
+            					<p:outputLabel  value="#{tr.transdate}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Status" width="50">
+            					<p:outputLabel  value="#{tr.paymentTypeName}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Receipt" width="100">
+            						<p:outputLabel  value="#{tr.receipts}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Amount" width="70">
+            						<p:outputLabel  value="#{tr.amountbal}"/>
+            				</p:column>
+     </p:dataTable>                    
+	 
+</p:sidebar>
+
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

@@ -1,0 +1,95 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+	
+<f:view renderKitId="PRIMEFACES_MOBILE"/>
+     <h:head>
+     </h:head>
+
+     <h:body>
+		
+		<h:form id="formId" prependId="false">
+		<p:growl id="msg" showDetail="true" />
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" style="#{skin.msg}">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+		<pm:page id="first">
+		
+            <pm:header title="Room Monitoring" fixed="true">
+                <p:tabMenu activeIndex="1" style="#{skin.menu}">
+                    <p:menuitem value="Home" icon="ui-icon-home" url="roommain.xhtml" iconPos="bottom"/>
+                    <p:menuitem value="Room Maintenance" icon="ui-icon-gear" url="maintenanceroom.xhtml" iconPos="bottom"/>
+                    <p:menuitem value="Menu" icon="ui-icon-power" url="main.xhtml" iconPos="bottom"/>
+                </p:tabMenu>
+                <pm:field>
+                <p:inputText id="search" value="#{roomBean.searchRoom}" a:placeholder="Search Room" a:type="search">
+    				<f:ajax event="keyup" listener="#{roomBean.init}" render="roomId"/>
+    			</p:inputText>
+                </pm:field>
+            </pm:header>
+		
+         <pm:content>
+         	
+         	<p:dataGrid id="roomId" var="room" value="#{roomBean.rooms}" columns="3" paginator="true" rows="9" >
+		        <f:facet name="header">
+		            List Of Rooms
+		        </f:facet>
+ 
+		        <p:panel header="#{room.roomNumber} #{room.name}" style="#{skin.panel}">
+		            <h:panelGrid columns="1" style="width:100%;">
+		                <p:graphicImage name="images/room.png" style="width: 50%; height:20%" />
+				        <p:outputLabel value="Description: #{room.description}" style="#{skin.label}" />
+				        <p:outputLabel value="Price: #{room.price}" style="#{skin.label}" />
+				        <p:commandButton onclick="PF('pnl-basic').show()" update=":formId:first:roomDetailsId" value="Update" actionListener="#{roomBean.clickRoom(room)}" style="#{skin.button}" />
+				        <p:commandButton update=":formId:first:roomId msg" value="Delete" actionListener="#{roomBean.deleteRoom(room)}" style="#{skin.button}">
+				        	<p:confirm header="Confirmation" message="Are you sure you want to delete this room?" icon="ui-icon-alert" />
+				        </p:commandButton>
+		            </h:panelGrid>
+		        </p:panel>
+ 
+ 		   </p:dataGrid>
+         	
+         	
+         	
+         	
+         </pm:content>
+         
+         
+         <p:overlayPanel  widgetVar="pnl-basic" at="right" showEffect="overlay" dynamic="true" style="width: 30em;#{skin.panel}" >
+     		<h3>Room Details</h3>
+     		<p:panelGrid id="roomDetailsId" columns="2">
+	    		<p:outputLabel for="mumId" value="Room No:" style="#{skin.label}"/>
+	    		<p:inputText id="mumId" a:placeholder="Room No" value="#{roomBean.roomNumber}" />
+	    		<p:outputLabel for="nameId" value="Name:" style="#{skin.label}"/>
+	    		<p:inputText id="nameId" a:placeholder="Name" value="#{roomBean.name}" />
+	    		<p:outputLabel for="descId" value="Description:" style="#{skin.label}"/>
+	    		<p:inputTextarea id="descId" a:placeholder="Description" value="#{roomBean.description}" />
+	    		<p:outputLabel for="priceId" value="Price:" style="#{skin.label}"/>
+	    		<p:inputText id="priceId" a:placeholder="00.00" value="#{roomBean.price}" />
+	    	</p:panelGrid>	
+	    	<p:panelGrid columns="1">	
+			  <p:commandButton style="#{skin.button}" update=":formId:first:roomDetailsId" value="Clear" actionListener="#{roomBean.clearFields}"/>
+			  <p:commandButton style="#{skin.button}" update=":formId:first:roomId,msg" value="Save" actionListener="#{roomBean.saveRoom}">
+			  	<p:confirm header="Confirmation" message="Are you sure you want to save this data?" icon="ui-icon-alert" />
+			  </p:commandButton>
+			  <p:commandButton style="#{skin.button}" onclick="PF('pnl-basic').hide()" update=":formId:first:roomId" value="Close" actionListener="#{roomBean.init}"/>
+			  
+			 </p:panelGrid> 
+ 		</p:overlayPanel>
+         
+       <pm:footer title="#{versionBean.copyright.appname} #{versionBean.copyright.currentversion}" fixed="true" style="#{skin.copyrightLabel}">
+                <p:tabMenu activeIndex="1" style="#{skin.menu}" >
+                    <p:menuitem value="Add Room" icon="ui-icon-home" onclick="PF('pnl-basic').show()" actionListener="#{roomBean.clearFields}" update=":formId:first:roomDetailsId" iconPos="top"/>
+                    <p:menuitem value="Room Maintenance" icon="ui-icon-gear" url="maintenanceroom.xhtml" iconPos="top"/>
+                    <p:menuitem value="Menu" icon="ui-icon-power" url="main.xhtml" iconPos="top"/>
+                </p:tabMenu>
+            </pm:footer>
+        </pm:page>
+	</h:form>
+     </h:body>
+     
+</html>

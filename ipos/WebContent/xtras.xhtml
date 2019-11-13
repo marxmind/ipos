@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Xtras</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.min.css"/>
+            <h:outputStylesheet name="css/pageHeaderFooter.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.min.js" target="head"/>
+            
+            
+    </f:facet>
+        
+    
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+	</f:facet>
+
+    <title>Xtras</title>
+
+<style>
+<!-- 
+
+ -->
+ </style>
+
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Xtras</title>
+
+</h:head>
+
+<h:body>
+
+<h:form prependId="false" id="formId" >
+
+		<div class="page-header">
+	 		<a><p:outputLabel value="Xtras" style="#{skin.pageTitle};"/></a>
+	    </div>
+
+		<p:growl id="msg" showDetail="true" />
+		
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+		
+		<p:layout fullPage="true" id="layId">
+			
+		<p:layoutUnit position="north" size="100" visible="false"/>
+		<p:layoutUnit position="south" size="50" visible="false"/>
+		<p:layoutUnit position="west" size="0" visible="false"/>
+		<p:layoutUnit position="east" size="0" visible="false"/>
+		<p:layoutUnit position="center">
+		
+		<p:toolbar id="tbxtra" style="#{skin.toolbar}">
+    		<f:facet name="left">
+		        <p:commandButton update="" icon="fa fa-file-o" value="New" actionListener="#{xtraBean.newXtra}"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="xtraGrid" value="Clear" icon="fa fa-trash" action="#{xtraBean.newXtra}"/>
+    			<p:commandButton update="tranDataId,xtraGrid,msg" icon="fa fa-floppy-o" value="Save" actionListener="#{xtraBean.save}">
+	           		<p:confirm header="Confirmation" message="Are you sure you want to save this transaction?" icon="ui-icon-alert" />
+	           	</p:commandButton>
+	           	<p:commandButton update="tranDataId,msg" icon="fa fa-floppy-o" value="Posted" actionListener="#{xtraBean.posted}">
+	           		<p:confirm header="Confirmation" message="Are you sure you want to posted this transaction?" icon="ui-icon-alert" />
+	           	</p:commandButton>
+    		</f:facet>
+		</p:toolbar>
+	
+		<p:panelGrid id="xtraGrid"  columns="6" layout="grid">
+	        			
+	        			<p:outputLabel value="Status" style="#{skin.label}"/>
+						<p:outputLabel value="#{xtraBean.status}" style="#{skin.label}"/>
+	        			
+	        			<p:outputLabel value="Date" style="#{skin.label}"/>
+						<p:calendar value="#{xtraBean.dateTrans}" style="#{skin.calendar}"/>
+						
+						<p:outputLabel value="Description" style="#{skin.label}"/>
+						<p:inputTextarea value="#{xtraBean.xtraDescription}" a:placeholder="Explanation" style="#{skin.textInput}"/>
+						
+						<p:outputLabel value="Transaction" style="#{skin.label}"/>
+						<p:selectOneMenu id="tranId" value="#{xtraBean.transTypeId}" style="#{skin.select}">
+	            			<f:selectItem itemLabel="Select..."/>
+	                		<f:selectItems value="#{xtraBean.transTypes}"/>
+	                		<f:ajax event="change" listener="#{xtraBean.enableCutomerField}" render="cusId"/>
+	            		</p:selectOneMenu>
+						
+						<p:outputLabel value="Customer" style="#{skin.label}"/>
+						<p:selectOneMenu id="cusId" value="#{xtraBean.customerId}" style="#{skin.select}" disabled="#{xtraBean.customerEnable}" filter="true" filterMatchMode="contains">
+	            			<f:selectItem itemLabel="Select..."/>
+	                		<f:selectItems value="#{xtraBean.customers}"/>
+	            		</p:selectOneMenu>
+	            		
+	            		
+	            		<p:outputLabel value="Amount" style="#{skin.label}"/>
+						<p:inputNumber value="#{xtraBean.amount}" a:placeholder="00.00" style="#{skin.textInput}"/>
+						
+			</p:panelGrid>				
+						<p:toolbar id="tbSearchXtra">
+    					<f:facet name="left">
+    						<p:inputText value="#{xtraBean.searchDescription}" a:placeholder="Search" style="#{skin.textInput}"/>
+    						<p:calendar value="#{xtraBean.searchDateFrom}" style="#{skin.calendar}" />
+    						<p:calendar value="#{xtraBean.searchDateTo}" style="#{skin.calendar}" />
+    						<p:commandButton update="tranDataId" icon="fa fa-search" action="#{xtraBean.init}"/>	
+    					</f:facet>
+    					</p:toolbar>
+						
+						
+						<p:dataTable id="tranDataId" value="#{xtraBean.xtras}" var="tranData" rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" style="#{skin.table}"
+                         selection="#{xtraBean.xtraSelected}" rowKey="#{tranData.id}" paginatorPosition="top"
+                         >
+	        			
+	        			<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Transaction in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="tranDataId" fileName="Transaction" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Transaction in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="tranDataId" fileName="Transaction" />
+            						</h:commandLink>
+            				</f:facet>
+	        			
+	        				<p:column headerText="[*]" width="20">
+            					<p:commandButton update="tranDataId,msg" icon="fa fa-trash"  actionListener="#{xtraBean.deleteItem(tranData)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" icon="ui-icon-alert" />
+            					</p:commandButton>
+            				</p:column>
+            				
+            				<p:column selectionMode="multiple" headerText="Post" style="width:16px;text-align:center"/>
+            				
+            				<p:column headerText="Create/Show Item" width="70">
+            					<p:commandButton update=":formId:xtraGrid" icon="fa fa-search" actionListener="#{xtraBean.clickItem(tranData)}" />
+            				</p:column>
+            				
+            				<p:column headerText="Date" width="50">
+            						<p:outputLabel  value="#{tranData.dateTrans}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Status" width="50">
+            						<f:view>
+                         			 		<my:if condition="#{tranData.status==1}">
+                         			 			<f:facet name="then">
+            										<p:outputLabel  value="NEW"/>
+            									</f:facet>
+            								<f:facet name="else">
+            										<p:outputLabel  value="POSTED"/>
+            								</f:facet>
+            						  		</my:if>
+            						  </f:view>
+            				</p:column>
+            				
+            				<p:column headerText="Transaction" width="100">
+            						<p:outputLabel  value="#{tranData.transactionName}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Description" width="100">
+            						<p:outputLabel value="#{tranData.description}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Customer" width="100">
+            						<p:outputLabel  value="#{tranData.customer.fullname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Amount" width="50">
+            						<p:outputLabel  value="#{tranData.amount}" />
+            				</p:column>
+            				
+            			</p:dataTable>	
+		</p:layoutUnit>
+	</p:layout>	
+		
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

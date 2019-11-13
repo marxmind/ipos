@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>SHEEDZ</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.css"/>
+            <h:outputStylesheet name="css/dashboard.css"/>
+            <h:outputStylesheet name="css/panel.css"/>
+            <h:outputStylesheet name="css/dataTables.bootstrap.mini.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.js" target="head"/>
+            
+            
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>SHEEDZ</title>
+
+<style>
+<!-- 
+.dataDesignTable{
+	font-style: normal; 	
+	font-family: Times New Roman; 
+	font-size: 80%;
+	font-weight: bold;
+}
+
+.centerPage1{
+	position: relative;
+	margin-left: 5px;
+	margin-bottom: 5px;
+	width: 100%;
+	height: 100%;
+	border: 3px solid black;
+	padding: 1px;
+}
+
+
+
+ -->
+ </style>
+
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>SHEEDZ</title>
+
+</h:head>
+
+<h:body>
+	
+
+<h:form prependId="false" id="formId" >
+	
+	<p:panel id="panel" header="UOM Profile">
+	<p:focus context="panel"/>
+    
+		
+		<p:toolbar id="tb">
+    		<f:facet name="left">
+		        <p:commandButton type="button" value="Menu" icon="fa fa-bars" onclick="PF('multiDialog').show()"/>
+		        <p:commandButton update=":formId:userUOMId"  value="New" icon="fa fa-file" onclick="PF('multiDialogUOM').show()"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton value="Print" icon="ui-icon-print" action="#{auomBean.printAll}"/>
+    			<p:commandButton value="Logout" icon="ui-icon-power" action="#{loginBean.logout}"/>
+    		</f:facet>
+		</p:toolbar>
+ 
+			<!-- <div style="height:500px"></div> -->
+ 
+		<p:sticky target="tb" />
+		
+		
+		
+		<p:dataTable id="uomId" value="#{auomBean.uoms}" var="rpt" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" styleClass="dataDesignTable"
+                         >
+                         	
+          					<p:column headerText="[*]" width="20">
+            					<p:commandButton update=":formId:uomId" icon="fa fa-trash" onclick="if( ! confirm('Are you sure you want to delete this data?')) return false" actionListener="#{auomBean.deleteRow(rpt,true)}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Print" width="20">
+            					<p:commandButton update=":formId:uomId" icon="fa fa-print"  actionListener="#{auomBean.print}"/>
+            				</p:column>                
+                         
+                         	<p:column headerText="Description" width="70">
+                         		<p:commandLink update=":formId:userUOMId" actionListener="#{auomBean.clickItem(rpt)}" style="color: transparent;" oncomplete="PF('multiDialogUOM').show()">
+            						<h:outputText  value="#{rpt.uomname}" style="color: black;"/>
+            					</p:commandLink>		
+            				</p:column>
+            				
+            				<p:column headerText="Symbol" width="70">
+                         		<p:commandLink update=":formId:userUOMId" actionListener="#{auomBean.clickItem(rpt)}" style="color: transparent;" oncomplete="PF('multiDialogUOM').show()">
+            						<h:outputText  value="#{rpt.symbol}" style="color: black;"/>
+            					</p:commandLink>		
+            				</p:column>
+            				 
+						
+		</p:dataTable>
+	
+	</p:panel>		
+
+<p:dialog header="UOM Profile" widgetVar="multiDialogUOM" Height="80" width="500">
+		<p:panelGrid id="userUOMId" columns="2" columnClasses="column" cellpadding="5">
+						
+				<h:outputLabel for="nameId" value="Description:" />
+        		<p:inplace id="nameId" editor="true">
+            		<p:inputText value="#{auomBean.uomname}" required="true" label="text" />
+        		</p:inplace>
+        		
+        		<h:outputLabel for="symId" value="Symbol:" />
+        		<p:inplace id="symId" editor="true">
+            		<p:inputText value="#{auomBean.symbol}" required="true" label="text" />
+        		</p:inplace>
+        		
+				
+        		<f:facet name="footer">
+        			<p:commandButton update="@form" value="Save"  styleClass="btn btn-primary" icon="ui-icon-note" actionListener="#{auomBean.save}" style="width: 10em;" onclick="PF('multiDialogUOM').hide();"/>
+     				<p:commandButton update="@form" value="Close" styleClass="btn btn-primary" icon="ui-icon-closethick" actionListener="#{auomBean.close}" style="width: 10em;" onclick="PF('multiDialogUOM').hide();"/>
+     			</f:facet>   	
+     </p:panelGrid> 
+	 
+</p:dialog>
+
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

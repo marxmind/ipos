@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:c="http://java.sun.com/jsf/core"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>#{versionBean.copyright.appname} Feature Settings</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <h:outputStylesheet name="css/pageHeaderFooter.css"/>
+            <h:outputStylesheet name="css/dataTables.bootstrap.mini.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.js" target="head"/>
+            
+            
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>#{versionBean.copyright.appname} Feature Settings</title>
+
+<style>
+<!-- 
+
+
+.centerPage{
+	position: relative;
+	margin-left: 0px;
+	margin-bottom: 0px;
+	width: 100%;
+	height: 100%;
+	border: 3px solid black;
+	padding: 1px;
+}
+
+
+ -->
+ </style>
+ 
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>#{versionBean.copyright.appname} Feature Settings</title>
+
+</h:head>
+
+<h:body>
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#headId">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    
+                    <a class="navbar-brand" href="#">#{versionBean.copyright.appname}<h3 style="text-align:center;font-style: italic;font-size: 15px;">#{versionBean.copyright.appname} Business Management System</h3></a>
+                    
+                </div>
+            </div>
+        </div>
+<h:form prependId="false" id="formId">
+		
+		<h:panelGrid id="panel1" class="centerPage" columns="1" border="0" cellpadding="1" cellspacing="0" 
+				>
+				<p:outputPanel  style="text-align:center;">
+				<p:graphicImage name="gif/wallpaper.jpg" style="width: 100%; height: 100%"/>
+				</p:outputPanel>
+		</h:panelGrid>		
+		<p:dialog  visible="true" header="Application Feature Notification" widgetVar="multiDialog" modal="true" showEffect="explode" hideEffect="explode" resizable="false" width="300">
+        <p:outputPanel id="dialogaction" style="text-align:center;">
+        </p:outputPanel>
+        
+        <p:panelGrid columns="2">
+        	
+        	<f:facet name="header">
+        		<p style="color: red">Please contact application developer. The module you have selected is not available on your subscription.</p>
+        	</f:facet>
+        </p:panelGrid>
+        
+</p:dialog>        
+</h:form>
+<ui:include src="loginfooter.xhtml" />
+</h:body>
+</html>

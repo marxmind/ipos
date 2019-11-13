@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>SHEEDZ Receipt Recording</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.css"/>
+            <h:outputStylesheet name="css/dashboard.css"/>
+            <h:outputStylesheet name="css/panel.css"/>
+            <h:outputStylesheet name="css/dataTables.bootstrap.mini.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <!-- <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.js" target="head"/> -->
+            
+            
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>SHEEDZ Receipt Recording</title>
+
+<style>
+<!-- 
+.dataDesignTable{
+	font-style: normal; 	
+	font-family: Times New Roman; 
+	font-size: 80%;
+	font-weight: bold;
+}
+
+.chargingMenu{
+	position: fixed;
+	margin-left: auto;
+    margin-right: auto;
+	width: 23%;
+	height: 100%;
+	border: 3px solid #73AD21;
+	padding: 1px;
+}
+
+.orderItem{
+	position: relative;
+	margin-left: auto;
+	margin-bottom: auto;
+	width: 75%;
+	height: 100%;
+	border: 3px solid #73AD21;
+	padding: 1px;
+}
+
+ -->
+ </style>
+ <!-- 
+ <h:outputScript library="js" name="classie.js"/>
+<h:outputStylesheet library="css" name="normalize.css" />
+<h:outputStylesheet library="css" name="set2.css" /> -->
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>SHEEDZ Receipt Recording</title>
+
+</h:head>
+
+<h:body>
+	
+
+<h:form prependId="false" id="formIdPos" >
+	<p:growl id="growl" life="2000" />
+		
+		 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+		
+	<p:panel id="panel" header="Receipt Recording">
+	<p:focus context="panel"/>
+				
+				
+		<p:toolbar id="tb">
+    		<f:facet name="left">
+    			<p:commandButton type="button" value="Menu" icon="ui-icon-contact" onclick="PF('multiDialog').show()"/>
+		        <p:inputText id="searchId" a:placeholder="Barcode" value="#{receiptBean.searchCode}">
+		        	<f:ajax event="change" listener="#{receiptBean.search}" render="freshId"/>
+		        </p:inputText>
+		        <p:commandButton id="amountId"  value="Enter" icon="ui-icon-pencil" actionListener="#{receiptBean.keyButton}"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton type="button" value="Product Look Up" icon="ui-icon-search" onclick="PF('multiDialogProductLookUp').show()"/>
+    			<p:commandButton id="freshId" update="formIdPos" value="Refresh" icon="ui-icon-refresh"/>
+    			<p:commandButton value="Logout" icon="ui-icon-power" action="#{loginBean.logout}"/>
+    		</f:facet>
+		</p:toolbar>
+		<!-- <div style="height:500px"></div> -->
+		<p:sticky target="tb" />		
+
+</p:panel>
+
+<p:dialog header="Product Look Up" position="center top" widgetVar="multiDialogProductLookUp"   Height="500" width="1000" maximizable="true" minimizable="false" modal="true" showEffect="explode" hideEffect="explode" resizable="false">
+
+	<p:toolbar id="tbProd">
+    		<f:facet name="left">
+		        <p:inputText id="prodSearchId" a:placeholder="Product Name" value="#{receiptBean.searchProduct}">
+		        	<f:ajax event="keyup" listener="#{receiptBean.loadProduct}" render="productDataId"/>
+		        </p:inputText>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="formIdPos" value="Close" icon="ui-icon-closethick" onclick="PF('multiDialogProductLookUp').hide()"/>
+    		</f:facet>
+		</p:toolbar>
+
+
+	<p:dataGrid id="productDataId" var="rpt" value="#{receiptBean.items}" columns="3" layout="grid"
+	                	rows="12" paginator="true" style="margin-top:20px">
+	 
+	        		<p:panel header="#{rpt.product.productProperties.productname}" style="text-align:center">
+	            		<h:panelGrid columns="1" style="width:100%">
+	            		
+	            			<h:outputText  value="Price : Php#{rpt.sellingPrice}" style="font-weight: bold"/>
+                			<h:outputText  value="In stock : #{rpt.quantity}"/>
+                			<h:outputText  value="UOM : #{rpt.product.productProperties.uom.symbol}"/>
+                			<h:outputText  value="Brand : #{rpt.product.productProperties.productBrand.productbrandname}"/>
+	            			
+						</h:panelGrid>
+						
+						<f:facet name="footer">
+						<p:outputLabel value="#{receiptBean.selectedQty}" a:placeholder="0.00" a:type="number" style="width: 5em" />
+						<p:commandButton value="-" />
+						<p:commandButton value="+" />
+						</f:facet>
+						
+					</p:panel>
+	</p:dataGrid>
+					
+</p:dialog>		
+
+<h:outputScript>
+
+			
+
+
+$(document).ready(
+      function(){fixPFDialogToggleMaximize('multiDialogProductLookUp');}
+ );
+
+function fixPFDialogToggleMaximize(dlg){
+if(undefined == dlg.doToggleMaximize) {
+    dlg.doToggleMaximize = dlg.toggleMaximize;
+    dlg.toggleMaximize = function() {
+        this.doToggleMaximize();
+
+        var marginsDiff = this.content.outerHeight() - this.content.height();
+        var newHeight = this.jq.innerHeight() - this.titlebar.outerHeight() - marginsDiff;
+        this.content.height(newHeight);
+    };
+}
+}
+</h:outputScript>	
+<p:defaultCommand target="#{receiptBean.keyPress}" />
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

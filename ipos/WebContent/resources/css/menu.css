@@ -1,0 +1,35 @@
+/*FOCUS*/
+.focus {
+  -webkit-transition: all 1s ease;
+     -moz-transition: all 1s ease;
+       -o-transition: all 1s ease;
+      -ms-transition: all 1s ease;
+          transition: all 1s ease;
+}
+
+.focus:hover {
+  border: 10px solid #808040;
+  border-radius: 10%;
+}
+
+
+.imageContainer {
+    position: relative;
+    width: 300px;
+    height: 130px;
+    
+}
+.imageContainer div {
+    position: absolute;
+    background: transparent;
+}
+
+.imageContainer1 {
+    position: relative;
+    width: 300px;
+    height: 130px;
+}
+.imageContainer1 div {
+    position: absolute;
+    background: transparent;
+}

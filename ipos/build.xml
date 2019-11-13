@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+
+<project name="sebu" basedir="." default="usage">
+	
+	<property file="build.properties"/>
+	<property name="src.dir" value="src"/>
+	<property name="web.dir" value="war"/>
+	<property name="javadoc.dir" value="doc"/>
+	<property name="build.dir" value="${web.dir}/WEB-INF/classes"/>
+	<property name="name" value="ipos"/>
+	
+	<path id="master-classpath">
+		<fileset dir="${web.dir}/WEB-INF/lib">
+			<include name="*.jar"/>	
+		</fileset>	
+		<pathelement path="${build.dir}"/>
+	</path>
+	
+	<target name="javadoc">
+		<javadoc packagenames="com.*" sourcepath="${src.dir}"
+			destdir="doc" version="true" windowtitle="IPOS IPoint Of Sales Application">
+			
+				<doctitle><![CDATA[<h1>= IPoint Of Sales Appliacation =</h1>]]> </doctitle>
+				<bottom><![CDATA[Developed by: Mark italia Copyright © 2016. All Rights Reserved. Build version ${buildVersion}]]></bottom>
+			
+				<group title="controller packages" packages="com.italia.ipos.controller.*"/>
+		</javadoc>
+	</target>
+	
+	
+	
+	<target name="usage">
+		<echo message="javadoc src : ${src.dir}"/>
+		<echo message = "-----------------------------------"/>
+		<echo message = "${name} build file"/>
+		<echo>Project code name : ${projectCodeName}</echo>
+		<echo>Application name : ${applicationName}</echo>
+		<echo>Build version : ${buildVersion}</echo>
+		<echo>start building ipos classes....</echo>
+		<echo>Ant build file directory ${ant.file} </echo>
+		<echo>Ant version ${ant.version} </echo>
+		<echo>basedirectory ${basedir} </echo>
+		<echo>Java version ${ant.java.version}</echo>
+		<echo>Project name ${ant.project.name}</echo>
+		<echo>Default target ${ant.project.default-target}</echo>
+		<echo>Target invoke ${ant.project.invoked-targets}</echo>
+		<echo>Location of ant jar ${ant.core.lib}</echo>
+		<echo>Home directory of Ant ${ant.home}</echo>
+		<echo>Ant library directory ${ant.library.dir}</echo>
+		<echo message = "deploy    --> Deploy application as directory"/>
+		<echo message = "deploywar --> Deploy application as a WAR file"/>
+		<echo message = "-----------------------------------"/>
+	</target>
+	
+	<target name="build" description="Compile main source java files">
+		
+		 
+		<mkdir dir="${web.dir}/WEB-INF/lib"/>
+		<mkdir dir="${build.dir}"/>
+		
+		<copy todir="${web.dir}" preservelastmodified="true">
+					
+					<fileset dir="${webcontent}">
+						<include name="**/*.xml"/>
+					</fileset>
+					
+		</copy>
+		
+		
+		<javac destdir="${build.dir}" source="1.8" target="1.8" debug="true"
+			deprecation="false" optimize="false" failonerror="true" >
+			
+			<src path="${src.dir}"/>
+			<classpath refid="master-classpath"/>
+		</javac>
+		
+	</target>
+	
+	<target name="library"  description="Required lirbary for the application">
+			<copy todir="${web.dir}" preservelastmodified="true">
+								<fileset dir="${webcontent}">
+									<include name="**/*.jar"/>
+								</fileset>
+			</copy>
+		</target>
+	
+	<target name="deploy" depends="build" description="Deploy Application">
+		
+		<copy todir="${deploy.path}/${name}" preservelastmodified="true">
+			
+			<fileset dir="${web.dir}">
+				<include name="**/*.*"/>
+			</fileset>
+			
+		</copy>
+	</target>
+	
+	<target name="deploywar" depends="build" description="Deploy Application as WAR file">
+		
+		<war destfile="${name}.war" webxml="${web.dir}/WEB-INF/web.xml">
+			<fileset dir="${web.dir}">
+				<include name="**/*.*"/>
+			</fileset>
+		</war>
+		
+		<copy todir="${deploy.path}" preservelastmodified="true">
+			<fileset dir=".">
+				<include name="*.war"/>	
+			</fileset>
+		</copy>
+		
+	</target>
+	<!--
+	<target name="clean" description="Clean output directories">
+		<delete>
+			<fileset dir="${build.dir}">
+				<include name="**/*.class"/>
+			</fileset>
+		</delete>
+	</target>
+	-->
+</project>

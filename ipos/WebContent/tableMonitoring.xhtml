@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>SHEEDZ Table Monitoring</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.css"/>
+            <h:outputStylesheet name="css/dashboard.css"/>
+            <h:outputStylesheet name="css/panel.css"/>
+            <h:outputStylesheet name="css/dataTables.bootstrap.mini.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.js" target="head"/>
+            
+            
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>SHEEDZ Table Monitoring</title>
+
+<style>
+<!-- 
+.dataDesignTable{
+	font-style: normal; 	
+	font-family: Times New Roman; 
+	font-size: 80%;
+	font-weight: bold;
+}
+
+.centerPage1{
+	position: relative;
+	margin-left: 5px;
+	margin-bottom: 5px;
+	width: 100%;
+	height: 100%;
+	border: 3px solid black;
+	padding: 1px;
+}
+
+
+
+ -->
+ </style>
+
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>SHEEDZ Table Monitoring</title>
+
+</h:head>
+
+<h:body>
+	
+<h:outputScript>
+	
+	function handleDrop(event, ui) {
+        var droppedCar = ui.draggable;
+ 
+        droppedCar.fadeOut('fast');
+    }
+	
+	function allowDrop(ev) {
+    	ev.preventDefault();
+	}
+
+	function drag(ev) {
+	    ev.dataTransfer.setData("text", ev.target.id);
+	}
+
+	function drop(ev) {
+	    ev.preventDefault();
+	    var data = ev.dataTransfer.getData("text");
+	    ev.target.appendChild(document.getElementById(data));
+	}
+
+</h:outputScript>	
+
+<h:form prependId="false" id="formId" >
+	<p:growl id="msg" showDetail="true" />
+	<p:panel id="panel" header="Table Monitoring"/>
+	<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+	<p:focus context="panel"/>
+    	
+		
+		<p:toolbar id="tbSup">
+    		<f:facet name="left">
+		        <p:commandButton type="button" value="Menu" icon="ui-icon-contact" onclick="PF('multiDialog').show()"/>
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update=":formId:display" value="Table Maintenance" actionListener="#{tableBean.initMaintenance}" oncomplete="PF('maintenanceDialog').show()"/>
+    			<p:commandButton value="Logout" icon="ui-icon-power" action="#{loginBean.logout}"/>
+    		</f:facet>
+		</p:toolbar>
+ 		<p:sticky target="tbSup" />
+		
+		<p:fieldset id="availableTableField" legend="Available Tables">
+		
+		<p:outputPanel id="returnArea">
+		<h:outputText value="!!!Drop here!!!" rendered="#{empty tableBean.tables}" style="font-size:24px;" />
+        <p:dataGrid id="availableTables" var="tbl" value="#{tableBean.tables}" columns="7">
+            <p:panel id="pnl" header="#{tbl.tableName}" style="text-align:center">
+                <h:panelGrid columns="1" style="width:100%">
+                    <p:graphicImage name="gif/tableSelect.jpg" style="width: 15%; height: 20%" styleClass="img-circle"/>
+                </h:panelGrid>
+            </p:panel>
+ 
+            <p:draggable for="pnl" revert="true" opacity="0.5"/>
+        </p:dataGrid>
+        </p:outputPanel>
+   		 </p:fieldset>
+		
+		<p:droppable for="availableTableField" tolerance="touch" activeStyleClass="ui-state-highlight" datasource="occupiedSelected" onDrop="handleDrop">
+        	<p:ajax listener="#{tableBean.onTableReturnDrop}" update="dropArea returnArea" />
+    	</p:droppable>
+		
+		<p:fieldset id="selectedTables" legend="Occupied Tables" style="margin-top:20px">
+        <p:outputPanel id="dropArea">
+            <h:outputText value="!!!Drop here!!!" rendered="#{empty tableBean.tableOccupieds}" style="font-size:24px;" />
+            <p:dataGrid id="occupiedSelected" var="tbl" value="#{tableBean.tableOccupieds}" columns="7">
+            <p:panel id="pnlreturn" header="#{tbl.tableName}" style="text-align:center">
+                <h:panelGrid columns="1" style="width:100%">
+                    <p:graphicImage name="gif/tableSelect.jpg" style="width: 15%; height: 20%" styleClass="img-circle"/>
+                </h:panelGrid>
+            </p:panel>
+ 
+            <p:draggable for="pnlreturn" revert="true" opacity="0.5"/>
+            
+        </p:dataGrid>
+            
+        </p:outputPanel>
+    	</p:fieldset>
+		
+		<p:droppable for="selectedTables" tolerance="touch" activeStyleClass="ui-state-highlight" datasource="availableTables" onDrop="handleDrop">
+        	<p:ajax listener="#{tableBean.onTableDrop}" update="dropArea returnArea" />
+    	</p:droppable>
+		
+		<!-- <p:graphicImage name="gif/tableSelect.jpg" style="width: 5%; height: 5%" id="dragMe"/>
+		<p:draggable for="dragMe" opacity="0.5" />
+		
+		<p:outputPanel a:ondrop="drop(event)" a:ondragover="allowDrop(event)" id="restrictPanel" layout="block" style="width:400px;height:200px;border:1px solid #666666;margin-bottom:20px">
+		
+		</p:outputPanel> -->
+		
+		
+		<p:dialog header="Table Maintenance" widgetVar="maintenanceDialog" resizable="false" draggable="false"
+              showEffect="fade" hideEffect="fade" modal="true" width="400">
+ 
+ 		<p:toolbar id="menuTool">
+			<f:facet name="left">
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="editFldsId" icon="ui-icon-note" value="New" actionListener="#{tableBean.clearFields}"/>
+    			<p:commandButton update="display,viewDataId,msg" icon="ui-icon-note" value="Save" actionListener="#{tableBean.saveTable}">
+	            	<p:confirm header="Confirmation" message="Are you sure you want to save this data?" icon="ui-icon-alert" />
+	            </p:commandButton>
+                <p:commandButton update="formId" icon="ui-icon-circle-close" value="Close" actionListener="#{tableBean.init}"/>
+    		</f:facet>
+    	</p:toolbar>	
+		
+ 
+        <p:outputPanel id="display">
+            <h:panelGrid id="editFldsId" columns="1" cellpadding="5"> 
+                <p:inputText value="#{tableBean.tableNumber}" a:placeholder="Table Number" style="font-weight:bold"/>
+                <p:inputText value="#{tableBean.tableName}" a:placeholder="Table Name" style="font-weight:bold"/>
+            </h:panelGrid>
+            
+            <p:dataTable id="viewDataId" var="tbl" value="#{tableBean.maintainTables}"
+            			 rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" styleClass="dataDesignTable">
+            			
+            			<p:column headerText="Table Number" width="50">
+                    		<h:outputText value="#{tbl.tableNumber}" />
+                		</p:column>
+                		
+                		<p:column headerText="Table Name" width="100">
+                    		<h:outputText value="#{tbl.tableName}" />
+                		</p:column>
+            			
+            			<p:column headerText="Change" width="60">
+            				<p:commandButton update="editFldsId" value="Change" actionListener="#{tableBean.clickChange(tbl)}"/>
+            			</p:column>
+            				
+            </p:dataTable>
+            
+        </p:outputPanel>
+    	</p:dialog>
+		
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

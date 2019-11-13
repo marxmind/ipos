@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Customer</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.min.css"/>
+             <h:outputStylesheet name="css/pageHeaderFooter.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.min.js" target="head"/>
+            
+            
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>Customer</title>
+
+<style>
+<!-- 
+
+ -->
+ </style>
+
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Customer</title>
+
+</h:head>
+
+<h:body>
+	
+
+<h:form prependId="false" id="formId" >
+		
+		<p:growl id="msg" showDetail="true" />
+	    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" style="#{skin.msg}">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+	
+	<div class="page-header">
+	 		<a><p:outputLabel value="Customer Setup" style="#{skin.pageTitle};"/></a>
+	</div>
+	
+	<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+	<p:focus context="tb"/>
+    
+		
+		<p:layout fullPage="true">
+			
+		<p:layoutUnit position="north" size="100" visible="false"/>
+		<p:layoutUnit position="south" size="50" visible="false"/>
+		<p:layoutUnit position="east" size="0" visible="false"/>
+		<p:layoutUnit position="west" size="350" visible="true">
+		
+		<p:toolbar id="tbCus" style="#{skin.toolbar}">
+    		<f:facet name="left">
+        		
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="usercusId"  value="New" icon="fa fa-file-o" actionListener="#{customerBean.clearFields}"/>
+    			<p:commandButton id="updateId" update="cusId msg" value="Save"  icon="fa fa-floppy-o" actionListener="#{customerBean.save}">
+            			<p:confirm header="Confirmation" message="Are you sure you want to save?" icon="ui-icon-alert" />
+            	</p:commandButton>
+    		</f:facet>
+		</p:toolbar>
+		
+		<p:panelGrid id="usercusId" columns="2" layout="grid" style="#{skin.grid}">
+				
+				<p:outputLabel value="Date:" />
+				<p:inputText value="#{customerBean.dateregistered}" disabled="true"/>
+				
+				<p:outputLabel value="Card Number:" />
+				<p:inputText value="#{customerBean.cardnumber}"/>
+						
+				<p:outputLabel value="First Name:" />
+            	<p:inputText value="#{customerBean.firstname}"/>
+        		
+        		
+        		<p:outputLabel value="Middle Name:" />
+            	<p:inputText value="#{customerBean.middlename}"/>
+        		
+        		
+        		<p:outputLabel value="Last Name:" />
+            	<p:inputText value="#{customerBean.lastname}"/>
+        		
+        		<p:outputLabel value="Age:" />
+        		<p:inputText value="#{customerBean.age}" a:type="number"/>
+        		
+        		<p:outputLabel  value="Gender: "/>
+            		<p:selectOneMenu value="#{customerBean.genderId}" style="width: 15em" filterMatchMode="contains" filter="true">
+                		<f:selectItems value="#{customerBean.genderList}"/>
+            		</p:selectOneMenu>
+        		
+        		<p:outputLabel  value="Province: "/>
+            		<p:selectOneMenu value="#{customerBean.provinceId}" style="width: 15em" filterMatchMode="contains" filter="true">
+                		<f:selectItems value="#{customerBean.province}"/>
+            		</p:selectOneMenu>
+        		
+        		<p:outputLabel  value="Municipality: "/>
+            		<p:selectOneMenu value="#{customerBean.municipalityId}" style="width: 15em" filterMatchMode="contains" filter="true">
+                		<f:selectItems value="#{customerBean.municipality}"/>
+            		</p:selectOneMenu>
+        		
+        		<p:outputLabel  value="Barangay: "/>
+            		<p:selectOneMenu value="#{customerBean.barangayId}" style="width: 15em">
+                		<f:selectItems value="#{customerBean.barangay}"/>
+            		</p:selectOneMenu>
+        		
+        		<p:outputLabel value="Purok:" />
+            	<p:inputText value="#{customerBean.address}"/>
+        		
+        		<p:outputLabel value="Contact No:" />
+            	<p:inputText value="#{customerBean.contactno}"/>
+				   	
+     </p:panelGrid> 
+		
+		</p:layoutUnit>
+		
+		<p:layoutUnit position="center">	
+		
+		<p:toolbar id="tb" style="#{skin.toolbar}">
+    		<f:facet name="left">
+        		<p:inputText value="#{customerBean.searchCustomer}" a:placeholder="Search Customer's Name">
+    					<f:ajax event="keyup" listener="#{customerBean.init}" render="cusId"/>
+    		</p:inputText>
+    		</f:facet>
+    		<f:facet name="right">
+    		</f:facet>
+		</p:toolbar>
+ 		
+		<p:dataTable id="cusId" value="#{customerBean.customers}" var="rpt" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100" paginatorPosition="top"
+                         scrollable="true" style="#{skin.table}"
+                         >
+                         	
+                         	<p:column width="20">
+								<p:rowToggler />
+							</p:column>
+                         	
+          					<p:column headerText="[*]" width="20">
+            					<p:commandButton update=":formId:cusId" icon="fa fa-trash"  actionListener="#{customerBean.deleteRow(rpt)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" icon="ui-icon-alert" />
+            					</p:commandButton>
+            				</p:column>
+            				
+            				<p:column headerText="Action" width="20">
+            					<p:commandButton update="usercusId" icon="fa fa-search"  actionListener="#{customerBean.clickItem(rpt)}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Date Registered" width="70">
+            						<p:outputLabel  value="#{rpt.dateregistered}"/>
+            				</p:column>
+            				
+                         	<p:column headerText="Customer Name" width="120">
+            						<p:outputLabel  value="#{rpt.fullname}"/>
+            				</p:column>
+            				
+            				
+            				<p:column headerText="Gender" width="50">
+                         			 <f:view>
+                         			 <my:if condition="#{rpt.gender==1}">
+                         			 	<f:facet name="then">
+            								<p:outputLabel  value="Male"/>
+            							</f:facet>
+            							<f:facet name="else">
+            								<p:outputLabel  value="Female"/>
+            							</f:facet>
+            						  </my:if>
+            						  </f:view>		
+            				</p:column> 
+            				
+            				
+            				<p:column headerText="Age" width="30">
+            						<p:outputLabel value="#{rpt.age}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Contact No" width="70">
+            						<p:outputLabel value="#{rpt.contactno}"/>
+            				</p:column>
+            				
+							<p:rowExpansion>
+								<p:panelGrid columns="2">
+									
+									<p:outputLabel value="Card Number" />
+									<p:outputLabel value="#{rpt.cardno}" />
+									
+									<p:outputLabel value="Address" />
+									<p:outputLabel value="#{rpt.address}, #{rpt.barangay.name}, #{rpt.municipality.name},  #{rpt.province.name}" />
+									
+								</p:panelGrid>
+							</p:rowExpansion>
+						
+		</p:dataTable>
+	
+	</p:layoutUnit>
+	</p:layout>		
+
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

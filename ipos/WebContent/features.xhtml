@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>#{versionBean.copyright.appname} Feature Settings</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.css"/>
+             <h:outputStylesheet name="css/menu.css"/>
+            <h:outputStylesheet name="css/pageHeaderFooter.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.js" target="head"/>
+            
+            
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>#{versionBean.copyright.appname} Feature Settings</title>
+
+ 
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>#{versionBean.copyright.appname} Feature Settings</title>
+
+</h:head>
+
+<h:body>
+	
+
+<h:form prependId="false" id="formId">
+		
+		<div class="page-header">
+	 		<a><p:outputLabel value="Feature Settings" style="#{skin.pageTitle};"/></a>
+	    </div>
+
+		<p:growl id="msg" showDetail="true" />
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+    	 
+		<p:layout fullPage="true">
+			
+		<p:layoutUnit position="north" size="100" visible="false"/>
+		<p:layoutUnit position="south" size="50" visible="false"/>
+		<p:layoutUnit position="west" size="400" visible="false"/>
+		<p:layoutUnit position="east" size="400" visible="false"/>
+		<p:layoutUnit position="center">		
+		
+		<p:tabView orientation="top" id="tabFeatures" style="#{skin.tabs}">
+			<p:ajax event="tabChange" listener="#{featuresBean.onTabChange}" update="tabFeatures" />
+		
+			<p:tab title="BASIC">
+				
+				<h:outputLabel value="Default" />
+				<p:selectBooleanCheckbox value="#{featuresBean.basic}">
+		        	  	<p:ajax update="msg" listener="#{featuresBean.activate('BASIC')}" />
+		        </p:selectBooleanCheckbox>	
+	        	<br/><br/>
+	        	<p:outputLabel value="TAX Percentage">
+	        		<p:inputNumber value="#{featuresBean.vatValue}" />
+	        		<p:commandButton update="msg" value="Update" actionListener="#{featuresBean.updateVat}">
+            				<p:confirm header="Confirmation" message="Are you sure you want to update tax percentage?" icon="ui-icon-alert" />
+            		</p:commandButton>
+	        		</p:outputLabel>
+	        	<br/><br/>
+	        	<p:dataTable id="basicDataId" value="#{featuresBean.basics}" var="rpt" rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100" paginatorPosition="top" paginatorAlwaysVisible="false"
+                         scrollable="true">
+                         
+                         <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Basic in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="basicDataId" fileName="BasicDetails" />
+            						</h:commandLink>
+            				</f:facet>
+                         
+                        <p:column headerText="Module" width="100">
+            						<p:outputLabel value="#{rpt.moduleName}" style="color: black;"/>
+            			</p:column>
+                         
+                         
+                 </p:dataTable>        
+				
+			</p:tab>
+			
+			<p:tab title="CUSTOM">
+			
+				<h:outputLabel value="Custom" />
+				<p:selectBooleanCheckbox value="#{featuresBean.custom}">
+	            	<p:ajax update="customDataId,msg" listener="#{featuresBean.activate('CUSTOM')}" />
+	        	</p:selectBooleanCheckbox>
+				
+				<br/><br/>
+	        	
+	        	<p:dataTable id="customDataId" value="#{featuresBean.customs}" var="rpt" rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100" paginatorPosition="top" paginatorAlwaysVisible="false"
+                         scrollable="true">
+                         
+                         <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Basic in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="customDataId" fileName="CustomDetails" />
+            						</h:commandLink>
+            				</f:facet>
+                         
+                        <p:column headerText="Enable" width="30">
+		        				 <p:selectBooleanCheckbox value="#{rpt.checked}">
+	            					<p:ajax update="customDataId,msg" listener="#{featuresBean.changeActivation(rpt)}" />
+	        					 </p:selectBooleanCheckbox>		 
+	        			</p:column> 
+                         
+                        <p:column headerText="Module" width="100">
+            						<p:outputLabel value="#{rpt.moduleName}" style="color: black;"/>
+            			</p:column>
+                         
+                         
+                 </p:dataTable>  
+				
+			</p:tab>
+		
+		</p:tabView>           
+		
+		</p:layoutUnit>
+		</p:layout>
+		
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+</h:body>
+</html>

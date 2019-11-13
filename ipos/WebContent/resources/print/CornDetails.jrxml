@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-04-25T08:01:44 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CornDetails" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ec903f4e-2bae-4d71-8ecb-ef9bf3c1276d">
+	<parameter name="PARAM_DATE" class="java.lang.String"/>
+	<parameter name="PARAM_PRINTEDDATE" class="java.lang.String"/>
+	<parameter name="PARAM_PROCCESSEDBY" class="java.lang.String"/>
+	<parameter name="PARAM_W_PURCHASED" class="java.lang.String"/>
+	<parameter name="PARAM_W_CURRENT_PRICE" class="java.lang.String"/>
+	<parameter name="PARAM_W_TOTAL_KILO" class="java.lang.String"/>
+	<parameter name="PARAM_W_TOTAL_DISCOUNT" class="java.lang.String"/>
+	<parameter name="PARAM_W_TOTAL_COMMISION" class="java.lang.String"/>
+	<parameter name="PARAM_Y_PURCHASED" class="java.lang.String"/>
+	<parameter name="PARAM_Y_CURRENT_PRICE" class="java.lang.String"/>
+	<parameter name="PARAM_Y_TOTAL_KILO" class="java.lang.String"/>
+	<parameter name="PARAM_Y_TOTAL_DISCOUNT" class="java.lang.String"/>
+	<parameter name="PARAM_Y_TOTAL_COMMISION" class="java.lang.String"/>
+	<parameter name="PARAM_TOTAL_WY_PURCHASED" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="chasedId" class="java.lang.Long"/>
+	<field name="corncolor" class="java.lang.String"/>
+	<field name="conditions" class="java.lang.String"/>
+	<field name="dateIn" class="java.lang.String"/>
+	<field name="kilo" class="java.lang.Double"/>
+	<field name="discount" class="java.lang.Double"/>
+	<field name="driver" class="java.math.BigDecimal"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="totalAmount" class="java.math.BigDecimal"/>
+	<field name="procBy" class="java.lang.String"/>
+	<field name="counter" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="96" splitType="Stretch">
+			<staticText>
+				<reportElement x="262" y="0" width="308" height="40" uuid="44edf8c7-9e3f-40cc-8e7b-e973934178e2"/>
+				<textElement textAlignment="Center">
+					<font size="26" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MATT-AGRI BUY N SELL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="326" y="40" width="150" height="30" uuid="8159b509-c9c6-487d-9cd0-5459de170ee1"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Detailed Report]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="300" y="70" width="200" height="23" uuid="c1d31223-da68-48e1-982b-e51e2cffaf2c"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_DATE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="610" y="2" width="191" height="21" uuid="18eaa05f-e114-4315-90c1-f64f9d9d559d"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_PRINTEDDATE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="610" y="24" width="191" height="20" uuid="1754067d-7dde-4bfa-95a2-75854874c4f5"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_PROCCESSEDBY}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="7" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="40" height="18" uuid="38cdfbcb-ed04-48f0-baba-2f53e79ffbad"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="711" y="0" width="90" height="18" uuid="d9bf6d6c-91b2-4ac1-86a2-0cca38b28afb"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROCCESSED BY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="41" y="0" width="100" height="18" uuid="58900f38-17fb-475d-b960-90f29db55b27"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[COLOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="141" y="0" width="110" height="18" uuid="bea6f254-3617-4b57-8fe0-a6605a952016"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONDITIONS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="252" y="0" width="100" height="18" uuid="3710087b-6881-480d-ac13-c1a7e2ec83e2"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PURCHASED DATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="353" y="0" width="48" height="18" uuid="c12db8fa-7f04-4c47-afbe-5ce70c229c79"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[KILO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="0" width="40" height="18" uuid="fd4e7639-1ef2-4615-a76e-bfee70f9ffde"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DISC.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="443" y="0" width="68" height="18" uuid="1482e8e2-8e34-4e9c-ad7d-0d454b3a8ef1"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DRIVER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="512" y="0" width="89" height="18" uuid="830485c7-a25c-4492-9fc7-6f4a59025967"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[AMOUNT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="602" y="0" width="108" height="18" uuid="399f2c04-4c3b-4ad8-9bff-b4f3d37b2b7d"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL AMOUNT]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="711" y="-1" width="90" height="20" uuid="acc8d491-b4ba-423e-99de-9bd985957053"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{procBy}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="40" height="20" uuid="26aca4c9-138e-4570-adb5-29a57b3a61d8"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{counter}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="41" y="0" width="100" height="20" uuid="9c020361-b0b9-426e-83d6-451e7d4da55d"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{corncolor}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="141" y="0" width="110" height="20" uuid="b0994570-090e-43e5-8445-780001578c86"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{conditions}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="252" y="0" width="100" height="20" uuid="1522c677-44f3-4f4d-bb08-df51dc96af57"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{dateIn}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="353" y="1" width="48" height="20" uuid="07106673-aafb-480a-8e28-b0212958e91e"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{kilo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="402" y="0" width="40" height="20" uuid="ab1eb72f-f9bf-4800-8e9c-d84d7bca1a9e"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{discount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
+				<reportElement x="443" y="0" width="68" height="20" uuid="86566980-3ee1-45e2-a53a-4ec726d9730b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{driver}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
+				<reportElement x="512" y="0" width="89" height="20" uuid="e375ca68-6cb8-4975-b762-68fb99707349"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
+				<reportElement x="602" y="0" width="108" height="20" uuid="07e3db2d-f0d4-417c-8ed1-ad98ccf24445"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{totalAmount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="8" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="131" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="70" height="20" uuid="4375a7e1-9970-4520-9ee8-459ae9b2d767"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Summary]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="2" width="60" height="20" uuid="0a64dc18-20f6-476b-966d-8a1a13760e09"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[White Corn]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="110" width="94" height="20" uuid="43fc613a-cb6e-4ab2-903d-b6da20acf4a2"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Purchased:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="70" width="50" height="20" uuid="fb7597e9-5eb5-4feb-b974-d85e0dfb8b97"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Discount:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="30" width="31" height="20" uuid="a1d5624d-f919-47cd-8bde-dba628f25070"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Price:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="50" width="31" height="20" uuid="d35862c0-f4b2-411a-9096-d1665282195d"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Kilo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="1" width="66" height="20" uuid="98cecb5b-d538-40da-a064-f575bf270ae0"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Yellow Corn]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="90" width="111" height="20" uuid="a50aac63-4cba-4a4b-b8c1-3383aa9b4430"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Driver's Commisions:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="82" width="109" height="20" uuid="b348368c-b1df-4edb-b93f-043d45db2841"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[White & Yellow]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="622" y="60" width="109" height="20" uuid="8cd422f1-4513-403a-86fa-df5b03a37ac6"/>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Purchased]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="624" y="30" width="177" height="29" forecolor="#F21E1B" uuid="4723588f-a7da-4c18-9a29-cabcb8831e77"/>
+				<textElement textAlignment="Left">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_TOTAL_WY_PURCHASED}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="409" y="110" width="140" height="20" uuid="55a7fbab-3ac9-485f-9271-4a4fb320fb8d"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_Y_PURCHASED}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="346" y="30" width="163" height="20" uuid="e1888c3f-c76a-4cc6-825e-4e4cf3f32df3"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_Y_CURRENT_PRICE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="346" y="50" width="163" height="20" uuid="de99d437-16a9-46cc-8a8f-87e7e8fc516f"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_Y_TOTAL_KILO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="365" y="70" width="163" height="20" uuid="f9f049cc-bcea-497f-8459-6de91c4446df"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_Y_TOTAL_DISCOUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="426" y="90" width="123" height="20" uuid="49082675-3600-4bb3-b4cb-c8d9a1ad658a"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_Y_TOTAL_COMMISION}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="81" y="110" width="94" height="20" uuid="398ea5a6-f64c-4138-950b-56611108adf3"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Purchased:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="81" y="70" width="50" height="20" uuid="bce0adb8-23e2-48c0-a2cf-99e67b8e0f20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Discount:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="81" y="30" width="31" height="20" uuid="e0a2c376-55f8-4460-9dd7-433b7ede2d78"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Price:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="81" y="50" width="31" height="20" uuid="57404f26-3fcf-49c4-b35e-e4c070e619fa"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Kilo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="81" y="90" width="111" height="20" uuid="588cb9d3-8121-45e3-a12b-0c779ae37b34"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Driver's Commisions:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="175" y="110" width="140" height="20" uuid="30f894d5-7ea0-4811-ab88-a074fff8ec19"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_W_PURCHASED}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="112" y="30" width="163" height="20" uuid="8cc7c3c3-6711-4f13-8708-72c6e1470710"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_W_CURRENT_PRICE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="112" y="50" width="163" height="20" uuid="74d918a9-bd6b-4c5b-ad44-2989606b0d33"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_W_TOTAL_KILO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="131" y="70" width="163" height="20" uuid="5789a0fd-0f28-46f3-a8e6-5502c2d0f6d7"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_W_TOTAL_DISCOUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="192" y="90" width="123" height="20" uuid="4c96963f-cd5d-4cdf-8049-977e2a413207"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARAM_W_TOTAL_COMMISION}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="623" y="61" width="160" height="1" uuid="9a69979d-8c8b-485b-ba76-a57e732d8b41">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

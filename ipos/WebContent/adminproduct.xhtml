@@ -1,0 +1,939 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>#{versionBean.copyright.appname} Product</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+             <h:outputStylesheet name="bootstrap/css/bootstrap.min.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <h:outputStylesheet name="css/pageHeaderFooter.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.min.js" target="head"/>
+            <h:outputStylesheet name="css/growl.css"/>
+    </f:facet>
+        
+    
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+	</f:facet>
+
+    <title>#{versionBean.copyright.appname} Product</title>
+
+<style>
+<!-- 
+.dataDesignTable{
+	font-style: normal; 	
+	font-family: Times New Roman; 
+	font-size: 80%;
+	font-weight: bold;
+}
+
+.centerPage1{
+	position: relative;
+	margin-left: 5px;
+	margin-bottom: 5px;
+	width: 100%;
+	height: 100%;
+	border: 3px solid black;
+	padding: 1px;
+}
+
+
+
+ -->
+ </style>
+
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>#{versionBean.copyright.appname} Product</title>
+
+</h:head>
+
+<h:body>
+
+<h:form prependId="false" id="formId" >
+
+		 <div class="page-header">
+	 		<a><p:outputLabel value="Product Configuration" style="#{skin.pageTitle};"/></a>
+	    </div>
+
+		<p:growl id="msg" showDetail="true" />
+		<p:growl id="msgbar" showDetail="true" sticky="true"/>
+		
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" style="#{skin.msg}">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+	
+	<p:layout fullPage="true" id="layId">
+			
+		<p:layoutUnit position="north" size="100" visible="false"/>
+		<p:layoutUnit position="south" size="50" visible="false"/>
+		<p:layoutUnit position="west" size="0" visible="false"/>
+		<p:layoutUnit position="east" size="0" visible="false"/>
+		<p:layoutUnit position="center">
+		
+    	<p:tabView orientation="left" id="tabProduct" style="#{skin.tabs}" prependId="false">
+    	
+    	<p:ajax event="tabChange" listener="#{aprodBean.onTabChange}" update="tabProduct #{aprodBean.msgId}" />
+    	
+        <p:tab title="Quantity Adjustment">
+            <p:toolbar id="qtybar">
+            	<f:facet name="left">
+            		
+    				<p:inputText value="#{aprodBean.searchProdQty}" a:placeholder="Search product" a:type="search">
+    					<f:ajax event="keyup" listener="#{aprodBean.initProductQty}" render="qtyDataId"/>
+    				</p:inputText>
+    				<p:commandButton update="qtyDataId" icon="fa fa-search" action="#{aprodBean.initProductQty}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton  id="updateQtyId" update="qtyDataId,msg"  value="Update" icon="fa fa-floppy-o"  actionListener="#{aprodBean.updateQty}">
+            				<p:confirm header="Confirmation" message="Are you sure you want to update this qty?" />
+            		</p:commandButton>
+    				<p:commandButton update="qtyDataId" value="Refresh" icon="fa fa-refresh" action="#{aprodBean.initProductQty}"/>
+    				<p:commandButton type="button" value="Product Look Up" icon="fa fa-search" onclick="PF('multiDialogProductLookUp').show()"/>
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="qtyDataId" value="#{aprodBean.invs}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         selection="#{aprodBean.quantityData}" rowKey="#{rpt.prodid}" editable="true" editMode="cell" widgetVar="cellTrans"
+                         >
+                         	 
+                         	 <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Product Inventory in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="qtyDataId" fileName="ProductInventory" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Product Inventory in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="qtyDataId" fileName="ProductInventory" />
+            						</h:commandLink>
+            				</f:facet>
+                         	 
+                         	 <p:ajax event="cellEdit"  listener="#{aprodBean.onCellEdit}" update="qtyDataId"/>
+                         	 
+            				<p:column selectionMode="multiple" headerText="Update" style="width:16px;text-align:center"/>
+            				 
+            				 <p:column headerText="Add Qty" width="50">
+            					<p:cellEditor>
+              	  					<f:facet name="output"><h:outputText value="#{rpt.productInventory.addqty}"/></f:facet>
+              	  					<f:facet name="input"><p:inputText  id="intId" value="#{rpt.productInventory.addqty}" a:placeholder="0.00" a:type="number" style="width:80%;color:black"/></f:facet>
+              					</p:cellEditor>	
+            				</p:column>
+            				
+                         	
+                         	<p:column headerText="Latest Qty" width="80">
+            						<p:outputLabel  value="#{rpt.productInventory.newqty}"/>
+            				</p:column>
+                         	
+                         	<p:column headerText="Recent Qty" width="80">
+            						<p:outputLabel  value="#{rpt.productInventory.oldqty}" />
+            				</p:column>
+                         	
+                         	<p:column headerText="Product Name" width="150">
+            						<p:outputLabel value="#{rpt.productProperties.productname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="50">
+            						<p:outputLabel  value="#{rpt.productProperties.uom.symbol}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Brand Name" width="150">
+            						<p:outputLabel value="#{rpt.productProperties.productBrand.productbrandname}"/>
+            				</p:column>
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+        <p:tab title="Price Setup" id="priceTabId">
+            <p:toolbar id="pricebar">
+            	<f:facet name="left">
+            		
+    				<p:inputText value="#{aprodBean.searchProductpricing}" a:placeholder="Search product">
+    					<f:ajax event="keyup" listener="#{aprodBean.initPricing}" render="priceDataId"/>
+    				</p:inputText>
+    				<p:commandButton update="priceDataId" icon="fa fa-search" action="#{aprodBean.initPricing}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update="priceDataId" value="Refresh" icon="fa fa-refresh" action="#{aprodBean.initPricing}"/>
+    				
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="priceDataId" value="#{aprodBean.pricingstans}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+                         	
+                         	<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Product Price in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="priceDataId" fileName="ProductPrice" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Product Price in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="priceDataId" fileName="ProductPrice" />
+            						</h:commandLink>
+            				</f:facet>
+                         	
+                         	<p:column width="10" exportable="false" headerText="Price Setup">
+            					<p:rowToggler collapseLabel="Close" expandLabel="Open Price" />
+            				</p:column>
+                         	
+          					<p:column headerText="Barcode" width="70">
+            						<p:outputLabel value="#{rpt.barcode}" />
+            				</p:column>                
+                         
+                         	<p:column headerText="Product Name" width="100">
+            						<p:outputLabel  value="#{rpt.productProperties.productname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="50">
+            						<p:outputLabel value="#{rpt.productProperties.uom.uomname}"/>
+            				</p:column>
+            				
+            				<p:rowExpansion>
+            					<p:dataTable id="priceTransDataId" value="#{rpt.pricetrans}" var="trans" 
+											 scrollable="true">
+                         				
+                         				<f:facet name="header">
+                         					<p:outputLabel id="msgId" value="#{aprodBean.errormsgprice}" style="color: red"/>
+                         				</f:facet>
+                         				
+                         				<p:column headerText="[*]" width="30">
+            								<p:commandButton update="priceTransDataId" icon="fa fa-trash"  actionListener="#{aprodBean.priceDeactivate(trans)}">
+            									<p:confirm header="Confirmation" message="Are you sure you want to deactivate this price?" />
+            								</p:commandButton>
+            							</p:column> 
+                         				
+                         				<p:column width="70">
+                         					<f:facet name="header">
+            									<p:outputLabel value="Purchased"/>
+            								</f:facet>
+            								<p:outputLabel value="#{trans.purchasedprice}" style="color: black;"/>
+            								<f:facet name="footer">
+            									<p:inputText id="purchId" value="#{aprodBean.purchasePricetmp}" a:placeholder="0.00" a:type="number" style="width: 5em">
+            										<f:ajax event="change" execute="@this" listener="#{aprodBean.checkInputAmount}" render="sellId"/>
+            									</p:inputText>
+            								</f:facet>
+            							</p:column>
+            							<p:column width="70">
+                         					<f:facet name="header">
+            									<p:outputLabel value="VAT(%)"/>
+            								</f:facet>
+            								<p:outputLabel value="#{trans.taxpercentage}"/>
+            								<f:facet name="footer">
+            									<p:inputText id="vatId"  value="#{aprodBean.taxpercentagetmp}" a:placeholder="0.00" a:type="number" style="width: 5em">
+            										<f:ajax event="change" execute="@this" listener="#{aprodBean.checkInputAmount}" render="sellId"/>
+            									</p:inputText>
+            								</f:facet>
+            							</p:column>
+            							<p:column width="70">
+                         					<f:facet name="header">
+            									<p:outputLabel value="Selling"/>
+            								</f:facet>
+            								<p:outputLabel  value="#{trans.sellingprice}"/>
+            								<f:facet name="footer">
+            									<p:inputText id="sellId"  value="#{aprodBean.sellingPricetmp}" a:placeholder="0.00" a:type="number" style="width: 5em">
+            										<f:ajax event="change"  listener="#{aprodBean.checkInputSellingPrice}" render="msgId"/>
+            										<f:ajax event="change"  execute="@this" listener="#{aprodBean.checkInputSellingPrice}" render="savepriceId"/>
+            									</p:inputText>
+            								</f:facet>
+            							</p:column>
+            							<p:column width="70">
+            								<f:facet name="header">
+            									<p:outputLabel value="Net(-VAT)"/>
+            								</f:facet>
+            								<p:outputLabel value="#{trans.netprice}"/>
+            								<f:facet name="footer">
+            									<p:commandButton disabled="#{aprodBean.isvalidamount}" id="savepriceId" update="priceTransDataId"  value="Save" icon="fa fa-floppy-o"  actionListener="#{aprodBean.addPrice(rpt)}">
+            										<p:confirm header="Confirmation" message="Are you sure you want to add this price?" />
+            									</p:commandButton>
+            								</f:facet>
+            							</p:column>
+                         				
+                         			</p:dataTable>
+            				</p:rowExpansion>
+            				
+            				
+            				
+            				
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+         <p:tab title="Barcode" id="barcodeTabId">
+            <p:toolbar id="barcodebar" >
+            	<f:facet name="left">
+    				<p:inputText value="#{aprodBean.searchProductCode}" a:placeholder="Search product">
+    					<f:ajax event="keyup" listener="#{aprodBean.initBarcode}" render="barcodeDataId"/>
+    				</p:inputText>
+    				<p:commandButton update="barcodeDataId" icon="fa fa-search" action="#{aprodBean.initBarcode}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update=":formId:bardidx"  value="New" icon="fa fa-file-o" onclick="PF('multiDialogBar').show()" actionListener="#{aprodBean.newProductBarcode}"/>
+    				<p:commandButton update="barcodeDataId" value="Refresh" icon="fa fa-refresh" action="#{aprodBean.initBarcode}"/>
+    				
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="barcodeDataId" value="#{aprodBean.bars}" var="rp" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+                         	
+                         	<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Product Barcode in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="barcodeDataId" fileName="ProductBarcode" />
+            						</h:commandLink>
+            						<h:commandLink title="Print Current Product" target="_blank" actionListener="#{aprodBean.printBarcode}">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+            						</h:commandLink>
+            						<h:commandLink title="Print All Product" target="_blank" actionListener="#{aprodBean.printAllProductBarcode}">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+            						</h:commandLink>
+            				</f:facet>
+                         	
+          					<p:column headerText="[*]" width="40" exportable="false">
+            					<p:commandButton update="barcodeDataId,msg" icon="fa fa-trash"  actionListener="#{aprodBean.deleteRow(rp)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" />
+            					</p:commandButton>
+            				</p:column>                
+                         
+                         	<p:column headerText="View" width="30" exportable="false">
+                         		<p:commandButton icon="fa fa-search" update="bardidx" actionListener="#{aprodBean.clickItem(rp)}" oncomplete="PF('multiDialogBar').show()"/> 
+                         	</p:column>
+                         	
+                         	<p:column headerText="Date Encode" width="150">
+            						<p:outputLabel value="#{rp.datecoded}"/>
+            				</p:column>
+                         
+                         	<p:column headerText="Barcode" width="150">
+            						<p:outputLabel value="#{rp.barcode}"/>
+            				</p:column>
+                         
+                         	<p:column headerText="Product Name" width="150">
+            						<p:outputLabel  value="#{rp.productProperties.productname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="50">
+            						<p:outputLabel value="#{rp.productProperties.uom.uomname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Expiration Date" width="150">
+            						<p:outputLabel  value="#{rp.productExpiration}"/>
+            				</p:column>
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+        <p:tab title="Properties" id="propertyId">
+            <p:toolbar id="propertybar" >
+    			<f:facet name="left">
+    				<p:inputText value="#{aprodBean.searchProperties}" a:placeholder="Search product">
+    					<f:ajax event="keyup" listener="#{aprodBean.initProperty}" render="propDataId"/>
+    				</p:inputText>
+    				<p:commandButton update="propDataId" icon="fa fa-search" action="#{aprodBean.initProperty}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update=":formId:propId" actionListener="#{aprodBean.loadPropertyComboList}"  value="New" icon="fa fa-file-o" onclick="PF('multiDialogProp').show()"/>
+    				<p:commandButton update="propDataId" value="Refresh" icon="fa fa-refresh" action="#{aprodBean.initProperty}"/>
+    				
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="propDataId" value="#{aprodBean.props}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+                         	
+                         	<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Product Properties in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="propDataId" fileName="ProductProperties" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Product Properties in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="propDataId" fileName="ProductProperties" />
+            						</h:commandLink>
+            				</f:facet>
+                         	
+          					<p:column headerText="[*]" width="40" exportable="false">
+            					<p:commandButton update="propDataId,msg" icon="fa fa-trash"  actionListener="#{aprodBean.deleteRow(rpt)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" />
+            					</p:commandButton>
+            				</p:column>                
+                         	
+                         	<p:column headerText="View" width="30" exportable="false">
+                         		<p:commandButton icon="fa fa-search" update=":formId:propId" actionListener="#{aprodBean.clickItem(rpt)}" oncomplete="PF('multiDialogProp').show()"/> 
+                         	</p:column>
+                         	
+                         	<p:column headerText="Product Name" width="150">
+            						<p:outputLabel  value="#{rpt.productname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="50">
+            						<p:outputLabel value="#{rpt.uom.uomname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Product Category" width="100">
+            						<p:outputLabel  value="#{rpt.productCategory.catname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Group Name" width="100">
+            						<p:outputLabel value="#{rpt.productGroup.productgroupname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Brand Name" width="100">
+            						<p:outputLabel  value="#{rpt.productBrand.productbrandname}"/>
+            				</p:column>
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+        <p:tab title="Category" id="categoryId">
+        	<p:toolbar id="cattoolbar" >
+    			<f:facet name="left">
+    				<p:inputText value="#{aprodBean.searchCategory}" a:placeholder="Search product">
+    					<f:ajax event="keyup" listener="#{aprodBean.initCategory}" render="catDataId"/>
+    				</p:inputText>
+    				<p:commandButton update="catDataId" icon="fa fa-search" action="#{aprodBean.initCategory}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    			    <p:commandButton update=":formId:catId"  value="New" icon="fa fa-file-o" onclick="PF('multiDialogCat').show()" actionListener="#{aprodBean.clearFields}"/>
+    				<p:commandButton update="catDataId" value="Refresh" icon="fa fa-refresh" action="#{aprodBean.initCategory}"/>
+    				
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="catDataId" value="#{aprodBean.cats}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+                         	
+                         	<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Product Category in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="catDataId" fileName="ProductCategory" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Product Category in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="catDataId" fileName="ProductCategory" />
+            						</h:commandLink>
+            				</f:facet>
+                         	
+          					<p:column headerText="[*]" width="20" exportable="false">
+            					<p:commandButton update="catDataId,msg" icon="fa fa-trash"  actionListener="#{aprodBean.deleteRow(rpt)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" />
+            					</p:commandButton>
+            				</p:column>                
+                         	
+                         	<p:column headerText="View" width="30" exportable="false">
+                         		<p:commandButton icon="fa fa-search" update=":formId:catId" actionListener="#{aprodBean.clickItem(rpt)}" oncomplete="PF('multiDialogCat').show()"/> 
+                         	</p:column>
+                         	
+                         	<p:column headerText="Description" width="150">
+            						<p:outputLabel value="#{rpt.catname}"/>
+            				</p:column>
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+        <p:tab title="Unit Of Measurement" id="uomtabId">
+        	<p:toolbar id="uomtoolbar" >
+    			<f:facet name="left">
+    				<p:inputText value="#{aprodBean.searchUOM}" a:placeholder="Search product">
+    					<f:ajax event="keyup" listener="#{aprodBean.initUOM}" render="uomDataId"/>
+    				</p:inputText>
+    				<p:commandButton update="uomDataId" icon="fa fa-search" action="#{aprodBean.initUOM}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update=":formId:uomId"  value="New" icon="fa fa-file-o" onclick="PF('multiDialogUOM').show()" actionListener="#{aprodBean.clearFields}"/>
+    				<p:commandButton update="uomDataId" value="Refresh" icon="fa fa-refresh" action="#{aprodBean.initUOM}"/>
+    				
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="uomDataId" value="#{aprodBean.uoms}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+                         	
+                         	<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Product UOM in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="uomDataId" fileName="ProductUOM" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Product UOM in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="uomDataId" fileName="ProductUOM" />
+            						</h:commandLink>
+            				</f:facet>
+                         	
+          					<p:column headerText="[*]" width="20" exportable="false">
+            					<p:commandButton update="uomDataId,msg" icon="fa fa-trash" actionListener="#{aprodBean.deleteRow(rpt)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" />
+            					</p:commandButton>
+            				</p:column>                
+                         	
+                         	<p:column headerText="View" width="30" exportable="false">
+                         		<p:commandButton icon="fa fa-search" update=":formId:uomId" actionListener="#{aprodBean.clickItem(rpt)}" oncomplete="PF('multiDialogUOM').show()"/> 
+                         	</p:column>
+                         	
+                         	<p:column headerText="Description" width="150">
+            						<p:outputLabel  value="#{rpt.uomname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="Symbol" width="50">
+            						<p:outputLabel  value="#{rpt.symbol}"/>
+            				</p:column>
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+         <p:tab title="Group Type" id="prouptabId">
+        	<p:toolbar id="grouptoolbar" >
+    			<f:facet name="left">
+    				<p:inputText value="#{aprodBean.searchGroup}" a:placeholder="Search product">
+    					<f:ajax event="keyup" listener="#{aprodBean.initProdGroup}" render="goupDataId"/>
+    				</p:inputText>
+    				<p:commandButton update="goupDataId" icon="fa fa-search" action="#{aprodBean.initProdGroup}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update=":formId:groupId"  value="New" icon="fa fa-file" onclick="PF('multiDialogGROUP').show()" actionListener="#{aprodBean.clearFields}"/>
+    				<p:commandButton update="goupDataId" value="Refresh" icon="fa fa-search" action="#{aprodBean.initProdGroup}"/>
+    				
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="goupDataId" value="#{aprodBean.groups}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+                         	<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Product Group in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="goupDataId" fileName="ProductGroup" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Product Group in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="goupDataId" fileName="ProductGroup" />
+            						</h:commandLink>
+            				</f:facet>
+                         	
+          					<p:column headerText="[*]" width="20" exportable="false">
+            					<p:commandButton update="goupDataId,msg" icon="fa fa-trash" actionListener="#{aprodBean.deleteRow(rpt)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" />
+            					</p:commandButton>
+            				</p:column>                
+                         
+                         	<p:column headerText="View" width="30" exportable="false">
+                         		<p:commandButton icon="fa fa-search" update=":formId:groupId" actionListener="#{aprodBean.clickItem(rpt)}" oncomplete="PF('multiDialogGROUP').show()"/> 
+                         	</p:column>
+                         
+                         	<p:column headerText="Description" width="150">
+            						<p:outputLabel  value="#{rpt.productgroupname}"/>
+            				</p:column>
+
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+        <p:tab title="Brand" id="brandtabId">
+        	<p:toolbar id="brandtoolbar" >
+    			<f:facet name="left">
+    				<p:inputText value="#{aprodBean.searchBrand}" a:placeholder="Search product">
+    					<f:ajax event="keyup" listener="#{aprodBean.initBrand}" render="brandDataId"/>
+    				</p:inputText>
+    				<p:commandButton update="brandDataId" icon="fa fa-search" action="#{aprodBean.initBrand}"/>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton update=":formId:brandId"  value="New" icon="fa fa-file-o" onclick="PF('multiDialogBRAND').show()" actionListener="#{aprodBean.clearFields}"/>
+    				<p:commandButton update="brandDataId" value="Refresh" icon="fa fa-refresh" action="#{aprodBean.initBrand}"/>
+    				
+    			</f:facet>
+		  	</p:toolbar>
+        	
+            <h:panelGrid columns="2" cellpadding="10">
+               		 <p:dataTable id="brandDataId" value="#{aprodBean.brands}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >
+                         	
+                         	<f:facet name="{Exporters}">
+            						<h:commandLink title="Export Product Brand in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="brandDataId" fileName="ProductBrand" />
+            						</h:commandLink>
+            						<h:commandLink title="Export Product Brand in pdf format">
+                						    <p:graphicImage name="img/pdf.jpg" width="24" height="24"/>
+                						    <p:dataExporter type="pdf" target="brandDataId" fileName="ProductBrand" />
+            						</h:commandLink>
+            				</f:facet>
+                         	
+          					<p:column headerText="[*]" width="20" exportable="false">
+            					<p:commandButton update="brandDataId,msg" icon="fa fa-trash" actionListener="#{aprodBean.deleteRow(rpt)}">
+            						<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" />
+            					</p:commandButton>
+            				</p:column>                
+                         
+                         	<p:column headerText="View" width="30" exportable="false">
+                         		<p:commandButton icon="fa fa-search" update=":formId:brandId" actionListener="#{aprodBean.clickItem(rpt)}" oncomplete="PF('multiDialogBRAND').show()"/> 
+                         	</p:column>
+                         	
+                         	<p:column headerText="Brand Code" width="100">
+            						<p:outputLabel value="#{rpt.productbrandcode}"/>
+            				</p:column>
+							
+							<p:column headerText="Brand Name" width="150">
+            						<p:outputLabel value="#{rpt.productbrandname}"/>
+            				</p:column>
+            				
+					</p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+    	</p:tabView>
+  </p:layoutUnit>
+  </p:layout>  	
+	
+<p:dialog header="Product Barcode Profile" position="center top" widgetVar="multiDialogBar" Height="500" width="800" closable="false" style="#{skin.dialog}" showEffect="clip" hideEffect="clip">
+		<h:panelGrid id="bardidx" >
+		<h:panelGrid id="barId" columns="6"  cellpadding="5">
+				
+				<p:outputLabel value="Date Encode: " />
+				<p:inputText value="#{aprodBean.datecoded}" disabled="true"/>
+				
+				<p:outputLabel value="Barcode: " />
+				<p:inputText id="barIdCode" value="#{aprodBean.barcode}" a:placeholder="12-Digits" >
+					<f:ajax event="keyup" listener="#{aprodBean.barcodeChecker}" render="barIdCode"/>
+				</p:inputText>
+				
+				<p:outputLabel value="Expiration Date: " />
+				<p:inputText value="#{aprodBean.expirationdate}" a:type="date" a:placeholder="YYYY-MM-DD"/>   	
+     </h:panelGrid> 
+     
+     <p:toolbar id="productItemlookupbar">
+	            	<f:facet name="left">
+	    				<p:inputText value="#{aprodBean.searchProductItem}" a:placeholder="Search product" disabled="#{aprodBean.lockBarcode}">
+	    					<f:ajax event="keyup" listener="#{aprodBean.initProductItem}" render="productItemDataId"/>
+	    				</p:inputText>
+	    				<p:commandButton update="productItemDataId" icon="fa fa-search" action="#{aprodBean.initProductItem}" disabled="#{aprodBean.lockBarcode}"/>
+	    			</f:facet>
+	    			<f:facet name="right">
+	    				<p:commandButton update="barcodeDataId msg" value="Save"  icon="fa fa-floppy-o" actionListener="#{aprodBean.savebar}" >
+	    					<p:confirm header="Confirmation" message="Are you sure you want to save this data?" />
+	    				</p:commandButton>
+	    				<p:commandButton update="barcodeDataId" value="Close" icon="ui-icon-closethick" onclick="PF('multiDialogBar').hide()"/>
+	    			</f:facet>
+		  	 	</p:toolbar>
+		  	 	
+		  	 	<p:dataTable id="productItemDataId" value="#{aprodBean.prodItems}" var="rpt" stickyHeader="false"
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top" selection="#{aprodBean.selectedItem}" rowKey="#{rpt.propid}"
+                         >
+                         	<p:column selectionMode="single" headerText="Select" style="width:16px;text-align:center"/>
+                         	
+                         	<p:column headerText="Product Name" width="150">
+            						<p:outputLabel  value="#{rpt.productname}"/>
+            				</p:column>
+            				
+            				<p:column headerText="UOM" width="50">
+            						<p:outputLabel  value="#{rpt.uom.uomname}"/>
+            				</p:column>
+                         
+                 </p:dataTable> 	
+	 </h:panelGrid>
+</p:dialog>
+
+<p:dialog header="Product Properties Profile" position="center top" widgetVar="multiDialogProp" Height="80" width="500" style="#{skin.dialog}" showEffect="clip" hideEffect="clip">
+		
+		<p:toolbar>
+    		<f:facet name="left">
+        		
+    		</f:facet>
+    		<f:facet name="right">
+     			<p:commandButton update="propDataId,propId,msg" value="Save"  icon="fa fa-floppy-o" actionListener="#{aprodBean.saveProp}" >
+        				<p:confirm header="Confirmation" message="Are you sure you want to delete this data?" />
+        			</p:commandButton>
+     				<p:commandButton update="propDataId" value="Close" icon="ui-icon-closethick" actionListener="#{aprodBean.close}"  onclick="PF('multiDialogProp').hide();"/>
+    		</f:facet>
+    		
+		</p:toolbar>
+		
+		<p:panelGrid id="propId" columns="2" columnClasses="column" cellpadding="5">
+				
+				<f:facet name="header">
+					<h:outputLabel id="imgDocPath" value="Path : #{aprodBean.documentPath}" styleClass="form-control"/>
+					<p:fileUpload fileUploadListener="#{aprodBean.imgUploadListener}" dragDropSupport="false"
+		                    			mode="advanced" auto="true" sizeLimit="10000000" label="Upload Picture"
+		                    			update="imgDocPath"
+		                    			allowTypes="/(\.|\/)(gif|jpeg|jpg|png)$/" />
+				</f:facet>
+				
+				<p:outputLabel value="Business Type: "/>
+            		<h:selectOneMenu value="#{aprodBean.propCodeId}" style="width: 16em" disabled="#{aprodBean.lockBusinessSelection}">
+            			<f:selectItem itemLabel="Select..."/>
+                		<f:selectItems value="#{aprodBean.propCodes}"/>
+                		<f:ajax event="change" listener="#{aprodBean.generateProdCode()}" render="prodCodeId" />
+            		</h:selectOneMenu>
+				
+				<p:outputLabel value="Product Code:" />
+            	<p:inputText id="prodCodeId" value="#{aprodBean.productCode}" required="true" disabled="true" label="text" style="width: 16em"/>
+				
+				<p:outputLabel value="Description:" />
+            	<p:inputText value="#{aprodBean.productPropertyDesc}" style="width: 16em"/>
+				
+				<p:outputLabel value="Unit of Measurement: "/>
+            		<h:selectOneMenu value="#{aprodBean.propUomId}" style="width: 16em">
+            			<f:selectItem itemLabel="Select..."/>
+                		<f:selectItems value="#{aprodBean.propUoms}"/>
+            		</h:selectOneMenu>
+				
+				<p:outputLabel value="Product Category: "/>
+            		<h:selectOneMenu value="#{aprodBean.propCatId}" style="width: 16em">
+            			<f:selectItem itemLabel="Select..."/>
+                		<f:selectItems value="#{aprodBean.propCats}"/>
+            		</h:selectOneMenu>
+            		
+            	<p:outputLabel value="Group Name: "/>
+            		<h:selectOneMenu value="#{aprodBean.propGroupId}" style="width: 16em">
+            			<f:selectItem itemLabel="Select..."/>
+                		<f:selectItems value="#{aprodBean.propGroups}"/>
+            		</h:selectOneMenu>
+            		
+            	<p:outputLabel value="Brand Name: "/>
+            		<h:selectOneMenu value="#{aprodBean.propBrandId}" style="width: 16em">
+            			<f:selectItem itemLabel="Select..."/>
+                		<f:selectItems value="#{aprodBean.propBrands}"/>
+            		</h:selectOneMenu>			
+				
+        		 	
+     </p:panelGrid> 
+	 
+</p:dialog>
+
+<p:dialog header="Product Category Profile" position="center center" widgetVar="multiDialogCat" Height="80" width="400" style="#{skin.dialog}" showEffect="clip" hideEffect="clip">
+		
+		<p:toolbar>
+    		<f:facet name="left">
+        		
+    		</f:facet>
+    		<f:facet name="right">
+     			<p:commandButton update="catDataId" value="Save"   icon="fa fa-floppy-o" actionListener="#{aprodBean.savecat}" style="width: 10em;" onclick="PF('multiDialogCat').hide();"/>
+     			<p:commandButton update="catDataId" value="Close"  actionListener="#{aprodBean.close}" style="width: 10em;" onclick="PF('multiDialogCat').hide();"/>
+    		</f:facet>
+    		
+		</p:toolbar>
+		
+		<p:panelGrid id="catId" columns="2" columnClasses="column" cellpadding="5">
+				
+				<p:outputLabel value="Description:" />
+            	<p:inputText value="#{aprodBean.productCatDesc}"/>
+				 	
+     </p:panelGrid> 
+	 
+</p:dialog>
+<p:dialog header="Unit of Measurement Profile" position="center center" widgetVar="multiDialogUOM" Height="80" width="400" style="#{skin.dialog}" showEffect="clip" hideEffect="clip">
+		
+		<p:toolbar>
+    		<f:facet name="left">
+        		
+    		</f:facet>
+    		<f:facet name="right">
+    		    <p:commandButton update="uomDataId" value="Save"   icon="fa fa-floppy-o" actionListener="#{aprodBean.saveuom}" onclick="PF('multiDialogUOM').hide();"/>
+     			<p:commandButton update="uomDataId" value="Close" actionListener="#{aprodBean.close}" onclick="PF('multiDialogUOM').hide();"/>
+    		</f:facet>
+    		
+		</p:toolbar>
+		
+		<p:panelGrid id="uomId" columns="2" columnClasses="column" cellpadding="5">
+				
+				<p:outputLabel value="Description:" />
+            	<p:inputText value="#{aprodBean.uomname}"/>
+        		
+        		<p:outputLabel value="Symbol:" />
+            	<p:inputText value="#{aprodBean.symbol}"/>
+				  	
+     </p:panelGrid> 
+	 
+</p:dialog>
+
+<p:dialog header="Product Group Profile" position="center center" widgetVar="multiDialogGROUP" Height="80" width="400" style="#{skin.dialog}" showEffect="clip" hideEffect="clip">
+		<p:toolbar>
+    		<f:facet name="left">
+        		
+    		</f:facet>
+    		<f:facet name="right">
+    		    <p:commandButton update="goupDataId" value="Save"   icon="fa fa-floppy-o" actionListener="#{aprodBean.savegroup}"  onclick="PF('multiDialogGROUP').hide();"/>
+     			<p:commandButton update="goupDataId" value="Close"  actionListener="#{aprodBean.close}"  onclick="PF('multiDialogGROUP').hide();"/>
+    		</f:facet>
+    		
+		</p:toolbar>
+		
+		<p:panelGrid id="groupId" columns="2" >
+				
+				<p:outputLabel value="Description:" />
+            	<p:inputText value="#{aprodBean.productGroupDesc}"/>
+        		  	
+     </p:panelGrid> 
+	 
+</p:dialog>
+
+<p:dialog header="Product Brand Profile" position="center center" widgetVar="multiDialogBRAND" Height="80" width="400" style="#{skin.dialog}" showEffect="clip" hideEffect="clip">
+		
+		<p:toolbar>
+    		<f:facet name="left">
+        		
+    		</f:facet>
+    		<f:facet name="right">
+    			<p:commandButton update="brandDataId" value="Save"   icon="fa fa-floppy-o" actionListener="#{aprodBean.savegbrand}" onclick="PF('multiDialogBRAND').hide();"/>
+     			<p:commandButton update="brandDataId" value="Close"  actionListener="#{aprodBean.close}"  onclick="PF('multiDialogBRAND').hide();"/>
+    		</f:facet>
+    		
+		</p:toolbar>
+		
+		<p:panelGrid id="brandId" columns="2">
+				
+				<p:outputLabel value="Brand Code:" />
+            	<p:inputText value="#{aprodBean.productBrandCode}" disabled="true"/>
+        		
+				
+				<p:outputLabel value="Brand Name:" />
+            	<p:inputText value="#{aprodBean.productBrandName}"/>
+				
+        		
+     </p:panelGrid> 
+	 
+</p:dialog>
+
+<p:dialog header="Product Look Up" position="center top" widgetVar="multiDialogProductLookUp" 
+closable="false" Height="500" width="700" maximizable="false" minimizable="false" modal="false" resizable="true" style="#{skin.dialog}" showEffect="clip" hideEffect="clip">
+        	<p:toolbar id="productlookupbarAll">
+            	<f:facet name="left">
+    				<p:inputText value="#{aprodBean.searchProduct}" a:placeholder="Search product" style="width: 20em">
+    					<f:ajax event="keyup" listener="#{aprodBean.initProduct}" render="productDataIdAll"/>
+    				</p:inputText>
+    			</f:facet>
+    			<f:facet name="right">
+    				<p:commandButton value="Close" onclick="PF('multiDialogProductLookUp').hide()"/>
+    			</f:facet>
+		  	</p:toolbar>
+        
+        
+		 	<p:panelGrid columns="1" style="border: 0">
+		 		<p:dataTable id="productDataIdAll" value="#{aprodBean.prods}" var="rpt" 
+							rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" paginatorPosition="top"
+                         >	
+                         	
+                         <p:column style="width:40px">
+            					<p:rowToggler />
+        				 </p:column>
+        				 
+        				 <p:column headerText="Name">
+            					<p:outputLabel value="#{rpt.productProperties.productname}" />
+       					  </p:column>
+                         
+                         <p:column headerText="Price">
+            					<p:outputLabel value="Php#{rpt.productPricingTrans.sellingprice}" />
+       					  </p:column>
+       					  
+       					  <p:column headerText="In Stock">
+       					  	<p:outputLabel value="#{rpt.productInventory.newqty}"/>
+       					  </p:column>
+                         
+                         <p:rowExpansion>
+                         	<p:panelGrid  columns="2" style="width:300px">
+                         
+                         	<f:facet name="header">
+                    			<p:graphicImage name="img/#{rpt.productProperties.productcode}.jpg" height="150px" width="180px"/> 
+                			</f:facet>
+                         
+                         	<p:outputLabel  value="Name"/>
+                         	<p:outputLabel value="#{rpt.productProperties.productname}" />
+                         	
+                         	<p:outputLabel value="Price"/>
+                         	<p:outputLabel value="Php#{rpt.productPricingTrans.sellingprice}"/>
+                         	
+                         	<p:outputLabel value="In Stock"/>
+                         	<p:outputLabel value="#{rpt.productInventory.newqty}"/>
+                         	
+                         	<p:outputLabel value="UOM"/>
+                         	<p:outputLabel value="#{rpt.productProperties.uom.symbol}"/>
+                         	
+                         	<p:outputLabel value="Brand"/>
+                         	<p:outputLabel value="#{rpt.productProperties.productBrand.productbrandname}"/>
+                         	</p:panelGrid>	
+                         </p:rowExpansion>	
+                         	
+                         
+                         	
+            				
+					</p:dataTable>
+	    	</p:panelGrid> 
+		</p:dialog>
+
+
+<h:outputScript>
+
+$(document).ready(
+      function(){fixPFDialogToggleMaximize('multiDialogProductLookUp');}
+ );
+
+function fixPFDialogToggleMaximize(dlg){
+if(undefined == dlg.doToggleMaximize) {
+    dlg.doToggleMaximize = dlg.toggleMaximize;
+    dlg.toggleMaximize = function() {
+        this.doToggleMaximize();
+
+        var marginsDiff = this.content.outerHeight() - this.content.height();
+        var newHeight = this.jq.innerHeight() - this.titlebar.outerHeight() - marginsDiff;
+        this.content.height(newHeight);
+    };
+}
+}
+</h:outputScript>
+
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+<br/><br/><br/><br/>
+
+<!-- </div> -->
+		
+</h:body>
+</html>

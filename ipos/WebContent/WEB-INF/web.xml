@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>ipos</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  
+  <context-param>
+        <param-name>primefaces.MOVE_SCRIPTS_TO_BOTTOM</param-name>
+        <param-value>true</param-value>
+    </context-param>
+  
+  <!-- -1indicates not to check for changes, since production servers it is safe to set this value. -->
+  <context-param>
+	<param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
+	<param-value>-1</param-value>
+  </context-param>
+
+	<context-param>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>#{themeBean.applicationTheme}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>primefaces.mobile.THEME</param-name>
+		<param-value>#{themeBean.mobileTheme}</param-value>
+	</context-param>	
+	<!-- 
+	<context-param>
+  		<param-name>primefaces.CACHE_PROVIDER</param-name>
+  		<param-value>org.primefaces.cache.EHCacheProvider</param-value>
+	</context-param>
+    -->
+    
+  <session-config>
+  	<session-timeout>60</session-timeout>
+  </session-config>
+   
+  <welcome-file-list>
+    <welcome-file>marxmind/login.xhtml</welcome-file>
+  </welcome-file-list>
+  <context-param>
+    <description>State saving method: 'client' or 'server' (=default). See JSF Specification 2.5.2</description>
+    <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+    <param-value>client</param-value>
+  </context-param>
+  
+  <context-param>
+    <param-name>javax.faces.application.CONFIG_FILES</param-name>
+    <param-value>/WEB-INF/faces-config.xml</param-value>
+  </context-param>
+  
+  
+  
+  <listener>
+    <listener-class>com.sun.faces.config.ConfigureListener</listener-class>
+  </listener>
+  <servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Faces Servlet</servlet-name>
+    <url-pattern>/marxmind/*</url-pattern>
+  </servlet-mapping>
+  
+  <context-param>
+	   <param-name>primefaces.FONT_AWESOME</param-name>
+	   <param-value>true</param-value>
+  </context-param>
+  
+  <mime-mapping>
+  <extension>eot</extension>
+  <mime-type>application/vnd.ms-fontobject</mime-type>
+</mime-mapping>
+<mime-mapping>
+  <extension>otf</extension>
+  <mime-type>font/opentype</mime-type>
+</mime-mapping>
+<mime-mapping>
+  <extension>ttf</extension>
+  <mime-type>application/x-font-ttf</mime-type>
+</mime-mapping>
+<mime-mapping>
+  <extension>woff</extension>
+  <mime-type>application/x-font-woff</mime-type>
+</mime-mapping>
+<mime-mapping>
+  <extension>svg</extension>
+  <mime-type>image/svg+xml</mime-type>
+</mime-mapping>
+<mime-mapping>
+  <extension>ico</extension>
+  <mime-type>image/x-icon</mime-type>
+</mime-mapping>
+  
+</web-app>

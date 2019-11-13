@@ -1,0 +1,33 @@
+body {
+   padding-top: 3rem;
+   padding-bottom: 3rem;
+}
+
+.page-header{
+	top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 3rem;
+	position: fixed;
+	overflow: hidden; 
+	background-color: #0d7cbb;
+	box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.25);
+ 	background: linear-gradient(#0789b2, #086583, #044357);
+}
+
+.page-header a {
+	float: left;
+	display: block;
+	color: #f2f2f2;
+	text-align: left;
+	padding: 14px;
+	text-decoration: none;
+}
+
+.page-footer{
+	overflow: hidden; background-color: #0d7cbb;
+	box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.25);
+ 	background: linear-gradient(#6abdf4, #41a7eb, #1a93e3);
+}

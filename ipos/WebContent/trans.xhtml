@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui = "http://java.sun.com/jsf/facelets"
+  xmlns:h = "http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui" 
+xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"  
+  >
+<h:head>
+<link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon.ico']}" />
+<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>SHEEDZ Receipt Transactions</title>
+	</f:facet>
+	
+	<f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.css"/>
+            <h:outputStylesheet name="css/dashboard.css"/>
+            <h:outputStylesheet name="css/panel.css"/>
+            <h:outputStylesheet name="css/dataTables.bootstrap.mini.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.js" target="head"/>
+            
+            
+    </f:facet>
+        
+    <f:facet name="last">
+ 		<h:outputStylesheet name="css/font-awesome.css" />
+    </f:facet>
+    <title>SHEEDZ Receipt Transactions</title>
+
+<style>
+<!-- 
+.dataDesignTable{
+	font-style: normal; 	
+	font-family: Times New Roman; 
+	font-size: 80%;
+	font-weight: bold;
+}
+
+.centerPage{
+	position: relative;
+	margin-left: 5px;
+	margin-bottom: 5px;
+	width: 100%;
+	height: 100%;
+	border: 3px solid black;
+	padding: 1px;
+}
+
+ -->
+ </style>
+ 
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>SHEEDZ Receipt Transactions</title>
+
+</h:head>
+
+<h:body>
+	
+
+<h:form prependId="false" id="formId">
+		<p:growl id="msg" showDetail="true" />
+		
+		<p:panel id="panel" header="SHEEDZ Receipt Transactions"/>
+		<p:focus context="panel"/>
+		
+		<p:toolbar id="tb">
+    		<f:facet name="left">
+    			<p:commandButton type="button" value="Menu" icon="ui-icon-contact" onclick="PF('multiDialog').show()"/>&nbsp;&nbsp;
+    			<p:inputText  a:placeholder="Search..." value="#{transBean.receiptSearch}" style="width: 16em">
+		        	<f:ajax render="rptDataId idTotal" event="keyup" listener="#{transBean.init}" />
+		     	</p:inputText>
+		     	<p:inputText value="#{transBean.dateFrom}" a:placeholder="YYYY-MM-DD" a:type="date"/>
+		    	<p:inputText value="#{transBean.dateTo}" a:placeholder="YYYY-MM-DD" a:type="date"/>
+		     	<p:commandButton update="rptDataId idTotal" icon="ui-icon-search" action="#{transBean.init}"/>
+    		</f:facet>
+    		<f:facet name="right">
+	            <p:commandButton value="Logout" icon="ui-icon-power" action="#{loginBean.logout}"/>
+    		</f:facet>
+		</p:toolbar>
+		
+		<h:panelGrid id="idTotal" columns="9" cellpadding="10">
+			<p:outputLabel value="Total Purchased: Php#{transBean.totalPurchased}" />&nbsp;&nbsp;&nbsp;&nbsp;
+			<p:outputLabel/>
+			<p:outputLabel value="Total Discount: Php#{transBean.totalDiscount}" />&nbsp;&nbsp;&nbsp;&nbsp;
+			<p:outputLabel/>
+			<p:outputLabel value="Total Taxable: Php#{transBean.totalTaxable}" />&nbsp;&nbsp;&nbsp;&nbsp;
+			<p:outputLabel/>
+			<p:outputLabel value="Total Non-Taxable: Php#{transBean.totalNonTaxable}" />&nbsp;&nbsp;&nbsp;&nbsp;
+			<p:outputLabel/>
+			<p:outputLabel value="Total VAT: Php#{transBean.totalVat}" />
+		</h:panelGrid>
+		
+		<p:dataTable id="rptDataId" value="#{transBean.trans}" var="rpt" rows="10" paginator="true" paginatorTemplate="{Exporters} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         scrollable="true" styleClass="dataDesignTable">
+                         
+                         <f:facet name="{Exporters}">
+            						<h:commandLink title="Export Receipt in excel format">
+                						    <p:graphicImage name="img/xls.jpg" width="24" height="24"/>
+                							<p:dataExporter type="xls" target="rptDataId" fileName="ReceiptDetails" />
+            						</h:commandLink>
+            				</f:facet>
+                         	
+            				<p:column headerText="Date" width="50">
+            						<h:outputText  value="#{rpt.transdate}" style="color: black;"/>
+            				</p:column>
+            				
+            				<p:column headerText="OR/Receipt" width="70">
+            						<h:outputText  value="#{rpt.receipts}" style="color: black;"/>
+            				</p:column>
+            				
+            				<p:column headerText="Status" width="50">
+            						<h:outputText  value="#{rpt.status}" style="color: black;"/>
+            				</p:column>
+            				
+            				<p:column headerText="Customer" width="100">
+            						<h:outputText  value="#{rpt.customer.fullname}" style="color: black;"/>
+            				</p:column>		  
+            				
+            				<p:column headerText="Purchased" width="70">
+            						<h:outputText  value="#{rpt.amountpurchased}" style="color: black;"/>
+            				</p:column>
+            				
+            				<p:column headerText="Cash" width="70">
+            						<h:outputText  value="#{rpt.amountreceived}" style="color: black;"/>
+            				</p:column>
+            				
+                         	<p:column headerText="Change" width="70">
+            						<h:outputText  value="#{rpt.amountchange}" style="color: black;"/>
+            				</p:column>
+            				
+            				<p:column headerText="Balance" width="70">
+            						<h:outputText  value="#{rpt.amountbal}" style="color: black;"/>
+            				</p:column>
+            				
+            				<p:column headerText="Discount" width="70">
+            						<h:outputText  value="#{rpt.discount}" style="color: black;"/>
+            				</p:column>
+            				
+            				<p:column headerText="Taxable" width="70">
+            						<h:outputText  value="#{rpt.vatsales}" style="color: black;"/>
+            				</p:column>
+            				
+            				<p:column headerText="Non-Taxable" width="70">
+            						<h:outputText  value="#{rpt.vatnet}" style="color: black;"/>
+            				</p:column>
+            				
+            				<p:column headerText="VAT" width="70">
+            						<h:outputText  value="#{rpt.vatamnt}" style="color: black;"/>
+            				</p:column>
+            				
+         </p:dataTable>                
+<ui:include src="loader.xhtml" />
+</h:form>
+<ui:include src="menu.xhtml" />
+</h:body>
+</html>

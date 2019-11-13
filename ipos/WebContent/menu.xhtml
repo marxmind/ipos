@@ -1,0 +1,57 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h = "http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      >
+ 
+    <ui:composition>
+        
+        <div 
+	   					style="width: 100%;
+						  padding-right: 15px;
+						  padding-left: 15px;
+						  margin-right: auto;
+						  margin-left: auto;
+	   					  padding: 0 !important; 
+	   					  position: fixed;
+						  right: 0;
+						  bottom: 0;
+						  left: 0;
+						  z-index: 1030;
+						  background: linear-gradient(#0789b2, #086583, #044357);
+						  ">
+							
+						<p:commandButton icon="fa fa-file-o" value="Cashier" action="#{menuBean.pos}" disabled="#{featuresBean.store}" style="#{skin.menu}" rendered="#{menuBean.cashier}"/>	
+						<p:commandButton icon="fa fa-male" value="Clients Trans" action="#{menuBean.clients}" disabled="#{featuresBean.clients}" style="#{skin.menu}" rendered="#{menuBean.clientsOverCounter}"/>
+						 <p:commandButton icon="fa fa-camera-retro" value="Balance Sheet" action="#{menuBean.accounting}" disabled="#{featuresBean.accounting}" style="#{skin.menu}" rendered="#{menuBean.accounting}"/>
+						 	
+			             <p:commandButton icon="fa fa-list-ul" value="Suppliers Trans" action="#{menuBean.suppliers}" disabled="#{featuresBean.suppliers}" style="#{skin.menu}" rendered="#{menuBean.supplierTrans}"/>
+			             <p:commandButton icon="fa fa-money" value="Delivery" action="#{menuBean.delivery}" disabled="#{featuresBean.delivery}" style="#{skin.menu}" rendered="#{menuBean.deliveryTrans}"/>
+			             <p:commandButton icon="fa fa-truck" value="Xtras" action="#{menuBean.xtras}" disabled="#{featuresBean.xtras}" style="#{skin.menu}" rendered="#{menuBean.xtras}"/>
+			             
+			             <p:commandButton icon="fa fa-file-text" value="Stats" action="#{menuBean.monitoring}" disabled="#{featuresBean.productStat}" style="#{skin.menu}" rendered="#{menuBean.stats}"/>
+			             <p:commandButton icon="fa fa-caret-square-o-down" value="Store Items" action="#{menuBean.store}" disabled="#{featuresBean.storeTransfer}" style="#{skin.menu}" rendered="#{menuBean.storeloader}"/>
+			             <p:commandButton icon="fa fa-caret-square-o-down" value="Expire" action="#{menuBean.productExpiration}" disabled="#{featuresBean.productExpiration}" style="#{skin.menu}" rendered="#{menuBean.expireMonitor}"/>
+			             <p:commandButton icon="fa fa-caret-square-o-down" value="Table Monitoring" action="#{menuBean.tableMonitoring}" disabled="#{featuresBean.tableMonitoring}" style="#{skin.menu}" rendered="#{menuBean.tableMonitor}"/>
+			             <p:commandButton icon="fa fa-caret-square-o-down" value="Rooms" action="#{menuBean.room}" disabled="#{featuresBean.roomMonitoring}" style="#{skin.menu}" rendered="#{menuBean.rooms}"/>
+			             
+			             <p:commandButton icon="fa fa-caret-square-o-down" value="Receipts" action="#{menuBean.rptTrans}" disabled="#{featuresBean.receiptTrans}" style="#{skin.menu}" rendered="#{menuBean.receiptsTrans}"/>
+			             <p:commandButton icon="fa fa-caret-square-o-down" value="Reset Rcpts" action="#{menuBean.rpt}" disabled="#{featuresBean.receiptSetting}" style="#{skin.menu}" rendered="#{menuBean.receiptReset}"/>
+			             <p:commandButton icon="fa fa-caret-square-o-down" value="Settings" action="#{menuBean.features}" disabled="#{featuresBean.featuresSettings}" style="#{skin.menu}" rendered="#{menuBean.settings}"/>
+			             
+			             <p:commandButton icon="fa fa-caret-square-o-down" value="User Setup" action="#{menuBean.adminuser}" disabled="#{featuresBean.adminUser}" style="#{skin.menu}" rendered="#{menuBean.userSetting}"/>
+			             <p:commandButton icon="fa fa-caret-square-o-down" value="Products Setup" action="#{menuBean.adminproduct}" disabled="#{featuresBean.adminProduct}" style="#{skin.menu}" rendered="#{menuBean.productSetting}"/>
+			             <p:commandButton icon="fa fa-caret-square-o-down" value="Suppliers Setup" action="#{menuBean.adminsupplier}" disabled="#{featuresBean.adminSupplier}" style="#{skin.menu}" rendered="#{menuBean.supplierSetting}"/>
+			             
+			             <p:commandButton icon="fa fa-caret-square-o-down" value="Customer Setup" action="#{menuBean.admincustomer}" disabled="#{featuresBean.adminClient}" style="#{skin.menu}" rendered="#{menuBean.customerSetting}"/>
+			             <p:commandButton icon="fa fa-caret-square-o-down" value="Customer Points" action="#{menuBean.adminpoints}" disabled="#{featuresBean.points}" style="#{skin.menu}" rendered="#{menuBean.points}"/>
+			             
+			             <p:commandButton icon="fa  fa-power-off" action="login" value="Logout" style="#{skin.menu}" actionListener="#{loginBean.logout}"/>
+			              
+			</div>
+         
+        
+    </ui:composition>
+</html>
