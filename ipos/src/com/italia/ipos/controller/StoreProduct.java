@@ -70,6 +70,65 @@ public class StoreProduct {
 		this.uom = uom;
 	}
 	
+	public static StoreProduct scanBarcode(String barcode){
+		StoreProduct store = null;
+		
+		String sql = "SELECT * FROM storeproduct WHERE prodIsActive=1 AND barcode=?";
+		
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		try{
+		conn = ConnectDB.getConnection();
+		ps = conn.prepareStatement(sql);
+		
+		ps.setString(0, barcode);
+		
+		/*
+		if(params!=null && params.length>0){
+			
+			for(int i=0; i<params.length; i++){
+				ps.setString(i+1, params[i]);
+			}
+			
+		}
+		*/
+		
+		rs = ps.executeQuery();
+		
+		while(rs.next()){
+			store = new StoreProduct();
+			try{store.setId(rs.getLong("storeid"));}catch(NullPointerException e){}
+			try{store.setBarcode(rs.getString("barcode"));}catch(NullPointerException e){}
+			try{store.setProductName(rs.getString("productName"));}catch(NullPointerException e){}
+			try{store.setUomSymbol(rs.getString("uomsymbol"));}catch(NullPointerException e){}
+			try{store.setQuantity(rs.getDouble("qty"));}catch(NullPointerException e){}
+			try{store.setPurchasedPrice(rs.getDouble("purchasedprice"));}catch(NullPointerException e){}
+			try{store.setSellingPrice(rs.getDouble("sellingprice"));}catch(NullPointerException e){}
+			try{store.setNetPrice(rs.getDouble("netprice"));}catch(NullPointerException e){}
+			try{store.setIsActive(rs.getInt("prodIsActive"));}catch(NullPointerException e){}
+			
+			Product prod = new Product();
+			try{prod.setProdid(rs.getLong("prodid"));}catch(NullPointerException e){}
+			store.setProduct(prod);
+			
+			ProductProperties prop = new ProductProperties();
+			try{prop.setPropid(rs.getLong("propid"));}catch(NullPointerException e){}
+			store.setProductProperties(prop);
+						
+			UOM uom = new UOM();
+			try{uom.setUomid(rs.getInt("uomid"));}catch(NullPointerException e){}
+			store.setUom(uom);
+			
+		}
+		
+		}catch(SQLException e) {
+			e.getMessage();
+		}
+		
+		return store;
+	}
+	
 	public static double storeQuantity(boolean isRevert, Product product, double qty){
 		String sql = "SELECT * FROM storeproduct WHERE prodIsActive=1 AND prodid=?";
 		String[] params = new String[1];
@@ -166,8 +225,8 @@ public class StoreProduct {
 	}
 	
 	public static List<StoreProduct> retrieve(Object... obj){
-		List<StoreProduct> products = Collections.synchronizedList(new ArrayList<StoreProduct>());
-		
+		//List<StoreProduct> products = Collections.synchronizedList(new ArrayList<StoreProduct>());
+		List<StoreProduct> products = new ArrayList<StoreProduct>();
 		String storeTable = "store";
 		String prodTable = "prod";
 		String propTable = "prop";
@@ -257,7 +316,8 @@ public class StoreProduct {
 	
 	public static List<StoreProduct> retrieve(String sql, String[] params){
 		
-		List<StoreProduct> products = Collections.synchronizedList(new ArrayList<StoreProduct>());
+		//List<StoreProduct> products = Collections.synchronizedList(new ArrayList<StoreProduct>());
+		List<StoreProduct> products = new ArrayList<StoreProduct>();
 		
 		String storeTable = "store";
 		String prodTable = "prod";
@@ -340,7 +400,8 @@ public class StoreProduct {
 	
 	public static List<StoreProduct> retrieveProduct(String sql, String[] params){
 		
-		List<StoreProduct> products = Collections.synchronizedList(new ArrayList<StoreProduct>());
+		//List<StoreProduct> products = Collections.synchronizedList(new ArrayList<StoreProduct>());
+		List<StoreProduct> products = new ArrayList<StoreProduct>();
 		
 		Connection conn = null;
 		ResultSet rs = null;

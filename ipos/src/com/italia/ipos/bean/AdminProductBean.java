@@ -1601,7 +1601,7 @@ public class AdminProductBean implements Serializable{
 	public void imgUploadListener(FileUploadEvent event) {
 		System.out.println("docUploadListener....");
         try {
-        	InputStream input = event.getFile().getInputstream();
+        	InputStream input = event.getFile().getInputStream();
         if(input!=null){
         	//save the stream in setter for saving purposes later
         	setDocFileExt(FilenameUtils.getExtension(event.getFile().getFileName()));

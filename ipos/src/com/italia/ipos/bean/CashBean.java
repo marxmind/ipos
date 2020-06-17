@@ -17,12 +17,12 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
@@ -96,9 +96,9 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
  * @since 04/02/2017
  * @version 1.0
  */
-@ManagedBean(name="cashBean")
+@Named
 @ViewScoped
-public class CashierBean implements Serializable{
+public class CashBean implements Serializable{//old name CashierBean
 
 	/**
 	 * 
@@ -318,7 +318,7 @@ public class CashierBean implements Serializable{
 	}
 	
 	public void initCustomer(){
-		customers = Collections.synchronizedList(new ArrayList<Customer>());
+		customers = new ArrayList<Customer>();
 		//Customer customer = new Customer();
 		//customer.setIsactive(1);
 		//customer.setFullname(Whitelist.remove(getSearchCustomer()));
@@ -344,7 +344,7 @@ public class CashierBean implements Serializable{
 	}
 	
 	public void initXtras(){
-		xtras = Collections.synchronizedList(new ArrayList<AddOnStore>());
+		xtras = new ArrayList<AddOnStore>();
 		ProductRunning run = new ProductRunning();
 		
 		if(getProductRunning()!=null){
@@ -531,7 +531,7 @@ public class CashierBean implements Serializable{
 				
 			}else{
 				
-				productPurchasedData = Collections.synchronizedMap(new HashMap<Long,PurchasedItem>());
+				productPurchasedData = new HashMap<Long,PurchasedItem>();
 				
 				String productName = store.getProductName();
 				double sellingPrice = store.getSellingPrice();
@@ -679,7 +679,7 @@ public class CashierBean implements Serializable{
 			
 		}else{
 			
-			productPurchasedData = Collections.synchronizedMap(new HashMap<Long,PurchasedItem>());
+			productPurchasedData = new HashMap<Long,PurchasedItem>();
 			
 			String productName = store.getProductName();
 			double sellingPrice = store.getSellingPrice();
@@ -826,7 +826,7 @@ public class CashierBean implements Serializable{
 		setTotalTaxable(0);
 		setTotalVat(0);
 		setReceiptView(null);
-		orders = Collections.synchronizedList(new ArrayList<PurchasedItem>());
+		orders = new ArrayList<PurchasedItem>();
 		double totalprice =0d;
 		itemCount = 0;
 		int count = 1;
@@ -1023,7 +1023,7 @@ public class CashierBean implements Serializable{
 	
 	
 	public void initProduct(){
-		prods = Collections.synchronizedList(new ArrayList<StoreProduct>());
+		prods = new ArrayList<StoreProduct>();
 		
 		if(getSearchProduct()!=null && !getSearchProduct().isEmpty()){
 		
@@ -1163,6 +1163,7 @@ public double getItemCount() {
 		}else{
 			return "searchId";
 		}*/
+		
 		return "orderDataId grandTotalId toolbarCommands rptId searchId";
 	}
 	
@@ -1258,8 +1259,8 @@ public double getItemCount() {
 			setBalanceamnt(null);
 			setReceiptView(null);
 			setItemCount(0);
-			orders = Collections.synchronizedList(new ArrayList<PurchasedItem>());
-			productPurchasedData = Collections.synchronizedMap(new HashMap<Long,PurchasedItem>());
+			orders = new ArrayList<PurchasedItem>();
+			productPurchasedData = new HashMap<Long,PurchasedItem>();
 			
 			transactiondVoid();
 			
@@ -1305,7 +1306,7 @@ public double getItemCount() {
 				}
 				
 			}
-			setQtyrunning(Collections.synchronizedMap(new HashMap<Long,QtyRunning>()));
+			setQtyrunning(new HashMap<Long,QtyRunning>());
 		}else{
 			if(getProductRunning()!=null){
 				ProductRunning run = new ProductRunning();
@@ -1365,15 +1366,20 @@ public double getItemCount() {
 		setItemCount(0);
 		setProductRunning(null);
 		
-		qtyrunning = Collections.synchronizedMap(new HashMap<Long,QtyRunning>());
-		productHolds = Collections.synchronizedList(new ArrayList<ProductRunning>());
-		transactions = Collections.synchronizedList(new ArrayList<Transactions>());
+		//qtyrunning = Collections.synchronizedMap(new HashMap<Long,QtyRunning>());
+		//productHolds = Collections.synchronizedList(new ArrayList<ProductRunning>());
+		//transactions = Collections.synchronizedList(new ArrayList<Transactions>());
+		qtyrunning = new HashMap<Long,QtyRunning>();
+		productHolds = new ArrayList<ProductRunning>();
+		transactions = new ArrayList<Transactions>();
 		
 		if(getProductPurchasedData()!=null && getProductPurchasedData().size()>0){
 			addMessage("Transaction has been moved to Payable Accounts.","");
 		}
-		orders = Collections.synchronizedList(new ArrayList<PurchasedItem>());
-		productPurchasedData = Collections.synchronizedMap(new HashMap<Long,PurchasedItem>());
+		//orders = Collections.synchronizedList(new ArrayList<PurchasedItem>());
+		//productPurchasedData = Collections.synchronizedMap(new HashMap<Long,PurchasedItem>());
+		orders = new ArrayList<PurchasedItem>();
+		productPurchasedData = new HashMap<Long,PurchasedItem>();
 	}
 	
 	public void moveToHoldPurchased(){
@@ -1397,7 +1403,7 @@ public double getItemCount() {
 	private void holdData(){
 		
 		ProductRunning productrun = addRunningProduct();
-		setQtyrunning(Collections.synchronizedMap(new HashMap<Long,QtyRunning>()));
+		setQtyrunning(new HashMap<Long,QtyRunning>());
 		
 		QtyRunning runQty = new QtyRunning();
 		runQty.setIsqtyactive(1);
@@ -1492,7 +1498,8 @@ public double getItemCount() {
 	}
 	
 	public void loadHistory(){
-		transactions = Collections.synchronizedList(new ArrayList<Transactions>());
+		//transactions = Collections.synchronizedList(new ArrayList<Transactions>());
+		transactions = new ArrayList<Transactions>();
 		Transactions tran = new Transactions();
 		tran.setIsvoidtrans(1);
 		String sql = "";
@@ -1901,7 +1908,7 @@ public double getItemCount() {
 	}
 	
 	@Deprecated
-	public void dispense(){
+	public void dispense(){//change to chargeDispense()
 		
 		if(getAmountin()==null || getAmountin().isEmpty() || getBalanceamnt().doubleValue()>1){
 			
@@ -2297,8 +2304,8 @@ public double getItemCount() {
 	}
 	
 	private List<PurchasedItem> addPurchasedItemForFirstTime(Transactions trans){
-		List<PurchasedItem> items = Collections.synchronizedList(new ArrayList<PurchasedItem>());
-		
+		//List<PurchasedItem> items = Collections.synchronizedList(new ArrayList<PurchasedItem>());
+		List<PurchasedItem> items = new ArrayList<PurchasedItem>();
 		if(orders!=null && orders.size()>0){
 			
 			ProductRunning productrun = new ProductRunning();
@@ -2366,7 +2373,7 @@ public double getItemCount() {
 			}
 			
 			//additional product not yet save in on hold
-			setQtyrunning(Collections.synchronizedMap(new HashMap<Long,QtyRunning>()));
+			setQtyrunning(new HashMap<Long,QtyRunning>());
 			for(PurchasedItem item : getProductPurchasedData().values()){
 				if(item.getAddOnStore()==null){
 					
@@ -2435,8 +2442,8 @@ public double getItemCount() {
 	}
 	
 	private List<PurchasedItem> addPurchasedItem(Transactions trans){
-		List<PurchasedItem> items = Collections.synchronizedList(new ArrayList<PurchasedItem>());
-		
+		//List<PurchasedItem> items = Collections.synchronizedList(new ArrayList<PurchasedItem>());
+		List<PurchasedItem> items = new ArrayList<PurchasedItem>();
 		if(orders!=null && orders.size()>0){
 			
 			for(PurchasedItem item : orders){
@@ -2483,7 +2490,7 @@ public double getItemCount() {
 		String sql = " AND store.prodIsActive=1 AND store.qty!=0 AND store.barcode=?";
 		String[] params = new String[1];
 		String barcode = Whitelist.remove(getSearchCode());
-		barcode = barcode.substring(0, 12);
+		//barcode = barcode.substring(0, 12);//removing this line code due to limit of character of barcode
 		System.out.println("barcode >> " + barcode);
 		params[0] = barcode;
 		

@@ -11,6 +11,34 @@
   </welcome-file-list>
   
   <context-param>
+    <param-name>primefaces.CSP</param-name>
+    <param-value>false</param-value>
+  </context-param>
+  
+  <context-param>
+    <param-name>javax.faces.PROJECT_STAGE</param-name>
+    <param-value>Production</param-value>
+  </context-param>
+  
+   <!-- Enable partial submit in PrimeFaces - this reduces the network traffic -->
+	<context-param>
+	    <param-name>primefaces.SUBMIT</param-name>
+	    <param-value>partial</param-value>
+	</context-param>
+	
+	 <!-- reduce saved view states -->
+	<context-param>
+	    <param-name>com.sun.faces.numberOfViewsInSession</param-name>
+	    <param-value>15</param-value>
+	</context-param>
+	
+	<!-- Disable ViewState compression (better performance but more memory usage) -->
+	<context-param>
+	    <param-name>com.sun.faces.compressViewState</param-name>
+	    <param-value>false</param-value>
+	</context-param>
+  
+  <context-param>
         <param-name>primefaces.MOVE_SCRIPTS_TO_BOTTOM</param-name>
         <param-value>true</param-value>
     </context-param>
@@ -25,10 +53,12 @@
 		<param-name>primefaces.THEME</param-name>
 		<param-value>#{themeBean.applicationTheme}</param-value>
 	</context-param>
+	<!-- 
 	<context-param>
 		<param-name>primefaces.mobile.THEME</param-name>
 		<param-value>#{themeBean.mobileTheme}</param-value>
-	</context-param>	
+	</context-param>
+	-->	
 	<!-- 
 	<context-param>
   		<param-name>primefaces.CACHE_PROVIDER</param-name>
@@ -46,7 +76,7 @@
   <context-param>
     <description>State saving method: 'client' or 'server' (=default). See JSF Specification 2.5.2</description>
     <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
-    <param-value>client</param-value>
+    <param-value>server</param-value>
   </context-param>
   
   <context-param>

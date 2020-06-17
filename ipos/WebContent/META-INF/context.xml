@@ -1,0 +1,7 @@
+<Context>
+    <Resource name="BeanManager" 
+        auth="Container"
+        type="javax.enterprise.inject.spi.BeanManager"
+        factory="org.jboss.weld.resources.ManagerObjectFactory" />
+        <!-- http://balusc.omnifaces.org/2013/10/how-to-install-cdi-in-tomcat.html -->
+</Context>

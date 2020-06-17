@@ -17,14 +17,14 @@ public class ConnectDB {
 		Connection conn = null;
 		
 		try{
-			String driver = ReadConfig.value(Ipos.DB_DRIVER);
-				   driver = SecureChar.decode(driver);
+			String driver =ReadConfig.value(Ipos.DB_DRIVER);
+				   //driver = SecureChar.decode(driver);
 			Class.forName(driver);
 			String db_url = ReadConfig.value(Ipos.DB_URL);
-				   db_url = SecureChar.decode(db_url);
+				   //db_url = SecureChar.decode(db_url);
 			String port = ReadConfig.value(Ipos.DB_PORT);
-			       port = SecureChar.decode(port);
-			String url = db_url + ":" + port + "/" +ReadConfig.value(Ipos.DB_NAME)+ "?" + ReadConfig.value(Ipos.DB_SSL);
+			       //port = SecureChar.decode(port);
+			String url = db_url + ":" + port + "/" +ReadConfig.value(Ipos.DB_NAME)+ "?serverTimezone=UTC&" + ReadConfig.value(Ipos.DB_SSL);
 			String u_name = ReadConfig.value(Ipos.USER_NAME);
 				   u_name = SecureChar.decode(u_name);
 				   u_name = u_name.replaceAll("mark", "");

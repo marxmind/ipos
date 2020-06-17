@@ -154,7 +154,8 @@ public class ProductProperties {
 	 * @return list of product properties
 	 */
 	public static List<ProductProperties> retrieve(Object ...obj){
-		List<ProductProperties> props = Collections.synchronizedList(new ArrayList<ProductProperties>());
+		//List<ProductProperties> props = Collections.synchronizedList(new ArrayList<ProductProperties>());
+		List<ProductProperties> props = new ArrayList<ProductProperties>();
 		String productTable = "prd";
 		String uomTable = "om";
 		String userTable = "usr";
@@ -334,8 +335,8 @@ public class ProductProperties {
 	}
 	
 	public static List<ProductProperties> retrieve(String sql, String[] params){
-		List<ProductProperties> props = Collections.synchronizedList(new ArrayList<ProductProperties>());
-		
+		//List<ProductProperties> props = Collections.synchronizedList(new ArrayList<ProductProperties>());
+		List<ProductProperties> props = new ArrayList<ProductProperties>();
 		String productTable = "prd";
 		String uomTable = "om";
 		String userTable = "usr";

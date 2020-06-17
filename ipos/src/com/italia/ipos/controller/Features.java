@@ -46,7 +46,7 @@ public class Features {
 	}
 	
 	public static List<Features> retrieve(String sql, String[] params){
-		List<Features> fets = Collections.synchronizedList(new ArrayList<Features>());
+		List<Features> fets = new ArrayList<Features>();
 		
 		Connection conn = null;
 		ResultSet rs = null;

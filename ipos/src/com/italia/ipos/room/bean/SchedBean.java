@@ -4,17 +4,19 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
- 
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
+
 import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
@@ -34,9 +36,9 @@ import com.italia.ipos.room.controller.ReservationXML;
  * @version 1.0
  *
  */
-@ManagedBean(name="schedBean", eager=true)
+@Named
 @ViewScoped
-public class SchedulerBean implements Serializable{
+public class SchedBean implements Serializable{
 
 	/**
 	 * 
@@ -257,25 +259,33 @@ public class SchedulerBean implements Serializable{
     	
     	String fromDate = dateFromValue+","+timeFromValue;
         String toDate = dateToValue+","+timeToValue;
-        DateFormat formatter = new SimpleDateFormat("d-MMM-yyyy,HH:mm:ss aaa");
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        //DateFormat formatter = new SimpleDateFormat("d-MMM-yyyy,HH:mm:ss aaa");
         try{
-        Date dateFrom = formatter.parse(fromDate);
-        Date dateTo = formatter.parse(toDate);
+        //Date dateFrom = formatter.parse(fromDate);
+        //Date dateTo = formatter.parse(toDate);
         
-        ScheduleEvent ev = new DefaultScheduleEvent(title, dateFrom, dateTo); 
-        ev.setId(rs.getId());
+        //ScheduleEvent ev = new DefaultScheduleEvent(title, dateFrom, dateTo);
+        //DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;//DateTimeFormatter.ofPattern("dd-MM-yyyy,HH:mm:ss a");
+        ScheduleEvent eve = DefaultScheduleEvent.builder()
+        		.title(title)
+        		.startDate(LocalDateTime.parse(fromDate,formatter))
+        		.endDate(LocalDateTime.parse(toDate,formatter))
+        		.build();
+        eve.setId(rs.getId());
         
-        System.out.println("check load id " + ev.getId());
+        System.out.println("check load id " + eve.getId());
         
-        return ev;
+        return eve;
         }catch(Exception e){}
         return new DefaultScheduleEvent();
     }
     
     private ScheduleEvent save(ScheduleEvent event, int type){
     	
-    	Date dateStart = event.getStartDate();
-    	Date dateNext = event.getEndDate();
+    	DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME; 
+    	LocalDateTime dateStart = event.getStartDate();
+    	LocalDateTime dateNext = event.getEndDate();
     	
         String dateFromValue = new SimpleDateFormat("dd-MMM-yyyy").format(dateStart);
         String dateToValue = new SimpleDateFormat("dd-MMM-yyyy").format(dateNext);
@@ -296,9 +306,9 @@ public class SchedulerBean implements Serializable{
         
         String fromDate = dateFromValue+","+timeFromValue;
         String toDate = dateToValue+","+timeToValue;
-        DateFormat formatter = new SimpleDateFormat("d-MMM-yyyy,HH:mm:ss aaa");
-        Date dateFrom = formatter.parse(fromDate);
-        Date dateTo = formatter.parse(toDate);
+        //DateFormat formatter = new SimpleDateFormat("d-MMM-yyyy,HH:mm:ss aaa");
+       // Date dateFrom = formatter.parse(fromDate);
+        //Date dateTo = formatter.parse(toDate);
         
         
         String[] val = new String[4];
@@ -317,7 +327,13 @@ public class SchedulerBean implements Serializable{
         	ReservationXML.addElement(val);
         }
         
-        event = new DefaultScheduleEvent(event.getTitle(), dateFrom, dateTo);
+       // event = new DefaultScheduleEvent(event.getTitle(), dateFrom, dateTo);
+       
+        event = DefaultScheduleEvent.builder()
+        		.title(event.getTitle())
+        		.startDate(LocalDateTime.parse(fromDate,formatter))
+        		.endDate(LocalDateTime.parse(toDate,formatter))
+        		.build();
         
         }catch(Exception e){}
         
@@ -330,7 +346,13 @@ public class SchedulerBean implements Serializable{
     }
      
     public void onDateSelect(SelectEvent selectEvent) {
-        event = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
+        //event = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
+        ScheduleEvent e = (ScheduleEvent)selectEvent.getObject();
+    	event = DefaultScheduleEvent.builder()
+        		.title(e.getTitle())
+        		.startDate(e.getStartDate())
+        		.endDate(e.getEndDate())
+        		.build();
         System.out.println("onDateSelect : id is " + event.getId());
     }
      
@@ -346,9 +368,9 @@ public class SchedulerBean implements Serializable{
     	
     	ScheduleEvent ev = save(event.getScheduleEvent(),3);
     	System.out.println("onEventResize : id is " + ev.getId());
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
+        //FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
          
-        addMessage(message);
+        //addMessage(message);
     }
      
     private void addMessage(FacesMessage message) {

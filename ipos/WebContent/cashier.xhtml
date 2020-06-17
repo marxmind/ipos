@@ -207,7 +207,10 @@ $('#cashId').keydown(function (event){
 				<p:inputTextarea onclick="PF('multiDialogReceipt').show();" id="idAreaRpt" value="#{cashBean.receiptView}" 
 					rows="50" 
 					style="background-color:white; 
-					#{skin.textInput}" 
+					color: black;font-style: normal; 	
+					font-family: Times New Roman; 
+					font-size: 100%;
+					font-weight: bold;" 
 					cols="40" autoResize="false" readonly="true"  disabled="false"/>
 		
 			</p:panelGrid>
@@ -242,15 +245,16 @@ $('#cashId').keydown(function (event){
 				style="border-radius: 1em;  color: white; background-color: white; ">
 	
 	
-	<p:focus context="tb" id="focusId"/>
+	
 				
 				
 		<p:toolbar id="tb" style="#{skin.toolbar}">
     		<f:facet name="left">
-    			
+    			<p:focus for="searchId" id="focusId">
 		        <p:inputText id="searchId"  a:placeholder="Search Code" value="#{cashBean.searchCode}">
 		        	<p:ajax event="change" listener="#{cashBean.search}" update="#{cashBean.refreshCashier}"/>
 		        </p:inputText>&nbsp;&nbsp;
+		        </p:focus>
 		        <p:commandButton type="button" update="productDataId idProdSearch" value="(f4)Products" icon="ui-icon-search" onclick="PF('multiDialogProductLookUp').show()" actionListener="#{cashBean.clearSearchProduct}"/>
 		        <p:commandButton type="button" update="productXtrasId" value="(f8)Xtras" icon="ui-icon-search" onclick="PF('multiDialogXtras').show()" disabled="#{featuresBean.xtraProduct}"/>
 		        <p:commandButton type="button" update="productReturnId" value="Returning" icon="ui-icon-search" onclick="PF('multiDialogReturn').show()" disabled="#{featuresBean.cashierProductReturn}"/>
@@ -275,7 +279,7 @@ $('#cashId').keydown(function (event){
     			
     		</f:facet>
 		</p:toolbar>
-		
+	
 		
 		<p:sticky target="tb" />		
 		

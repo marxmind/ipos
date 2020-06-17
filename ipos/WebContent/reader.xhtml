@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        
+        <title>QR / Barcode Reader</title>
+        
+        <f:facet name="middle">
+            <h:outputStylesheet name="bootstrap/css/bootstrap.min.css"/>
+            <h:outputStylesheet name="css/menu.css"/>
+            <h:outputScript name="jquery/jquery.min.js" target="head"/>
+            <h:outputScript name="bootstrap/js/bootstrap.min.js" target="head"/>
+            <h:outputStylesheet name="css/growl.css"/>
+        </f:facet>
+        
+    </h:head>
+    <h:body>
+        <h:form prependId="false">
+            <div id="top">
+                <h1>QR / Barcode Reader</h1>
+            </div>
+            <div id="content" class="center_content">
+                <div style="text-align: center;">
+                <div>
+                    <p:growl id="growl" showDetail="true" autoUpdate="true"/>
+                    <p:photoCam id="cameraId" listener="#{photoController.oncapture}" update="rTxt" style="margin: 0 auto;" widgetVar="pc"/>
+                    <p:poll interval="1" oncomplete="PF('pc').capture()"/>
+                </div>
+                <div style="margin-top: 30px;">
+                    <h:outputText id="rTxt" value="#{photoController.resultText}"/>
+                </div>
+            </div>
+            </div>
+            
+            
+             <h:outputScript>
+		 
+		 	function setup() {
+		 	
+				Webcam.attach( '#cameraId' );
+			}
+		 
+		 	</h:outputScript>
+            
+        </h:form>
+    </h:body>
+</html>
