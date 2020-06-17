@@ -44,6 +44,7 @@ import com.italia.ipos.enm.ReceiptStatus;
 import com.italia.ipos.enm.Status;
 import com.italia.ipos.reader.ReadConfig;
 import com.italia.ipos.utils.DateUtils;
+import com.italia.ipos.utils.LogU;
 
 
 
@@ -53,6 +54,7 @@ public class DispenseXML {
 	
 	public static void main(String[] args) {
 		
+		LogU.add("initialize xml fetching.....");
 		System.out.println("initialize.....");
 		
 		File folder = new File(APP_DISPINESE_FOLDER);
@@ -72,8 +74,8 @@ public class DispenseXML {
 		
 		
 		//DispenseXML.readXML("2017-06-21-0000000912.xml");
-		
-		
+		LogU.add("completed xml fetching.....");
+		System.out.println("completed");
 	}
 	
 	private static void loadXMLDB(File fileName){
