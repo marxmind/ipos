@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<business>
+	<line id="0">
+		<name>MATT-AGRI SUPPLY</name>
+		<description>Agri Products</description>
+		<address>Purok Lugan, Poblacion, Lake Sebu</address>
+		<owner>Matt ALvin Italia</owner>
+		<contact>0</contact>
+		<database>agripos</database>
+		<driver>org.mariadb.jdbc.Driver</driver>
+		<url>jdbc:mariadb://localhost</url>
+		<port>3306</port>
+		<SSL>useSSL=false</SSL>
+		<username>cm9vdA==</username>
+		<password>b2N0b2JlcjE4MTk4Nio=</password>
+	</line>	
+</business>

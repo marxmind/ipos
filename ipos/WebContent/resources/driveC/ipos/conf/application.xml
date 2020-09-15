@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><databaseDetails>
+	<databaseName>agripos</databaseName>
+	<driver>org.mariadb.jdbc.Driver</driver>
+	<url>jdbc:mariadb://localhost</url>
+	<port>3306</port>
+	<SSL>useSSL=false</SSL>
+	<username>cm9vdA==</username>
+	<password>b2N0b2JlcjE4MTk4Nio=</password>
+	<applicationExp>02r03i-01a08i-02r00m01a07l</applicationExp>
+	<applicationVersion>Version 1.0</applicationVersion>
+	<copyright>Copyright © 2016. All Rights Reserved.</copyright>
+	<author>Mark Italia</author>
+	<supportEamil>markritalia@gamil.com</supportEamil>
+	<supportNo>09175121252</supportNo>
+	<includeLog>yes</includeLog>
+	<logPath>C:\ipos\log\</logPath>
+	<imgPath>C:\ipos\img\</imgPath>
+	<reports>C:\ipos\reports\</reports>
+	<businessType>0</businessType><!--default [0]open [1]specific-->
+	<businessName>MATT-AGRI SUPPLY</businessName>
+	<businessWallpaperFile>wallpaper.jpg</businessWallpaperFile>
+	<themeStyle>rocket</themeStyle>
+	<receiptLog>C:\ipos\receipts\</receiptLog>
+	<selectedItemSave>0</selectedItemSave><!-- use in cashiering fast saving-->
+	<dispense>C:\ipos\dispense\</dispense><!-- use in cashiering -->
+	<enableoutsidesaving>true</enableoutsidesaving><!-- use in cashiering -->
+	<cashierjar>C:\ipos\dispense\runDispensejar.bat</cashierjar><!-- runDispensejar.bat DispenseXML.jar-->
+	<printername>EPSON TM-U220 Receipt</printername>
+	<printerison>0</printerison>
+	<mobileTheme>marx</mobileTheme>
+</databaseDetails>

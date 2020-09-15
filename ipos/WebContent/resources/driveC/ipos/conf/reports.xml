@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<reports>
+	<productbarcode>productbarcode</productbarcode>
+	<accountingsummary>accountingsummary</accountingsummary>
+	<checkout>checkout</checkout>
+	<salesinvoice>salesinvoice</salesinvoice>
+	<chargeinvoice>chargeinvoice</chargeinvoice>
+</reports>

@@ -1,0 +1,33 @@
+Configuration for page design
+Author: Mark Italia
+Date: November 14, 2017
+
+label=
+header=
+title=
+placeholder=
+textInput=
+table=
+panel=
+tabs=
+button=
+link=
+dialog=
+pagelayout = 
+copyrightLabel=font-size: 60% ! important;font-weight: bold ! important;  text-transform: none ! important;
+calendarSched=
+homeDirImgaes=-moz-border-radius: 20px; -webkit-border-radius: 50px; border-radius: 50px;border: 1px solid #3e2b14; padding 2px; box-shadow: 8px 8px 10px #aaa;
+homeImgaeProfile=width: 255px; height: 255px; -moz-border-radius: 20px; -webkit-border-radius: 20px; border-radius: 20px; border: 1px solid #3e2b14; padding 2px; box-shadow: 8px 8px 10px #aaa;
+msg=
+toolbar=
+pageTitle=font-size: 100% ! important;font-weight: bold ! important;  text-transform: none ! important; color: white;
+menu=
+grid=
+select=
+calendar=
+chart=
+checkbox=
+	
+conditions=CONDITIONS: Buyer hereby AGREES and GUARANTEES to pay the value of the good covered in this TRUST RECEIPT  in cash unless there is a  stipulation of CONTRARY interest at the rate 24% per annum shall be charged on all overdue accounts. In case collection made through an attorney, buyer likewise agrees to pay the cost of collection, and an additional sum equal to 25% of the unpaid amount of the attorney's fees. It is hereby stipulated the courts of LAKE SEBU/SURALLAH shall have jurisdiction over the same, to the exclution of the courts. GOODS TRAVEL AT BUYERS RISK. 
+address=Purok Lugan, Poblacion, Lake Sebu, South Cotabato
+contactNumber=09956244155
